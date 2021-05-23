@@ -1,0 +1,12 @@
+#pragma once
+#define GRICON 1001
+#define STONE_BITMAP 1002
+#define GRRADIO 1003
+#define GRBENCH 1004
+#define GRBENCH_LEGS 1005
+#define GRANTENNA 1007
+#define GRROAD 1008
+#define GRFOOTPATH 1009
+
+
+

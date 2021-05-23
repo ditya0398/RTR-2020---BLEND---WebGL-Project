@@ -1,0 +1,10 @@
+#include"GRWindow.h"
+GRICON ICON "gricon.ico"
+GRRADIO BITMAP "bush.bmp"
+GRBENCH BITMAP "bench.bmp"
+GRBENCH_LEGS BITMAP "wood.bmp"
+GRANTENNA BITMAP "antenna.bmp"
+GRROAD BITMAP "road2.bmp"
+GRFOOTPATH BITMAP "footpath2.bmp"
+
+
