@@ -23,6 +23,7 @@
     <ProjectGuid>{E2A3103A-1B8F-48E3-86D4-6AE337EB7458}</ProjectGuid>
     <RootNamespace>My103DCUBEANDPYRAMID</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>WebGL Project</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
