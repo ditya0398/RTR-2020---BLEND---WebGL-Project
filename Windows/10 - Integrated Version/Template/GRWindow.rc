@@ -1,0 +1,7 @@
+#include"GRWindow.h"
+GRRADIO BITMAP "bush.bmp"
+GRBENCH BITMAP "bench.bmp"
+GRBENCH_LEGS BITMAP "wood.bmp"
+GRANTENNA BITMAP "antenna.bmp"
+
+

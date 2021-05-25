@@ -1,9 +1,15 @@
 #include<Windows.h>
-#include<glew.h>               // This SHOULD be above GL.h header.
+#include<gl/glew.h>               // This SHOULD be above GL.h header.
 #include<gl/GL.h>
 
 #include<stdio.h>
 #include"vmath.h"
+
+// gauri files include
+#include"GRWindow.h"
+#include"GRStack.h"
+#include"GRSourceHeader.h"
+
 #pragma comment(lib,"opengl32.lib")//for linking
 #pragma comment(lib,"glew32.lib")//for linking
 
@@ -203,6 +209,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
+	case WM_CHAR:
+		switch (wParam)
+		{
+		case 'y':
+			GRIncrementX();
+			break;
+
+		case 'x':
+			GRIncrementY();
+			break;
+		}
+		break;
+
 	case WM_DESTROY:
 		uninitialize();
 		PostQuitMessage(0);
@@ -263,10 +282,10 @@ int initialize(void)
 		DestroyWindow(hwnd);
 	}
 
-
+	GRInitShaders();
 
 	
-
+	glEnable(GL_TEXTURE_2D);
 	//Depth Lines
 	glClearDepth(1.0f);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -311,6 +330,8 @@ void resize(int width, int height)
 		0.1f,
 		100.0f);
 
+	GRInitPerspMatrixInResize(width, height);
+
 }
 
 
@@ -321,6 +342,7 @@ void display(void)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	GRDisplayGeometry();
 
 	SwapBuffers(ghdc);
 	
@@ -329,6 +351,8 @@ void display(void)
 void uninitialize(void)
 {
 	
+	GRUninitialize();
+
 	if (gbIsFullScreen == true)
 	{
 		SetWindowLong(ghwnd, GWL_STYLE, gdwStyle | WS_OVERLAPPEDWINDOW);
