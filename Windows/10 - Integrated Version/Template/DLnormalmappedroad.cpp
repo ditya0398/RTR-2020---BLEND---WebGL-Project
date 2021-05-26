@@ -2,7 +2,7 @@
 #include"DLresource.h"
 
 //////////////////////////////////////////////////Global Variable///////////////////////////////////////////
-extern HWND ghwnd_dl;
+extern HWND ghwnd;
 extern vmath::mat4 perspectiveProjectionMatrix;
 
 GLuint programNormalMap;
@@ -181,7 +181,7 @@ void initNormalMappedRoadDL() {
 	glCompileShader(vertShader_dl);
 	glGetShaderiv(vertShader_dl, GL_COMPILE_STATUS, &status);
 	if(status == GL_FALSE) {
-		MessageBoxA(ghwnd_dl, "Vertex Shader Error", NULL, NULL);
+		MessageBoxA(ghwnd, "Vertex Shader Error", NULL, NULL);
 	}	
 
 	//Compiling Fragment Shader
@@ -190,7 +190,7 @@ void initNormalMappedRoadDL() {
 	glCompileShader(fragShader_dl);
 	glGetShaderiv(fragShader_dl, GL_COMPILE_STATUS, &status);
 	if(status == GL_FALSE) {
-		MessageBoxA(ghwnd_dl, "Fragment Shader Error", NULL, NULL);
+		MessageBoxA(ghwnd, "Fragment Shader Error", NULL, NULL);
 	}	
 
 	//Linking Program
@@ -200,7 +200,7 @@ void initNormalMappedRoadDL() {
 	glLinkProgram(programNormalMap);
 	glGetProgramiv(programNormalMap, GL_LINK_STATUS, &status);
 	if(status == GL_FALSE) {
-		MessageBoxA(ghwnd_dl, "Linking Error", NULL, NULL);
+		MessageBoxA(ghwnd, "Linking Error", NULL, NULL);
 	}	
 	glDetachShader(programNormalMap, vertShader_dl);
 	glDetachShader(programNormalMap, fragShader_dl);
@@ -365,7 +365,7 @@ void renderNormalMappedRoadDL() {
 
 	//Set Viewport and Transform Matrices
 	glUseProgram(programNormalMap);
-	glUniformMatrix4fv(UniformModelView_dl, 1, GL_FALSE, vmath::translate(0.0f, 0.0f, -9.0f) * vmath::rotate(angRotx_dl, 0.0f, 1.0f, 0.0f) * vmath::rotate(angRoty_dl, 1.0f, 0.0f, 0.0f));
+	glUniformMatrix4fv(UniformModelView_dl, 1, GL_FALSE, vmath::translate(0.0f, 0.0f, -9.0f));
 	glUniformMatrix4fv(UniformProjection_dl, 1, GL_FALSE, perspectiveProjectionMatrix);
 	//Set Sampler
 	glUniform1i(UniformSamplerTex_dl, 0);
