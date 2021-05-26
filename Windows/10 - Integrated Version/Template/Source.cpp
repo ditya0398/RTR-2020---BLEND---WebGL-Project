@@ -10,6 +10,10 @@
 #include"GRStack.h"
 #include"GRSourceHeader.h"
 
+//Deep Include Files
+#include"DLnormalmappedroad.h"
+#include"DLresource.h"
+
 #pragma comment(lib,"opengl32.lib")//for linking
 #pragma comment(lib,"glew32.lib")//for linking
 
@@ -284,6 +288,7 @@ int initialize(void)
 
 	GRInitShaders();
 
+	initNormalMappedRoadDL();
 	
 	glEnable(GL_TEXTURE_2D);
 	//Depth Lines
@@ -344,6 +349,8 @@ void display(void)
 
 	GRDisplayGeometry();
 
+	renderNormalMappedRoadDL();
+
 	SwapBuffers(ghdc);
 	
 }
@@ -352,6 +359,8 @@ void uninitialize(void)
 {
 	
 	GRUninitialize();
+
+	uninitNormalMappedRoadDL();
 
 	if (gbIsFullScreen == true)
 	{

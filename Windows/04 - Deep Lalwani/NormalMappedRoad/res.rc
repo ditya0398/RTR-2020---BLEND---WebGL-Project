@@ -1,0 +1,7 @@
+#include"res.h"
+BRICK_TEX BITMAP footpath.bmp
+BRICK_NOR BITMAP footpathnor.bmp
+PEBBLE_TEX BITMAP pebble.bmp
+PEBBLE_NOR BITMAP pebblenor.bmp
+TILES_TEX BITMAP road.bmp
+TILES_NOR BITMAP roadnor.bmp
