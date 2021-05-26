@@ -1,0 +1,3 @@
+#include"res.h"
+ROAD_TEX BITMAP roadtex.bmp
+ROAD_NOR BITMAP roadnor.bmp
