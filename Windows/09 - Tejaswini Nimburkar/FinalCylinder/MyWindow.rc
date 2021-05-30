@@ -1,0 +1,3 @@
+#include "MyWindow.h"
+
+MyICON ICON OneDrive.ico

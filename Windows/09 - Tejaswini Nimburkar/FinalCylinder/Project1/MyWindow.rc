@@ -1,0 +1,13 @@
+#include "MyWindow.h"
+
+MyICON ICON OneDrive.ico
+
+STONE_BITMAP BITMAP stone.bmp
+
+VIJAY_BITMAP BITMAP Vijay_kundali.bmp
+
+SMILEY_BITMAP BITMAP Smiley.bmp
+
+
+
+
