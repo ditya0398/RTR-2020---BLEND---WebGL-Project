@@ -1,11 +1,9 @@
-#include<Windows.h>
-#include<stdio.h>
-#include<gl/glew.h>
-#include<gl/GL.h>
-#include"vmath.h"
-#include"res.h"
+#include"DLnormalmappedroad.h"
 
 //////////////////////////////////////////////////Global Variable///////////////////////////////////////////
+extern HWND ghwnd_dl;
+extern vmath::mat4 perspectiveProjectionMatrix;
+
 GLuint programNormalMap;
 enum vaobo_dl{
 	Road_dl = 0,
@@ -31,15 +29,15 @@ enum tex2D_dl {
 };
 GLuint texs2D_dl[tex2D_dl::LenTex_dl];
 
-const int MaxLen_dl = 3;
+extern const int MaxLen_dl = 3;
 GLuint texsArr[MaxLen_dl][2] = {
 	{tex2D_dl::Road1Tex_dl, tex2D_dl::Road1Nor_dl},
 	{tex2D_dl::Road2Tex_dl, tex2D_dl::Road2Nor_dl},
 	{tex2D_dl::Road3Tex_dl, tex2D_dl::Road3Nor_dl}
 };
-int current_dl = 0;
+extern int current_dl;
 
-GLfloat angRotx_dl = 0.0f, angRoty_dl = 0.0f;
+extern GLfloat angRotx_dl, angRoty_dl;
 
 //////////////////////////////////////////////////Global Structures///////////////////////////////////////////
 struct light_t_dl {
@@ -56,11 +54,6 @@ struct material_t_dl {
 	vmath::vec1 shininess;
 };
 
-struct {
-	int w;
-	int h;
-} size_dl;
-
 enum {
 	VertexPosition_dl = 0,
 	VertexNormal_dl = 1,
@@ -69,11 +62,12 @@ enum {
 	VertexBiTangent_dl = 4,
 	UniformBlockLight_dl = 0,
 	UniformBlockMaterial = 1,
-	UniformModelView_dl = 0,
-	UniformProjection_dl = 1,
-	UniformSamplerTex_dl = 2,
-	UniformSamplerNor_dl = 3,
-	UniformIsNormalMapping_dl = 4
+	UniformModel_dl = 0,
+	UniformView_dl = 1,
+	UniformProjection_dl = 2,
+	UniformSamplerTex_dl = 3,
+	UniformSamplerNor_dl = 4,
+	UniformIsNormalMapping_dl = 5
 };
 
 typedef struct vertex_t_dl {
@@ -123,22 +117,24 @@ void initNormalMappedRoadDL() {
 	"vec4 specular;\n"\
 	"} light;\n"\
 	//Trandform Matrices
-	"layout(location = 0)uniform mat4 mvMatrix;\n"\
-	"layout(location = 1)uniform mat4 projectionMatrix;\n"\
+	"layout(location = 0)uniform mat4 modelMatrix;\n"\
+	"layout(location = 1)uniform mat4 viewMatrix;\n"\
+	"layout(location = 2)uniform mat4 projectionMatrix;\n"\
 	//Main Function
 	"void main(void) {\n"\
 	//Vertex Calculation
-	"vec4 P = mvMatrix * position;\n"\
-	"gl_Position = projectionMatrix * P;\n"\
+	"gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;\n"\
 	//Lighting Calculation
-	"mat3 norMat = mat3(mvMatrix);\n"\
+	"mat3 norMat = mat3(modelMatrix);\n"\
 	"vec3 T = normalize(norMat * tangent);\n"\
 	"vec3 N = normalize(norMat * normal);\n"\
 	"T = normalize(T - dot(T, N) * N);\n"\
 	"vec3 B = cross(N, T);\n"\
 	"mat3 TBN = transpose(mat3(T, B, N));\n"\
-	"vs_out.L = vec3(light.position - P);\n"\
-	"vs_out.V = -P.xyz;\n"\
+	"vec3 lightPos = TBN * light.position.xyz;\n"\
+	"vec3 P = TBN  * mat3(modelMatrix) * position.xyz;\n"\
+	"vs_out.L = lightPos - P;\n"\
+	"vs_out.V = -P;\n"\
 	//Passing Normals and TexCoords
 	"vs_out.normal = normal;\n"\
 	"vs_out.texCoord = texCoord;\n"\
@@ -162,10 +158,11 @@ void initNormalMappedRoadDL() {
 	"float shininess;\n"\
 	"} material;\n"\
 	//Model View Matrix
-	"layout(location = 0)uniform mat4 mvMatrix;\n"\
+	"layout(location = 0)uniform mat4 modelMatrix;\n"\
+	"layout(location = 1)uniform mat4 viewMatrix;\n"\
 	//Texture Samplers
-	"layout(location = 2)uniform sampler2D texSam;\n"\
-	"layout(location = 3)uniform sampler2D norSam;\n"\
+	"layout(location = 3)uniform sampler2D texSam;\n"\
+	"layout(location = 4)uniform sampler2D norSam;\n"\
 	//In Block
 	"in VS_OUT {\n"\
 	"vec3 L;\n"\
@@ -178,13 +175,13 @@ void initNormalMappedRoadDL() {
 	//Main Function
 	"void main(void) {\n"\
 	//Scaling TexCoord
-	"vec2 texCoord = fs_in.texCoord * vec2(3.0, 7.0);\n"\
+	"vec2 texCoord = fs_in.texCoord;\n"\
 	//Sampling Texture
 	"vec4 color = vec4(texture(texSam, texCoord).rgb, 1.0);\n"\
 	"vec3 normal = texture(norSam, texCoord).rgb * 2.0 - 1.0;\n"\
 	//Lighting Calculation
 	"vec3 L = normalize(fs_in.L);\n"\
-	"vec3 N = normalize(mat3(mvMatrix) * normal);\n"\
+	"vec3 N = normalize(mat3(modelMatrix)  * normal);\n"\
 	"vec3 V = normalize(fs_in.V);\n"\
 	"vec3 R = reflect(-L, N);\n"\
 	"vec4 ambient = light.ambient * material.ambient * color;\n"\
@@ -201,7 +198,9 @@ void initNormalMappedRoadDL() {
 	glCompileShader(vertShader_dl);
 	glGetShaderiv(vertShader_dl, GL_COMPILE_STATUS, &status);
 	if(status == GL_FALSE) {
-		MessageBoxA(ghwnd_dl, "Vertex Shader Error", NULL, NULL);
+		char buffer[1024];
+		glGetShaderInfoLog(vertShader_dl, 1024, NULL, buffer);
+		MessageBoxA(ghwnd_dl, buffer, NULL, NULL);
 	}	
 
 	//Compiling Fragment Shader
@@ -233,17 +232,17 @@ void initNormalMappedRoadDL() {
 	vmath::vec2 deltaTex1, deltaTex2;
 	float f;
 
-	vmath::vec3 pos1 = vmath::vec3(-3.0f, -1.0f, 7.0f);
-	vmath::vec3 pos2 = vmath::vec3(3.0f, -1.0f, 7.0f);
-	vmath::vec3 pos3 = vmath::vec3(3.0f, -1.0f, -7.0f);
-	vmath::vec3 pos4 = vmath::vec3(-3.0f, -1.0f, -7.0f);
+	vmath::vec3 pos1 = vmath::vec3(3.0f, 0.0, 7.0f);
+	vmath::vec3 pos2 = vmath::vec3(-3.0f, 0.0f, 7.0f);
+	vmath::vec3 pos3 = vmath::vec3(-3.0f, 0.0f, -7.0f);
+	vmath::vec3 pos4 = vmath::vec3(3.0f, 0.0f, -7.0f);
 
 	vmath::vec3 normals = vmath::vec3(0.0f, 0.0f, 1.0f);
 
 	vmath::vec2 tex1 = vmath::vec2(0.0f, 0.0f);
-	vmath::vec2 tex2 = vmath::vec2(1.0f, 0.0f);
-	vmath::vec2 tex3 = vmath::vec2(1.0f, 1.0f);
-	vmath::vec2 tex4 = vmath::vec2(0.0f, 1.0f);
+	vmath::vec2 tex2 = vmath::vec2(3.0f, 0.0f);
+	vmath::vec2 tex3 = vmath::vec2(3.0f, 7.0f);
+	vmath::vec2 tex4 = vmath::vec2(0.0f, 7.0f);
 
 	edge1 = pos2 - pos1;
 	edge2 = pos3 - pos1;
@@ -301,7 +300,7 @@ void initNormalMappedRoadDL() {
 	glNamedBufferData(ubos_dl[ubo_dl::Material_dl], sizeof(material_t_dl), NULL, GL_STATIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER, UniformBlockLight_dl, ubos_dl[ubo_dl::Light_dl]);
 	light_t_dl *light = (light_t_dl*)glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(light_t_dl), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-	light->position = vmath::vec4(3.0f, 3.0f, 3.0f, 1.0f);
+	light->position = vmath::vec4(0.0f, 1.0f, 10.0f, 1.0f);
 	light->ambient = vmath::vec4(0.1f, 0.1f, 0.1f, 1.0f);
 	light->diffuse = vmath::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	light->specular = vmath::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -385,9 +384,9 @@ void renderNormalMappedRoadDL() {
 
 	//Set Viewport and Transform Matrices
 	glUseProgram(programNormalMap);
-	glViewport(0, 0, size_dl.w, size_dl.h);
-	glUniformMatrix4fv(UniformModelView_dl, 1, GL_FALSE, vmath::translate(0.0f, 0.0f, -9.0f) * vmath::rotate(angRotx_dl, 0.0f, 1.0f, 0.0f) * vmath::rotate(angRoty_dl, 1.0f, 0.0f, 0.0f));
-	glUniformMatrix4fv(UniformProjection_dl, 1, GL_FALSE, vmath::perspective(45.0f, (float)size_dl.w / size_dl.h, 0.1f, 1000.0f));
+	glUniformMatrix4fv(UniformModel_dl, 1, GL_FALSE, vmath::translate(0.0f, -2.0f, -10.0f) * vmath::rotate(angRotx_dl, 0.0f, 1.0f, 0.0f) * vmath::rotate(angRoty_dl, 1.0f, 0.0f, 0.0f));
+	glUniformMatrix4fv(UniformView_dl, 1, GL_FALSE, vmath::mat4::identity());
+	glUniformMatrix4fv(UniformProjection_dl, 1, GL_FALSE, perspectiveProjectionMatrix);
 	//Set Sampler
 	glUniform1i(UniformSamplerTex_dl, 0);
 	glUniform1i(UniformSamplerNor_dl, 1);
