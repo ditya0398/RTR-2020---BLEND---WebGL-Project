@@ -127,9 +127,11 @@ function init() {
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
 
-	GRInit()
-	initNormalMapRoad()
-	initCubeMap()
+	// GRInit()
+	// initNormalMapRoad()
+	// initCubeMap()
+
+//	initShadow();
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0)
 
@@ -160,6 +162,9 @@ function render() {
 	GRDisplay()
 	renderNormalMapRoad()
 	
+
+//	Draw_Shadow();
+
 	animFrame(render, canvas)
 }
 
