@@ -129,6 +129,7 @@ function init() {
 
 	GRInit()
 	initNormalMapRoad()
+	initCubeMap()
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0)
 
@@ -155,9 +156,10 @@ function reshape() {
 function render() {
 	gl.clear(gl.COLOR_BUFFER_BIT)
 
+	Display_CubeMap()
 	GRDisplay()
 	renderNormalMapRoad()
-
+	
 	animFrame(render, canvas)
 }
 
