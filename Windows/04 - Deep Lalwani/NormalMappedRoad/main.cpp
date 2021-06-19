@@ -1,9 +1,5 @@
-#include<Windows.h>
-#include<stdio.h>
-#include<gl/glew.h>
-#include<gl/GL.h>
-#include"vmath.h"
-#include"res.h"
+#include"DLnormalmappedroad.h"
+
 using namespace vmath;
 
 #pragma comment(lib, "user32.lib")
@@ -22,7 +18,10 @@ HGLRC ghrc_dl;
 bool gbActive_dl;
 bool gbFullscreen_dl;
 
-#include"normalmap.cpp"
+int current_dl = 0;
+const int MaxLen_dl = 3;
+GLfloat angRotx_dl = 0.0f, angRoty_dl = 0.0f;
+mat4 perspectiveProjectionMatrix;
 
 int WINAPI WinMain(HINSTANCE hInst_dl, HINSTANCE hPrev_dl, LPSTR szCmdLine_dl, int iCmdShow_dl) {
 	void loadShader(void);
@@ -191,8 +190,8 @@ void Init(void) {
 }
 
 void Resize(int w, int h) {
-	size_dl.w = w;
-	size_dl.h = h;
+	glViewport(0, 0, w, h);
+	perspectiveProjectionMatrix = perspective(45.0f, (float)w / h, 0.1f, 100.0f);
 }
 
 void Update(void) {
