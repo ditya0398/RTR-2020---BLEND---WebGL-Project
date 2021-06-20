@@ -6,9 +6,9 @@ const WebGLMacros =
     GR_ATTRIBUTE_NORMAL:3
 };
 
-var grgVertexShaderObject;
-var grgFragmentShadeerObject;
-var grgShaderProgramObject;
+var grvertexShaderObject;
+var grfragmentShadeerObject;
+var grshaderProgramObject ;
 
 var grvaoTriangle;
 var grvboTrianglePosition;
@@ -59,7 +59,7 @@ var grtextureBenchLegs;
 var grtextureAntenna;
 var grtextureRoad;
 var grtextureFootpath;
-var grgtextureSamplerUniform;
+var grtextureSamplerUniform;
 
 var grgModelMatrixUniform;
 var grgViewMatrixUniform;

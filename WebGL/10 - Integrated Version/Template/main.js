@@ -15,7 +15,7 @@ const macros = {
 	AMC_ATTRIB_NORMAL:1,
 	AMC_ATTRIB_TEXCOORD:2,
 	DL_ATTRIB_TANGENT:3,
-	DL_ATTRIB_BITANGENT:4
+	DL_ATTRIB_BITANGENT: 4
 }
 
 function main() {
@@ -133,6 +133,7 @@ function init() {
 
 //	initShadow();
 
+	tvn_init();
 	gl.clearColor(0.0, 0.0, 0.0, 1.0)
 
 	perspectiveMatrix = mat4.create()
@@ -160,6 +161,7 @@ function render() {
 
 	Display_CubeMap()
 	GRDisplay()
+	tvn_display();
 	renderNormalMapRoad()
 	
 
@@ -170,6 +172,7 @@ function render() {
 
 function uninit() {
 	GRUninitialize()
+	tvn_uninitialize();
 	gl.deleteVertexArray(vao)
 	gl.deleteBuffer(vbo)
 	gl.deleteProgram(program)
