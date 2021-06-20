@@ -8,7 +8,7 @@ var texSamplerFire;
 
 
 var options = {
-    // this option is not actually in the UI
+ 
     fireEmitPositionSpread: {x:100,y:20},
   
     fireEmitRate: 3000,
@@ -78,6 +78,7 @@ textureList = ["rectangle.png","circle.png","gradient.png","thicker_gradient.png
 images = [];
 textures = [];
 currentTextureIndex = 2;
+
 function loadTexture(textureName,index) {
     textures[index] = gl.createTexture();
     images[index] = new Image();
@@ -294,14 +295,20 @@ var fragmentShaderObject;
   gl.useProgram(null);
  
 }
+
 function animateFire() {
-  logic();
+  logicFire();
   renderFire();
 }
-// the timing function's only job is to calculate the framerate
+
+
 frameTime = 18;
 lastTime = time();
 lastFPSDivUpdate = time();
+
+
+
+// the timing function's only work is to calculate the framerate
 function timing() {
   currentTime = time();
   frameTime = frameTime * 0.9 + (currentTime - lastTime) * 0.1;
@@ -328,8 +335,8 @@ var sparkParticleDiscrepancy = 0;
 
 noise.seed(Math.random());
 
-// calculate new positions for all the particles
-function logic() {
+
+function logicFire() {
 
   var currentParticleTime = time();
   var timeDifference = currentParticleTime - lastParticleTime;
@@ -370,7 +377,7 @@ function logic() {
     fireParticles[i].pos = addVecs(fireParticles[i].pos,scaleVec(fireParticles[i].vel,timeDifference/1000.0));
 
     //var offAngle = angleBetweenVecs(fireParticles[i].vel,subVecs(particleAverage,));
-    //console.log(offAngle);
+ 
   fireParticles[i].color.a -= options.fireDeathSpeed+Math.abs(particleAverage.x-fireParticles[i].pos.x)*options.fireTriangleness;//;Math.abs((fireParticles[i].pos.x-canvas.width/2)*options.fireTriangleness);
 
     if (fireParticles[i].pos.y <= -fireParticles[i].size.height*2 || fireParticles[i].color.a <= 0)
@@ -400,7 +407,7 @@ function logic() {
   }
   sparkParticles = deleteMarked(sparkParticles);
 
-  //document.getElementById("numParticles").innerHTML = "# particles: " + (fireParticles.length + sparkParticles.length);
+
 
   lastParticleTime = currentParticleTime;
 
