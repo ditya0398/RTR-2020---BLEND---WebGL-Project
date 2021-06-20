@@ -126,14 +126,16 @@ function init() {
 
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
-
+	initFire();
 	// GRInit()
-	// initNormalMapRoad()
+//	 initNormalMapRoad()
 	// initCubeMap()
 
 //	initShadow();
 
-	tvn_init();
+	//tvn_init();
+
+
 	gl.clearColor(0.0, 0.0, 0.0, 1.0)
 
 	perspectiveMatrix = mat4.create()
@@ -153,16 +155,18 @@ function reshape() {
 
 	gl.viewport(0, 0, canvas.width, canvas.height)
 
-	mat4.perspective(perspectiveMatrix, 45.0 * Math.PI / 180.0, canvas.width / canvas.height, 0.1, 100.0)
+	mat4.perspective(perspectiveMatrix,45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 100.0)
 }
 
 function render() {
 	gl.clear(gl.COLOR_BUFFER_BIT)
 
-	Display_CubeMap()
-	GRDisplay()
-	tvn_display();
-	renderNormalMapRoad()
+	// Display_CubeMap()
+	// GRDisplay()
+	 //tvn_display();
+	animateFire();
+	// renderNormalMapRoad()
+
 	
 
 //	Draw_Shadow();
