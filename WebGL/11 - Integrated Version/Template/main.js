@@ -126,22 +126,29 @@ function init() {
 
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
-	initFire();
+	//initFire();
 	// GRInit()
 //	 initNormalMapRoad()
 	// initCubeMap()
 
 //	initShadow();
 
-	//tvn_init();
+	
+	tvn_script_init();
+	tvn_speaker_init();
+	tvn_init_tripod();
+	tvn_init_lamp_arch();
+
+	
 
 
-	gl.clearColor(0.0, 0.0, 0.0, 1.0)
+	
 
 	perspectiveMatrix = mat4.create()
 
 	gl.enable(gl.DEPTH_TEST)
 	gl.depthFunc(gl.LEQUAL)
+	gl.clearColor(0.0, 0.0, 0.0, 1.0)
 }
 
 function reshape() {
@@ -159,11 +166,16 @@ function reshape() {
 }
 
 function render() {
-	gl.clear(gl.COLOR_BUFFER_BIT)
+	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 	// Display_CubeMap()
 	// GRDisplay()
-	 //tvn_display();
+	
+	tvn_script_draw();
+	tvn_speaker_draw();
+	tvn_tripod_draw();
+	tvn_draw_lamp_arch();
+
 	animateFire();
 	// renderNormalMapRoad()
 
@@ -175,8 +187,13 @@ function render() {
 }
 
 function uninit() {
-	GRUninitialize()
-	tvn_uninitialize();
+	//GRUninitialize()
+	tvn_uninit_lamp_arch();
+	tvn_uninit_script();
+	tvn_speaker_uninit();
+	tvn_tripod_uninit();
+	tvn_uninit_lamp_arch();
+
 	gl.deleteVertexArray(vao)
 	gl.deleteBuffer(vbo)
 	gl.deleteProgram(program)
