@@ -135,6 +135,7 @@ function init() {
 
 	//tvn_init();
 	GRInitScene2();
+	DL_initChair()
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0)
 
@@ -167,7 +168,8 @@ function render() {
 	//animateFire();
 	// renderNormalMapRoad()
 	GRDisplayScene2();
-	
+	DL_renderChair()
+
 
 //	Draw_Shadow();
 
