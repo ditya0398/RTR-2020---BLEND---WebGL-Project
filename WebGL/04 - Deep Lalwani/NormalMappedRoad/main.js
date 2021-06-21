@@ -5,18 +5,10 @@ var animFrame = window.requestAnimationFrame || window.webkitRequestAnimationFra
 var cancelFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.webkitCancelRequestAnimationFrame || window.mozCancelRequestAnimationFrame || window.mozCancelAnimationFrame || window.oCancelRequestAnimationFrame || window.oCancelAnimationFrame || window.msCancelRequestAnimationFrame || window.msCancelAnimationFrame
 var canvas_og_width, canvas_og_height
 
-var perspectiveMatrix
+var perspMat
 var gbLight = false
 
 var rotX = 0.0, rotY = 0.0
-
-const macros = {
-	AMC_ATTRIB_POSITION:0,
-	AMC_ATTRIB_NORMAL:1,
-	AMC_ATTRIB_TEXCOORD:2,
-	DL_ATTRIB_TANGENT:3,
-	DL_ATTRIB_BITANGENT: 4
-}
 
 function main() {
 	//Get Canvas from DOM
@@ -45,50 +37,23 @@ function keyDown(event) {
 		case 76:
 			gbLight = !gbLight
 			break
-		case 88 :                   // x key
-            grfangleX_radio = grfangleX_radio + 1.0;
-            if(grfangleX_radio >= 360.0)
-            {
-                grfangleX_radio = 0.0;
-            }
-            break;
-        case 89 :                   // y key
-            grfangleY_radio = grfangleY_radio + 1.0;
-            if(grfangleY_radio >= 360.0)
-            {
-                grfangleY_radio = 0.0;
-            }
-            break;
-		case 65: //A
-			grftransx_radio -= 0.1
+		case 37:
+			rotY += 3.0
 			break
-		case 83: //S
-			grftransz_radio -= 0.1
+		case 38:
+			rotX += 3.0
 			break
-		case 68: //D
-			grftransx_radio += 0.1
+		case 39:
+			rotY -=3.0
 			break
-		case 87: //W
-			grftransz_radio += 0.1
-			break
-		case 81: //Q
-			grftransy_radio -= 0.1
-			break
-		case 69: //E
-			grftransy_radio += 0.1
-			break
-		case 77: //M
-			grscaling_radio += 0.01
-			break
-		case 78: //N
-			grscaling_radio -= 0.01
+		case 40:
+			rotX -= 3.0
 			break
 		case 27:
 			uninit()
 			window.close()
 			break
 	}
-	console.log(event.keyCode)
 }
 
 function toggleFullscreen() {
@@ -126,35 +91,15 @@ function init() {
 
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
-	//initFire();
-	// GRInit()
-//	 initNormalMapRoad()
-	// initCubeMap()
 
-//	initShadow();
+	initNormalMapRoad();
 
+	gl.clearColor(0.0, 0.0, 0.0, 1.0)
 
-	
-	tvn_script_init();
-	tvn_speaker_init();
-	tvn_init_tripod();
-	tvn_init_lamp_arch();
-
-	
-
-
-	GRInitScene2();
-	DL_initChair()
-
-
-
-	
-
-	perspectiveMatrix = mat4.create()
+	perspMat = mat4.create()
 
 	gl.enable(gl.DEPTH_TEST)
 	gl.depthFunc(gl.LEQUAL)
-	gl.clearColor(0.0, 0.0, 0.0, 1.0)
 }
 
 function reshape() {
@@ -168,57 +113,19 @@ function reshape() {
 
 	gl.viewport(0, 0, canvas.width, canvas.height)
 
-	mat4.perspective(perspectiveMatrix,45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 100.0)
+	mat4.perspective(perspMat, 45.0 * Math.PI / 180.0, canvas.width / canvas.height, 0.1, 100.0)
 }
 
 function render() {
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	gl.clear(gl.COLOR_BUFFER_BIT)
 
-	// Display_CubeMap()
-	// GRDisplay()
-
-	
-	tvn_script_draw();
-	tvn_speaker_draw();
-	tvn_tripod_draw();
-	tvn_draw_lamp_arch();
-
-	animateFire();
-
-
-	//animateFire();
-
-	// renderNormalMapRoad()
-	GRDisplayScene2();
-	DL_renderChair()
-
-
-//	Draw_Shadow();
+	renderNormalMapRoad()
 
 	animFrame(render, canvas)
 }
 
 function uninit() {
-
-	//GRUninitialize()
-	tvn_uninit_lamp_arch();
-	tvn_uninit_script();
-	tvn_speaker_uninit();
-	tvn_tripod_uninit();
-
-
-
-	GRUninitialize()
-	GRUninitializeScene2()
-
-
 	gl.deleteVertexArray(vao)
 	gl.deleteBuffer(vbo)
 	gl.deleteProgram(program)
-}
-
-function deg2rad(degrees)
-{
-    var rad = degrees * Math.PI / 180.0;
-    return rad;
 }
