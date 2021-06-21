@@ -5,52 +5,38 @@ var canvas_orignal_width;
 var canvas_orignal_height;
 
 
-
+var degrees;
 var tvn_vertexShaderObject;
 var tvn_fragmentShaderObject;
 var tvn_shaderProgramObject;
 
 var tvn_vao;
+var tvn_vao_rectangle;
 var tvn_vbo;
+var tvn_vbo_rectangle;
+var tvn_vbo_rectangle_color;
 var tvn_vbo_color;
 var tvn_mvpUniform;
-var angle1;
-var vertices = new Float32Array(37680);
-var radius = 0.04;
-var i = 0;
-var textureSamplerUniform;
-
-var orthographicProjectionMatrix;
-var pyramid_texture;
+var rangle = 0.0;
 
 
-function tvn_init()
-{
-    for (angle1 = 0.0; angle1 < 2 * 3.14; angle1 = angle1 + 0.001) {
-        vertices[i++] = (Math.cos(angle1) * radius);
-        vertices[i++] = (1.0);
-        vertices[i++] = (Math.sin(angle1) * radius);
 
-        vertices[i++] = (Math.cos(angle1) * radius);
-        vertices[i++] = -2.0;
-        vertices[i++] = (Math.sin(angle1) * radius);
-
-    }
-
+function tvn_script_init() {
+    //vertex shader 
     var vertexShaderSourcedCode =
         "#version 300 es" +
         "\n" +
         "in vec4 vPosition;" +
-        "in vec2 vtexCoord;" +
-        "uniform mat4 u_mvp_matrix;" +
-        "out vec2 out_tex_coord;" +
+        "in vec4 vColor;" +
 
+        "uniform mat4 u_mvp_matrix;" +
+        "out vec4 out_color;" +
+        "out vec2 tex_coord;" +
         "void main(void)" +
         "{" +
         "gl_Position = u_mvp_matrix * vPosition;" +
-
-        "out_tex_coord.x = vPosition.x;" +
-        "out_tex_coord.y = vPosition.y;" +
+        "tex_coord.x =vPosition.x;" +
+        "tex_coord.y = vPosition.y;" +
 
         "}";
 
@@ -61,7 +47,7 @@ function tvn_init()
         var error = gl.getShaderInfoLog(tvn_vertexShaderObject);
         if (error.length > 0) {
             alert(error);
-            uninitialize();
+            tvn_uninit_script();
         }
     }
 
@@ -70,13 +56,12 @@ function tvn_init()
         "#version 300 es" +
         "\n" +
         "precision highp float;" +
-        "in vec2 out_tex_coord;" +
         "uniform sampler2D u_texture_sampler;" +
-        "out vec4 fragColor;" +
+        "in vec2 tex_coord;" +
+        "out vec4 FragColor;" +
         "void main(void)" +
         "{" +
-        "fragColor =  texture(u_texture_sampler, out_tex_coord);" +
-
+        "FragColor = texture(u_texture_sampler,tex_coord);" +
         "}";
 
     tvn_fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
@@ -86,7 +71,7 @@ function tvn_init()
         var error = gl.getShaderInfoLog(tvn_fragmentShaderObject);
         if (error.length > 0) {
             alert(error);
-            uninitialize();
+            tvn_uninit_script();
         }
     }
 
@@ -97,7 +82,7 @@ function tvn_init()
 
     //pre-link binding of shader program object with vertex shader attributes
     gl.bindAttribLocation(tvn_shaderProgramObject, WebGLMacros.AMC_ATTRIB_POSITION, "vPosition");
-
+    
 
     //linking 
     gl.linkProgram(tvn_shaderProgramObject);
@@ -105,7 +90,7 @@ function tvn_init()
         var error = gl.getProgramInfoLog(tvn_shaderProgramObject);
         if (error.length > 0) {
             alert(error);
-            uninitialize();
+            tvn_uninit_script();
         }
     }
 
@@ -113,14 +98,56 @@ function tvn_init()
     tvn_mvpUniform = gl.getUniformLocation(tvn_shaderProgramObject, "u_mvp_matrix");
     textureSamplerUniform = gl.getUniformLocation(tvn_shaderProgramObject, "u_texture_sampler");
 
+    // ** vertices , color , shader attribs, vbo initialization***
+
+    var squareVertices = new Float32Array([
+        1.0, 1.0, 1.0,
+        -1.0, 1.0, 1.0,
+        -1.0, -1.0, 1.0,
+        1.0, -1.0, 1.0,
+
+        1.0, 1.0, -1.0,
+        1.0, 1.0, 1.0,
+        1.0, -1.0, 1.0,
+        1.0, -1.0, -1.0,
+
+        1.0, 1.0, -1.0,
+        -1.0, 1.0, -1.0,
+        -1.0, -1.0, -1.0,
+        1.0, -1.0, -1.0,
+
+        -1.0, 1.0, -1.0,
+        -1.0, 1.0, 1.0,
+        -1.0, -1.0, 1.0,
+        -1.0, -1.0, -1.0,
+
+        1.0, 1.0, -1.0,
+        -1.0, 1.0, -1.0,
+        -1.0, 1.0, 1.0,
+        1.0, 1.0, 1.0,
+
+        1.0, -1.0, -1.0,
+        -1.0, -1.0, -1.0,
+        -1.0, -1.0, 1.0,
+        1.0, -1.0, 1.0
+    ]);
+
+
+
 
     tvn_vao = gl.createVertexArray();
     gl.bindVertexArray(tvn_vao);
 
-    /*************position*****************************/
-    tvn_vbo = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo);
-    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+
+
+    /***********************rectangle position**********************************/
+    tvn_vao_rectangle = gl.createVertexArray();
+    gl.bindVertexArray(tvn_vao_rectangle);
+
+    tvn_vbo_rectangle = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo_rectangle);
+    gl.bufferData(gl.ARRAY_BUFFER, squareVertices, gl.STATIC_DRAW);
     gl.vertexAttribPointer(WebGLMacros.AMC_ATTRIB_POSITION,
         3, // 3 is for x,y,z co-cordinates is our triangle Verteices array
         gl.FLOAT,
@@ -130,11 +157,9 @@ function tvn_init()
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
 
-    gl.bindVertexArray(null);
-
     pyramid_texture = gl.createTexture();
     pyramid_texture.image = new Image();
-    pyramid_texture.image.src = "Tejswini_Resources/lampstand.png";
+    pyramid_texture.image.src = "Tejswini_Resources/script.png";
 
     pyramid_texture.image.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, pyramid_texture);
@@ -145,46 +170,41 @@ function tvn_init()
 
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, pyramid_texture.image);
         gl.bindTexture(gl.TEXTURE_2D, null);
+    }
 
-    }//lambda, closure
+
 }
 
+function tvn_script_draw() {
 
-function tvn_display()
-{
     gl.useProgram(tvn_shaderProgramObject);
 
     var modelViewMatrix = mat4.create();
 
-    mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -4.0]);//resulting matrix, act on the matrix, open square bracket
+    mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -6.0]);//resulting matrix, act on the matrix, open square bracket
+
 
     var modelViewProjectionMatrix = mat4.create(); // tayar hi honar and indentity matrix la inidilization pan karnar  
+
     mat4.multiply
         (modelViewProjectionMatrix, perspectiveMatrix, modelViewMatrix);
+
     gl.uniformMatrix4fv(tvn_mvpUniform, false, modelViewProjectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, pyramid_texture);
     gl.uniform1i(textureSamplerUniform, 0);
 
-
-    gl.bindVertexArray(tvn_vao);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12560);
-
-
-
+    gl.bindVertexArray(tvn_vao_rectangle);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     gl.bindVertexArray(null);
 
 
-
     gl.useProgram(null);
-
 }
 
 
-
-function tvn_uninitialize() {
-    //code
+function tvn_uninit_script() {
     if (tvn_vao) {
         gl.deleteVertexArary(tvn_vao);
         tvn_vao = null;
@@ -211,5 +231,4 @@ function tvn_uninitialize() {
         gl.deleteProgram(tvn_shaderProgramObject);
         tvn_shaderProgramObject = null;
     }
-
 }
