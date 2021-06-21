@@ -134,7 +134,7 @@ function init() {
 //	initShadow();
 
 	//tvn_init();
-
+	GRInitScene2();
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0)
 
@@ -164,9 +164,9 @@ function render() {
 	// Display_CubeMap()
 	// GRDisplay()
 	 //tvn_display();
-	animateFire();
+	//animateFire();
 	// renderNormalMapRoad()
-
+	GRDisplayScene2();
 	
 
 //	Draw_Shadow();
@@ -176,6 +176,7 @@ function render() {
 
 function uninit() {
 	GRUninitialize()
+	GRUninitializeScene2()
 	tvn_uninitialize();
 	gl.deleteVertexArray(vao)
 	gl.deleteBuffer(vbo)
