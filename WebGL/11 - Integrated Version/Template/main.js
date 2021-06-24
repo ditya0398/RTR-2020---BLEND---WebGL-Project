@@ -136,15 +136,15 @@ function init() {
 
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
-	initFire();
-	GRInit()
-	initNormalMapRoad()
-	initCubeMap()
+	// initFire();
+	// GRInit()
+	// initNormalMapRoad()
+	// initCubeMap()
 
+	tejswini_hut_init()
+	
 	// initShadow();
 
-
-	
 	//tvn_script_init();
 	//tvn_speaker_init();
 	//tvn_init_tripod();
@@ -186,9 +186,9 @@ function render() {
 
 	if(currentScene == scenes.SCENE_1) {
 		// Display_CubeMap()
-		GRDisplay()
+		// GRDisplay()
 		// animateFire();
-		renderNormalMapRoad()
+		// renderNormalMapRoad()
 	}
 	
 	//tvn_script_draw();
@@ -196,6 +196,7 @@ function render() {
 	//tvn_tripod_draw();
 	//tvn_draw_lamp_arch();
 
+	tejswini_hut_draw()
 	
 	// GRDisplayScene2();
 	// DL_renderChair()

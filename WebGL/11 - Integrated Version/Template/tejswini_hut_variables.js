@@ -6,7 +6,7 @@ var canvas_orignal_height;
 
 
 var vertices = new Float32Array(37680);
-var radius = 0.08;
+var radius_tvn = 0.12;
 var i = 0;
 var stack = [];
 var index = -1;
@@ -35,13 +35,13 @@ function tejswini_hut_init() {
 
     /*************Cylinder **********************/
     for (angle1 = 0.0; angle1 < 2 * 3.14; angle1 = angle1 + 0.001) {
-        vertices[i++] = (Math.cos(angle1) * radius);
+        vertices[i++] = (Math.cos(angle1) * radius_tvn);
         vertices[i++] = (1.0);
-        vertices[i++] = (Math.sin(angle1) * radius);
+        vertices[i++] = (Math.sin(angle1) * radius_tvn);
 
-        vertices[i++] = (Math.cos(angle1) * radius);
+        vertices[i++] = (Math.cos(angle1) * radius_tvn);
         vertices[i++] = -1.0;
-        vertices[i++] = (Math.sin(angle1) * radius);
+        vertices[i++] = (Math.sin(angle1) * radius_tvn);
 
     }
 
@@ -59,8 +59,7 @@ function tejswini_hut_init() {
         "void main(void)" +
         "{" +
         "gl_Position = projection_matrix * view_matrix * model_matrix * vPosition;" +
-        "out_tex_coord.x = vPosition.x;" +
-        "out_tex_coord.y = vPosition.y;" +
+        "out_tex_coord = vPosition.xy;" +
         "}";
 
     tvn_vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
@@ -287,7 +286,7 @@ function tejswini_hut_init() {
 
 }
 
-function tejswini_init_draw() {
+function tejswini_hut_draw() {
     gl.useProgram(tvn_shaderProgramObject);
 
     var modelMatrix = mat4.create();
@@ -322,8 +321,6 @@ function tejswini_init_draw() {
     gl.bindTexture(gl.TEXTURE_2D, tin_texture);
     gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
-    gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
-    gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
 
     /********************************************************************/
