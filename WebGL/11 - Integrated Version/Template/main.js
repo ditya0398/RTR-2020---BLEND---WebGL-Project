@@ -70,28 +70,28 @@ function keyDown(event) {
             }
             break;
 		case 65: //A
-			grtransRoadsideX -= 0.1
+			tvn_trans_x -= 0.1
 			break
 		case 83: //S
-			grtransRoadsideY -= 0.1
+			tvn_trans_z -= 0.1
 			break
 		case 68: //D
-			grtransRoadsideX += 0.1
+			tvn_trans_x += 0.1
 			break
 		case 87: //W
-			grtransRoadsideY += 0.1
+			tvn_trans_z += 0.1
 			break
 		case 81: //Q
-			grtransRoadsideZ -= 0.1
+			tvn_trans_y -= 0.1
 			break
 		case 69: //E
-			grtransRoadsideZ += 0.1
+			tvn_trans_y += 0.1
 			break
 		case 77: //M
-			grscaling_radio += 0.01
+			tvn_scale += 0.01
 			break
 		case 78: //N
-			grscaling_radio -= 0.01
+			tvn_scale -= 0.01
 			break
 		case 27:
 			uninit()
@@ -140,9 +140,9 @@ function init() {
 	GRInit()
 	GRInitRoadside();
 	initNormalMapRoad()
-	initCubeMap()
+	// initCubeMap()
 
-	//tejswini_hut_init()
+	tejswini_hut_init()
 	
 	// initShadow();
 
@@ -183,9 +183,10 @@ function render() {
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 	if(currentScene == scenes.SCENE_1) {
-		Display_CubeMap()
-		GRDisplay()
 		// animateFire();
+		// Display_CubeMap()
+		GRDisplay()
+		tejswini_hut_draw()
 		renderNormalMapRoad()
 		GRDisplayRoadside();
 	}
@@ -195,8 +196,6 @@ function render() {
 	//tvn_tripod_draw();
 	//tvn_draw_lamp_arch();
 
-	//tejswini_hut_draw()
-	
 	// GRDisplayScene2();
 	// DL_renderChair()
 	// GRDisplayStageLights();

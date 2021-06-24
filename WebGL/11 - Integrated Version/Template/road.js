@@ -29,8 +29,6 @@ var matShininessUniform
 var texSamUniform
 var texNorUniform
 
-var vertices
-
 function initNormalMapRoad() {
 	var vertexSrc = 
 	"#version 300 es\n"+
@@ -304,14 +302,14 @@ function initNormalMapRoad() {
 			pos3, normals, tan2, bit1, tex3,
 			pos4, normals, tan2, bit1, tex4
 		)
-		vertices = Float32Array.from(arr)
+		vertices_dl = Float32Array.from(arr)
 
 		vao_footpath = gl.createVertexArray()
 		gl.bindVertexArray(vao_footpath)
 
 		vbo_footpath = gl.createBuffer()
 		gl.bindBuffer(gl.ARRAY_BUFFER, vbo_footpath)
-		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
+		gl.bufferData(gl.ARRAY_BUFFER, vertices_dl, gl.STATIC_DRAW)
 		gl.vertexAttribPointer(macros.AMC_ATTRIB_POSITION, 3, gl.FLOAT, false, 4 * 14, 0)
 		gl.enableVertexAttribArray(macros.AMC_ATTRIB_POSITION)
 		gl.vertexAttribPointer(macros.AMC_ATTRIB_NORMAL, 3, gl.FLOAT, false, 4 * 14, 4 * 3)
@@ -399,14 +397,14 @@ function initNormalMapRoad() {
 			pos3, normals, tan2, bit1, tex3,
 			pos4, normals, tan2, bit1, tex4
 		)
-		vertices = Float32Array.from(arr)
+		vertices_dl = Float32Array.from(arr)
 	
 		vao_wall = gl.createVertexArray()
 		gl.bindVertexArray(vao_wall)
 
 		vbo_wall = gl.createBuffer()
 		gl.bindBuffer(gl.ARRAY_BUFFER, vbo_wall)
-		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
+		gl.bufferData(gl.ARRAY_BUFFER, vertices_dl, gl.STATIC_DRAW)
 		gl.vertexAttribPointer(macros.AMC_ATTRIB_POSITION, 3, gl.FLOAT, false, 4 * 14, 0)
 		gl.enableVertexAttribArray(macros.AMC_ATTRIB_POSITION)
 		gl.vertexAttribPointer(macros.AMC_ATTRIB_NORMAL, 3, gl.FLOAT, false, 4 * 14, 4 * 3)
@@ -494,14 +492,14 @@ function initNormalMapRoad() {
 			pos3, normals, tan2, bit1, tex3,
 			pos4, normals, tan2, bit1, tex4
 		)
-		vertices = Float32Array.from(arr)
+		vertices_dl = Float32Array.from(arr)
 
 		vao_road = gl.createVertexArray()
 		gl.bindVertexArray(vao_road)
 
 		vbo_road = gl.createBuffer()
 		gl.bindBuffer(gl.ARRAY_BUFFER, vbo_road)
-		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
+		gl.bufferData(gl.ARRAY_BUFFER, vertices_dl, gl.STATIC_DRAW)
 		gl.vertexAttribPointer(macros.AMC_ATTRIB_POSITION, 3, gl.FLOAT, false, 4 * 14, 0)
 		gl.enableVertexAttribArray(macros.AMC_ATTRIB_POSITION)
 		gl.vertexAttribPointer(macros.AMC_ATTRIB_NORMAL, 3, gl.FLOAT, false, 4 * 14, 4 * 3)

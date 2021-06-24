@@ -4,14 +4,18 @@ var bFullscreen = false;
 var canvas_orignal_width;
 var canvas_orignal_height;
 
+var tvn_trans_x = 1.5
+var tvn_trans_y = 0.0
+var tvn_trans_z = -9.5
 
+var tvn_scale = 0.71
 
-var vertices = new Float32Array(37680);
-var radius = 0.08;
-var i = 0;
-var stack = [];
-var index = -1;
-var angle1;
+var vertices_tvn = new Float32Array(37680);
+var radius_tvn = 0.12;
+var i_tvn = 0;
+var stack_tvn = [];
+var index_tvn = -1;
+var angle1_tvn;
 
 
 var degrees;
@@ -35,14 +39,14 @@ var tvn_viewMatrix;
 function tejswini_hut_init() {
 
     /*************Cylinder **********************/
-    for (angle1 = 0.0; angle1 < 2 * 3.14; angle1 = angle1 + 0.001) {
-        vertices[i++] = (Math.cos(angle1) * radius);
-        vertices[i++] = (1.0);
-        vertices[i++] = (Math.sin(angle1) * radius);
+    for (angle1_tvn = 0.0; angle1_tvn < 2 * 3.14; angle1_tvn = angle1_tvn + 0.001) {
+        vertices_tvn[i_tvn++] = (Math.cos(angle1_tvn) * radius_tvn);
+        vertices_tvn[i_tvn++] = (1.2);
+        vertices_tvn[i_tvn++] = (Math.sin(angle1_tvn) * radius_tvn);
 
-        vertices[i++] = (Math.cos(angle1) * radius);
-        vertices[i++] = -1.0;
-        vertices[i++] = (Math.sin(angle1) * radius);
+        vertices_tvn[i_tvn++] = (Math.cos(angle1_tvn) * radius_tvn);
+        vertices_tvn[i_tvn++] = -1.0;
+        vertices_tvn[i_tvn++] = (Math.sin(angle1_tvn) * radius_tvn);
 
     }
 
@@ -223,7 +227,7 @@ function tejswini_hut_init() {
 
     tvn_vbo = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo);
-    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices_tvn, gl.STATIC_DRAW);
     gl.vertexAttribPointer(macros.AMC_ATTRIB_POSITION,
         3, // 3 is for x,y,z co-cordinates is our triangle Verteices array
         gl.FLOAT,
@@ -298,13 +302,14 @@ function tejswini_hut_draw() {
     var rotateMatrix = mat4.create();
 
     modelMatrix = stackpush(modelMatrix);
-    mat4.translate(translateMatrix, translateMatrix, [0.0, 0.0, -6.0]);
+    mat4.translate(translateMatrix, translateMatrix, [tvn_trans_x, tvn_trans_y, tvn_trans_z]);
     //mat4.rotateY(rotateMatrix, rotateMatrix, deg2rad(45));
 
 
 
     mat4.multiply
         (modelMatrix, translateMatrix, rotateMatrix);
+    mat4.scale(modelMatrix, modelMatrix, [tvn_scale, tvn_scale, tvn_scale])
     modelMatrix = stackpush(modelMatrix);
     mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
@@ -424,29 +429,29 @@ function tejswini_hut_draw() {
 function stackpush(matrix) {
     var prevMatrix;
     console.log("push" + matrix);
-    if (index < 0) {
-        stack.push(matrix);
-        index++;
+    if (index_tvn < 0) {
+        stack_tvn.push(matrix);
+        index_tvn++;
         return matrix;
     }
     else {
-        prevMatrix = stack[index];
-        stack.push(mat4.multiply(matrix, prevMatrix, matrix));
-        index++;
+        prevMatrix = stack_tvn[index_tvn];
+        stack_tvn.push(mat4.multiply(matrix, prevMatrix, matrix));
+        index_tvn++;
         return matrix;
     }
 
 }
 
 function stackpop() {
-    if (!stack[0]) {
-        stack[0] = mat4.create();
-        return stack[0];
+    if (!stack_tvn[0]) {
+        stack_tvn[0] = mat4.create();
+        return stack_tvn[0];
     }
 
     else {
-        stack.pop(index--);
-        return stack[index];
+        stack_tvn.pop(index_tvn--);
+        return stack_tvn[index_tvn];
     }
 
 }
