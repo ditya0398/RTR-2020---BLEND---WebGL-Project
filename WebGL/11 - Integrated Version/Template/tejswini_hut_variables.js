@@ -4,13 +4,6 @@ var bFullscreen = false;
 var canvas_orignal_width;
 var canvas_orignal_height;
 
-const WebGLMacros =
-{
-    tvn_ATTRIBUTE_VERTEX: 0,
-    tvn_ATTRIBUTE_COLOR: 1,
-    tvn_ATTRIBUTE_NORMAL: 2,
-    tvn_ATTRIBUTE_TEXTURE: 3
-};
 
 
 var vertices = new Float32Array(37680);
@@ -112,8 +105,8 @@ function tejswini_hut_init() {
     gl.attachShader(tvn_shaderProgramObject, tvn_fragmentShaderObject);
 
     //pre-link binding of shader program object with vertex shader attributes
-    gl.bindAttribLocation(tvn_shaderProgramObject, WebGLMacros.tvn_ATTRIBUTE_VERTEX, "vPosition");
-    gl.bindAttribLocation(tvn_shaderProgramObject, WebGLMacros.tvn_ATTRIBUTE_TEXTURE, "vtexcoord");
+    gl.bindAttribLocation(tvn_shaderProgramObject, macros.AMC_ATTRIB_POSITION, "vPosition");
+    gl.bindAttribLocation(tvn_shaderProgramObject, macros.AMC_ATTRIB_TEXCOORD, "vtexcoord");
 
 
     //linking 
@@ -204,12 +197,12 @@ function tejswini_hut_init() {
     tvn_vbo_rectangle = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo_rectangle);
     gl.bufferData(gl.ARRAY_BUFFER, squareVertices, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(WebGLMacros.tvn_ATTRIBUTE_VERTEX,
+    gl.vertexAttribPointer(macros.AMC_ATTRIB_POSITION,
         3, // 3 is for x,y,z co-cordinates is our triangle Verteices array
         gl.FLOAT,
         false,
         0, 0);
-    gl.enableVertexAttribArray(WebGLMacros.tvn_ATTRIBUTE_VERTEX); // 
+    gl.enableVertexAttribArray(macros.AMC_ATTRIB_POSITION); // 
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
 
@@ -217,8 +210,8 @@ function tejswini_hut_init() {
     tvn_vbo_tex_coord = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo_tex_coord);
     gl.bufferData(gl.ARRAY_BUFFER, cubeTexCoord, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(WebGLMacros.tvn_ATTRIBUTE_TEXTURE, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(WebGLMacros.tvn_ATTRIBUTE_TEXTURE);
+    gl.vertexAttribPointer(macros.AMC_ATTRIB_TEXCOORD, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(macros.AMC_ATTRIB_TEXCOORD);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     gl.bindVertexArray(null);
@@ -231,12 +224,12 @@ function tejswini_hut_init() {
     tvn_vbo = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(WebGLMacros.tvn_ATTRIBUTE_VERTEX,
+    gl.vertexAttribPointer(macros.AMC_ATTRIB_POSITION,
         3, // 3 is for x,y,z co-cordinates is our triangle Verteices array
         gl.FLOAT,
         false,
         0, 0);
-    gl.enableVertexAttribArray(WebGLMacros.tvn_ATTRIBUTE_VERTEX); // 
+    gl.enableVertexAttribArray(macros.AMC_ATTRIB_POSITION); // 
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
 
@@ -246,7 +239,7 @@ function tejswini_hut_init() {
     /*****************************************/
     tin_texture = gl.createTexture();
     tin_texture.image = new Image();
-    tin_texture.image.src = "tin.png";
+    tin_texture.image.src = "Tejswini_Resources/tin.png";
 
     tin_texture.image.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, tin_texture);
@@ -262,7 +255,7 @@ function tejswini_hut_init() {
 
     wood_texture = gl.createTexture();
     wood_texture.image = new Image();
-    wood_texture.image.src = "wood.png";
+    wood_texture.image.src = "Tejswini_Resources/wood.png";
 
     wood_texture.image.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, wood_texture);
@@ -278,7 +271,7 @@ function tejswini_hut_init() {
 
     hut_texture = gl.createTexture();
     hut_texture.image = new Image();
-    hut_texture.image.src = "hut.png";
+    hut_texture.image.src = "Tejswini_Resources/hut.png";
 
     hut_texture.image.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, hut_texture);
@@ -295,7 +288,7 @@ function tejswini_hut_init() {
 
 }
 
-function tejswini_init_draw() {
+function tejswini_hut_draw() {
     gl.useProgram(tvn_shaderProgramObject);
 
     var modelMatrix = mat4.create();
@@ -313,7 +306,7 @@ function tejswini_init_draw() {
     mat4.multiply
         (modelMatrix, translateMatrix, rotateMatrix);
     modelMatrix = stackpush(modelMatrix);
-    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveProjectionMatrix);
+    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
     gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
@@ -330,8 +323,6 @@ function tejswini_init_draw() {
     gl.bindTexture(gl.TEXTURE_2D, tin_texture);
     gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
-    gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
-    gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
 
     /********************************************************************/
@@ -349,7 +340,7 @@ function tejswini_init_draw() {
     stackpop();
     
 
-    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveProjectionMatrix);
+    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
     gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
@@ -372,7 +363,7 @@ function tejswini_init_draw() {
     modelMatrix = stackpush(modelMatrix);
     stackpop();
 
-    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveProjectionMatrix);
+    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
     gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
@@ -392,7 +383,7 @@ function tejswini_init_draw() {
     modelMatrix = stackpush(modelMatrix);
     stackpop();
 
-    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveProjectionMatrix);
+    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
     gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
@@ -410,7 +401,7 @@ function tejswini_init_draw() {
     mat4.translate(translateMatrix, translateMatrix, [-1.9, -3.0, -1.0]);
     mat4.multiply
         (modelMatrix, translateMatrix, rotateMatrix);
-    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveProjectionMatrix);
+    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
 
     modelMatrix = stackpush(modelMatrix);
     stackpop();
