@@ -30,7 +30,7 @@ var grgVboTextureBenchLegs;
 var grfangleX_table = 0.0;
 var grfangleY_table = 0.0;
 
-var grftransx_table = 4.9;
+var grftransx_table = 2.4;
 var grftransy_table = -1.1;
 var grftransz_table = -14.8;
 
@@ -39,13 +39,13 @@ var grscaling_table = 0.27;
 var grfangleX_bench = 0.0;
 var grfangleY_bench = 0.0;
 
-var grftransx_bench = 4.67;
+var grftransx_bench = 2.67;
 var grftransy_bench = -1.4;
 var grftransz_bench = -12.8;
 
 var grscaling_bench = 0.27;
 
-var grftransx_radio = 5.5;
+var grftransx_radio = 3.0;
 var grftransy_radio = -0.9;
 var grftransz_radio = -14.6;
 var grscaling_radio = 0.32;

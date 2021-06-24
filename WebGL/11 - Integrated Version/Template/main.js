@@ -18,6 +18,16 @@ const macros = {
 	DL_ATTRIB_BITANGENT: 4
 }
 
+const scenes = {
+	SCENE_0:0,
+	SCENE_1:1,
+	SCENE_2:2,
+	SCENE_3:3,
+	SCENE_4:4
+}
+
+var currentScene = scenes.SCENE_1
+
 function main() {
 	//Get Canvas from DOM
 	canvas = document.getElementById("dl")
@@ -126,12 +136,12 @@ function init() {
 
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
-	//initFire();
-	// GRInit()
-//	 initNormalMapRoad()
-	// initCubeMap()
+	initFire();
+	GRInit()
+	initNormalMapRoad()
+	initCubeMap()
 
-//	initShadow();
+	// initShadow();
 
 
 	
@@ -143,11 +153,11 @@ function init() {
 	
 
 
-	//GRInitScene2();
-	//DL_initChair()
-//	GRInitStageLights();
+	// GRInitScene2();
+	// DL_initChair()
+	// GRInitStageLights();
 
-	tejswini_hut_init();
+
 	
 
 	perspectiveMatrix = mat4.create()
@@ -168,31 +178,28 @@ function reshape() {
 
 	gl.viewport(0, 0, canvas.width, canvas.height)
 
-	mat4.perspective(perspectiveMatrix,45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 100.0)
+	mat4.perspective(perspectiveMatrix,45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 1000.0)
 }
 
 function render() {
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-	// Display_CubeMap()
-	// GRDisplay()
-
+	if(currentScene == scenes.SCENE_1) {
+		// Display_CubeMap()
+		GRDisplay()
+		// animateFire();
+		renderNormalMapRoad()
+	}
 	
 	//tvn_script_draw();
 	//tvn_speaker_draw();
 	//tvn_tripod_draw();
 	//tvn_draw_lamp_arch();
 
-	//animateFire();
-
-
-	//animateFire();
-
-	// renderNormalMapRoad()
-//	GRDisplayScene2();
-	//DL_renderChair()
-	//GRDisplayStageLights();
-	tejswini_init_draw();
+	
+	// GRDisplayScene2();
+	// DL_renderChair()
+	// GRDisplayStageLights();
 
 
 //	Draw_Shadow();
@@ -210,12 +217,12 @@ function uninit() {
 
 
 
-	//GRUninitialize()
-	//GRUninitializeScene2()
-	//GRUninitializeStageLights()
-	tejswini_hut_uninit();
-	gl.deleteVertexArray(vao)
-	gl.deleteBuffer(vbo)
+	GRUninitialize()
+	GRUninitializeScene2()
+	GRUninitializeStageLights()
+
+	gl.deleteVertexArray(vao_footpath)
+	gl.deleteBuffer(vbo_footpath)
 	gl.deleteProgram(program)
 }
 
