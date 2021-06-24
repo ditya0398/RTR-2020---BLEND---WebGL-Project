@@ -235,7 +235,7 @@ function tvn_draw_lamp_arch() {
 
     modelMatrix = stackpush(modelMatrix);
 
-    mat4.translate(translateMatrix, translateMatrix, [0.0, 0.0, -3.0]);//resulting matrix, act on the matrix, open square bracket
+    mat4.translate(translateMatrix, translateMatrix, [-1.0, 0.2, -3.0]);//resulting matrix, act on the matrix, open square bracket
 
 
 
@@ -249,7 +249,7 @@ function tvn_draw_lamp_arch() {
 
 
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix, false, gViewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
 
 
@@ -282,7 +282,7 @@ function tvn_draw_lamp_arch() {
     stackpop();
 
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix, false, gViewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
 
 

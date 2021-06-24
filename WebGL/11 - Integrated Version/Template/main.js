@@ -5,10 +5,13 @@ var animFrame = window.requestAnimationFrame || window.webkitRequestAnimationFra
 var cancelFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.webkitCancelRequestAnimationFrame || window.mozCancelRequestAnimationFrame || window.mozCancelAnimationFrame || window.oCancelRequestAnimationFrame || window.oCancelAnimationFrame || window.msCancelRequestAnimationFrame || window.msCancelAnimationFrame
 var canvas_og_width, canvas_og_height
 
+var gViewMatrix
 var perspectiveMatrix
 var gbLight = false
 
 var rotX = 0.0, rotY = 0.0
+
+var view = [0.0, 0.0, 5.0]
 
 const macros = {
 	AMC_ATTRIB_POSITION:0,
@@ -70,22 +73,22 @@ function keyDown(event) {
             }
             break;
 		case 65: //A
-			tvn_trans_x -= 0.1
+			view[0] -= 0.1
 			break
 		case 83: //S
-			tvn_trans_z -= 0.1
+			view[2] += 0.1
 			break
 		case 68: //D
-			tvn_trans_x += 0.1
+			view[0] += 0.1
 			break
 		case 87: //W
-			tvn_trans_z += 0.1
+			view[2] -= 0.1
 			break
 		case 81: //Q
-			tvn_trans_y -= 0.1
+			view[1] -= 0.1
 			break
 		case 69: //E
-			tvn_trans_y += 0.1
+			view[1] += 0.1
 			break
 		case 77: //M
 			tvn_scale += 0.01
@@ -140,24 +143,22 @@ function init() {
 	GRInit()
 	GRInitRoadside();
 	initNormalMapRoad()
-	// initCubeMap()
+	initCubeMap()
 
 	tejswini_hut_init()
-	
+	tvn_init_lamp_arch();
+
 	// initShadow();
 
 	//tvn_script_init();
 	//tvn_speaker_init();
 	//tvn_init_tripod();
-	//tvn_init_lamp_arch();
-
+	
 	// GRInitScene2();
 	// DL_initChair()
 	// GRInitStageLights();
 
-
-	
-
+	gViewMatrix = mat4.create()
 	perspectiveMatrix = mat4.create()
 
 	gl.enable(gl.DEPTH_TEST)
@@ -182,6 +183,8 @@ function reshape() {
 function render() {
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+	mat4.lookAt(gViewMatrix, view, [0.0, 0.0, view[2] - 20.0], [0.0, 1.0, 0.0])
+
 	if(currentScene == scenes.SCENE_1) {
 		// animateFire();
 		// Display_CubeMap()
@@ -189,12 +192,12 @@ function render() {
 		tejswini_hut_draw()
 		renderNormalMapRoad()
 		GRDisplayRoadside();
+		tvn_draw_lamp_arch();
 	}
 	
 	//tvn_script_draw();
 	//tvn_speaker_draw();
 	//tvn_tripod_draw();
-	//tvn_draw_lamp_arch();
 
 	// GRDisplayScene2();
 	// DL_renderChair()

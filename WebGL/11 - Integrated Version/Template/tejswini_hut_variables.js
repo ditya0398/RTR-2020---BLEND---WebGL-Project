@@ -313,7 +313,7 @@ function tejswini_hut_draw() {
     modelMatrix = stackpush(modelMatrix);
     mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix, false, gViewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -348,7 +348,7 @@ function tejswini_hut_draw() {
     mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix, false, gViewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
 
     // *** unbind vao ***
@@ -371,7 +371,7 @@ function tejswini_hut_draw() {
     mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix, false, gViewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12560);
@@ -391,7 +391,7 @@ function tejswini_hut_draw() {
     mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix, false, gViewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12560);
@@ -412,7 +412,7 @@ function tejswini_hut_draw() {
     stackpop();
 
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix, false, gViewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12560);

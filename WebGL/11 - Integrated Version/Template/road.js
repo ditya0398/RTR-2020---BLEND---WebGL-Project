@@ -104,7 +104,7 @@ function initNormalMapRoad() {
 	"vec3 normal = texture(norSam, texCoord).rgb * 2.0 - 1.0;\n"+
 	//Lighting Calculation
 	"vec3 L = normalize(L_out);\n"+
-	"vec3 N = normalize(mat3(modelMatrix)  * normal_out);\n"+
+	"vec3 N = normalize(mat3(modelMatrix)  * normal);\n"+
 	"vec3 V = normalize(V_out);\n"+
 	"vec3 R = reflect(-L, N);\n"+
 	"vec4 ambient = light_ambient * material_ambient * color;\n"+
@@ -520,11 +520,9 @@ function renderNormalMapRoad() {
 	var modelMatRight = mat4.create()
 	mat4.translate(modelMatLeft, modelMatLeft, [0.0, -2.0, -10.0])
 	mat4.translate(modelMatRight, modelMatRight, [0.0, -2.0, -10.0])
-	var viewMat = mat4.create()
-	mat4.identity(viewMat)
-
+	
 	gl.uniformMatrix4fv(projUniform, false, perspectiveMatrix)
-	gl.uniformMatrix4fv(viewUniform, false, viewMat)
+	gl.uniformMatrix4fv(viewUniform, false, gViewMatrix)
 	
 	gl.uniform4f(lightPositionUniform, 0.0, 1.0, 10.0, 1.0)
 	gl.uniform4f(lightAmbientUniform, 0.1, 0.1, 0.1, 1.0)
@@ -564,11 +562,11 @@ function renderNormalMapRoad() {
 	mat4.translate(modelMatLeft, modelMatLeft, [0.0, -2.0, -10.0])
 	mat4.translate(modelMatRight, modelMatRight, [0.0, -2.0, -10.0])
 	
-	mat4.translate(modelMatLeft, modelMatLeft, [-3.7, 0.0, 0.0])
+	mat4.translate(modelMatLeft, modelMatLeft, [-3.7, 2.0, 0.0])
 	gl.uniformMatrix4fv(modelUniform, false, modelMatLeft)
 	gl.drawArrays(gl.TRIANGLES, 0, 6)
 	
-	mat4.translate(modelMatRight, modelMatRight, [3.7, 0.0, 0.0])
+	mat4.translate(modelMatRight, modelMatRight, [3.7, 2.0, 0.0])
 	gl.uniformMatrix4fv(modelUniform, false, modelMatRight)
 	gl.drawArrays(gl.TRIANGLES, 0, 6)
 

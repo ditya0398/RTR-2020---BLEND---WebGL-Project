@@ -250,7 +250,7 @@ function GRDisplayRoadside()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
     
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -290,7 +290,7 @@ function GRDisplayRoadside()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
     
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);

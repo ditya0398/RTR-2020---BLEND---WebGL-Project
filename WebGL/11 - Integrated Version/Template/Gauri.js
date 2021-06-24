@@ -446,7 +446,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
     
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -481,7 +481,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -500,7 +500,6 @@ function GRDisplay()
 
     //***************** antenna - 2
     grmodelMatrix = mat4.create();
-    grviewMatrix = mat4.create();
     grprojectionMatrix = mat4.create();
     grscaleMatrix = mat4.create();
     grtranslateMatrix = mat4.create();
@@ -515,7 +514,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -551,7 +550,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -605,7 +604,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -643,7 +642,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -680,7 +679,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -733,7 +732,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -768,7 +767,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -803,7 +802,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
  
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
  
     gl.activeTexture(gl.TEXTURE0);
@@ -838,7 +837,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
  
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
  
     gl.activeTexture(gl.TEXTURE0);
@@ -873,7 +872,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
  
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
  
     gl.activeTexture(gl.TEXTURE0);
@@ -908,7 +907,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
  
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
  
     gl.activeTexture(gl.TEXTURE0);
@@ -943,7 +942,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
  
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
  
     gl.activeTexture(gl.TEXTURE0);
@@ -978,7 +977,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
  
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
  
     gl.activeTexture(gl.TEXTURE0);
@@ -1013,7 +1012,7 @@ function GRDisplay()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
  
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
  
     gl.activeTexture(gl.TEXTURE0);
