@@ -4,9 +4,17 @@ var bFullscreen = false;
 var canvas_orignal_width;
 var canvas_orignal_height;
 
+const WebGLMacros =
+{
+    tvn_ATTRIBUTE_VERTEX: 0,
+    tvn_ATTRIBUTE_COLOR: 1,
+    tvn_ATTRIBUTE_NORMAL: 2,
+    tvn_ATTRIBUTE_TEXTURE: 3
+};
+
 
 var vertices = new Float32Array(37680);
-var radius_tvn = 0.12;
+var radius = 0.08;
 var i = 0;
 var stack = [];
 var index = -1;
@@ -35,13 +43,13 @@ function tejswini_hut_init() {
 
     /*************Cylinder **********************/
     for (angle1 = 0.0; angle1 < 2 * 3.14; angle1 = angle1 + 0.001) {
-        vertices[i++] = (Math.cos(angle1) * radius_tvn);
+        vertices[i++] = (Math.cos(angle1) * radius);
         vertices[i++] = (1.0);
-        vertices[i++] = (Math.sin(angle1) * radius_tvn);
+        vertices[i++] = (Math.sin(angle1) * radius);
 
-        vertices[i++] = (Math.cos(angle1) * radius_tvn);
+        vertices[i++] = (Math.cos(angle1) * radius);
         vertices[i++] = -1.0;
-        vertices[i++] = (Math.sin(angle1) * radius_tvn);
+        vertices[i++] = (Math.sin(angle1) * radius);
 
     }
 
@@ -59,7 +67,8 @@ function tejswini_hut_init() {
         "void main(void)" +
         "{" +
         "gl_Position = projection_matrix * view_matrix * model_matrix * vPosition;" +
-        "out_tex_coord = vPosition.xy;" +
+        "out_tex_coord.x = vPosition.x;" +
+        "out_tex_coord.y = vPosition.y;" +
         "}";
 
     tvn_vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
@@ -103,8 +112,8 @@ function tejswini_hut_init() {
     gl.attachShader(tvn_shaderProgramObject, tvn_fragmentShaderObject);
 
     //pre-link binding of shader program object with vertex shader attributes
-    gl.bindAttribLocation(tvn_shaderProgramObject, macros.AMC_ATTRIB_POSITION, "vPosition");
-    gl.bindAttribLocation(tvn_shaderProgramObject, macros.AMC_ATTRIB_TEXCOORD, "vtexcoord");
+    gl.bindAttribLocation(tvn_shaderProgramObject, WebGLMacros.tvn_ATTRIBUTE_VERTEX, "vPosition");
+    gl.bindAttribLocation(tvn_shaderProgramObject, WebGLMacros.tvn_ATTRIBUTE_TEXTURE, "vtexcoord");
 
 
     //linking 
@@ -195,12 +204,12 @@ function tejswini_hut_init() {
     tvn_vbo_rectangle = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo_rectangle);
     gl.bufferData(gl.ARRAY_BUFFER, squareVertices, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(macros.AMC_ATTRIB_POSITION,
+    gl.vertexAttribPointer(WebGLMacros.tvn_ATTRIBUTE_VERTEX,
         3, // 3 is for x,y,z co-cordinates is our triangle Verteices array
         gl.FLOAT,
         false,
         0, 0);
-    gl.enableVertexAttribArray(macros.AMC_ATTRIB_POSITION); // 
+    gl.enableVertexAttribArray(WebGLMacros.tvn_ATTRIBUTE_VERTEX); // 
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
 
@@ -208,8 +217,8 @@ function tejswini_hut_init() {
     tvn_vbo_tex_coord = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo_tex_coord);
     gl.bufferData(gl.ARRAY_BUFFER, cubeTexCoord, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(macros.AMC_ATTRIB_TEXCOORD, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(macros.AMC_ATTRIB_TEXCOORD);
+    gl.vertexAttribPointer(WebGLMacros.tvn_ATTRIBUTE_TEXTURE, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(WebGLMacros.tvn_ATTRIBUTE_TEXTURE);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     gl.bindVertexArray(null);
@@ -222,12 +231,12 @@ function tejswini_hut_init() {
     tvn_vbo = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(macros.AMC_ATTRIB_POSITION,
+    gl.vertexAttribPointer(WebGLMacros.tvn_ATTRIBUTE_VERTEX,
         3, // 3 is for x,y,z co-cordinates is our triangle Verteices array
         gl.FLOAT,
         false,
         0, 0);
-    gl.enableVertexAttribArray(macros.AMC_ATTRIB_POSITION); // 
+    gl.enableVertexAttribArray(WebGLMacros.tvn_ATTRIBUTE_VERTEX); // 
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
 
@@ -237,7 +246,7 @@ function tejswini_hut_init() {
     /*****************************************/
     tin_texture = gl.createTexture();
     tin_texture.image = new Image();
-    tin_texture.image.src = "Tejswini_Resources/tin.png";
+    tin_texture.image.src = "tin.png";
 
     tin_texture.image.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, tin_texture);
@@ -253,7 +262,7 @@ function tejswini_hut_init() {
 
     wood_texture = gl.createTexture();
     wood_texture.image = new Image();
-    wood_texture.image.src = "Tejswini_Resources/wood.png";
+    wood_texture.image.src = "wood.png";
 
     wood_texture.image.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, wood_texture);
@@ -269,7 +278,7 @@ function tejswini_hut_init() {
 
     hut_texture = gl.createTexture();
     hut_texture.image = new Image();
-    hut_texture.image.src = "Tejswini_Resources/hut.png";
+    hut_texture.image.src = "hut.png";
 
     hut_texture.image.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, hut_texture);
@@ -286,7 +295,7 @@ function tejswini_hut_init() {
 
 }
 
-function tejswini_hut_draw() {
+function tejswini_init_draw() {
     gl.useProgram(tvn_shaderProgramObject);
 
     var modelMatrix = mat4.create();
@@ -295,7 +304,7 @@ function tejswini_hut_draw() {
     var translateMatrix = mat4.create();
     var rotateMatrix = mat4.create();
 
-
+    modelMatrix = stackpush(modelMatrix);
     mat4.translate(translateMatrix, translateMatrix, [0.0, 0.0, -6.0]);
     //mat4.rotateY(rotateMatrix, rotateMatrix, deg2rad(45));
 
@@ -303,8 +312,8 @@ function tejswini_hut_draw() {
 
     mat4.multiply
         (modelMatrix, translateMatrix, rotateMatrix);
-
-    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
+    modelMatrix = stackpush(modelMatrix);
+    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveProjectionMatrix);
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
     gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
@@ -321,6 +330,8 @@ function tejswini_hut_draw() {
     gl.bindTexture(gl.TEXTURE_2D, tin_texture);
     gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
 
     /********************************************************************/
@@ -331,10 +342,14 @@ function tejswini_hut_draw() {
     translateMatrix = mat4.create();
     rotateMatrix = mat4.create();
 
-    mat4.translate(translateMatrix, translateMatrix, [1.9, -3.0, -6.0]);
+    mat4.translate(translateMatrix, translateMatrix, [1.9, -3.0, 0.0]);
     mat4.multiply
         (modelMatrix, translateMatrix, rotateMatrix);
-    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
+    modelMatrix = stackpush(modelMatrix);
+    stackpop();
+    
+
+    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveProjectionMatrix);
 
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
     gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
@@ -351,10 +366,13 @@ function tejswini_hut_draw() {
     translateMatrix = mat4.create();
     rotateMatrix = mat4.create();
 
-    mat4.translate(translateMatrix, translateMatrix, [1.9, -3.0, -7.0]);
+    mat4.translate(translateMatrix, translateMatrix, [1.9, -3.0, -1.0]);
     mat4.multiply
         (modelMatrix, translateMatrix, rotateMatrix);
-    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
+    modelMatrix = stackpush(modelMatrix);
+    stackpop();
+
+    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveProjectionMatrix);
 
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
     gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
@@ -368,10 +386,13 @@ function tejswini_hut_draw() {
     translateMatrix = mat4.create();
     rotateMatrix = mat4.create();
 
-    mat4.translate(translateMatrix, translateMatrix, [-1.9, -3.0, -6.0]);
+    mat4.translate(translateMatrix, translateMatrix, [-1.9, -3.0, 0.0]);
     mat4.multiply
         (modelMatrix, translateMatrix, rotateMatrix);
-    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
+    modelMatrix = stackpush(modelMatrix);
+    stackpop();
+
+    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveProjectionMatrix);
 
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
     gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
@@ -386,10 +407,13 @@ function tejswini_hut_draw() {
     translateMatrix = mat4.create();
     rotateMatrix = mat4.create();
 
-    mat4.translate(translateMatrix, translateMatrix, [-1.9, -3.0, -7.0]);
+    mat4.translate(translateMatrix, translateMatrix, [-1.9, -3.0, -1.0]);
     mat4.multiply
         (modelMatrix, translateMatrix, rotateMatrix);
-    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
+    mat4.multiply(projectionMatrix, projectionMatrix, perspectiveProjectionMatrix);
+
+    modelMatrix = stackpush(modelMatrix);
+    stackpop();
 
     gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
     gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
@@ -399,11 +423,44 @@ function tejswini_hut_draw() {
 
 
 
-
+    stackpop();
+    stackpop();
     gl.bindVertexArray(null);
     gl.useProgram(null);
 
 }
+
+function stackpush(matrix) {
+    var prevMatrix;
+    console.log("push" + matrix);
+    if (index < 0) {
+        stack.push(matrix);
+        index++;
+        return matrix;
+    }
+    else {
+        prevMatrix = stack[index];
+        stack.push(mat4.multiply(matrix, prevMatrix, matrix));
+        index++;
+        return matrix;
+    }
+
+}
+
+function stackpop() {
+    if (!stack[0]) {
+        stack[0] = mat4.create();
+        return stack[0];
+    }
+
+    else {
+        stack.pop(index--);
+        return stack[index];
+    }
+
+}
+
+
 
 function tejswini_hut_uninit() {
     if (tvn_vao) {
