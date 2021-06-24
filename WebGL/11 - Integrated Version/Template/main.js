@@ -135,17 +135,17 @@ function init() {
 
 
 	
-	tvn_script_init();
-	tvn_speaker_init();
-	tvn_init_tripod();
-	tvn_init_lamp_arch();
+	//tvn_script_init();
+	//tvn_speaker_init();
+	//tvn_init_tripod();
+	//tvn_init_lamp_arch();
 
 	
 
 
 	GRInitScene2();
 	DL_initChair()
-
+	GRInitStageLights();
 
 
 	
@@ -178,12 +178,12 @@ function render() {
 	// GRDisplay()
 
 	
-	tvn_script_draw();
-	tvn_speaker_draw();
-	tvn_tripod_draw();
-	tvn_draw_lamp_arch();
+	//tvn_script_draw();
+	//tvn_speaker_draw();
+	//tvn_tripod_draw();
+	//tvn_draw_lamp_arch();
 
-	animateFire();
+	//animateFire();
 
 
 	//animateFire();
@@ -191,6 +191,7 @@ function render() {
 	// renderNormalMapRoad()
 	GRDisplayScene2();
 	DL_renderChair()
+	GRDisplayStageLights();
 
 
 //	Draw_Shadow();
@@ -201,16 +202,16 @@ function render() {
 function uninit() {
 
 	//GRUninitialize()
-	tvn_uninit_lamp_arch();
-	tvn_uninit_script();
-	tvn_speaker_uninit();
-	tvn_tripod_uninit();
+	//tvn_uninit_lamp_arch();
+	//tvn_uninit_script();
+	//tvn_speaker_uninit();
+	//tvn_tripod_uninit();
 
 
 
 	GRUninitialize()
 	GRUninitializeScene2()
-
+	GRUninitializeStageLights()
 
 	gl.deleteVertexArray(vao)
 	gl.deleteBuffer(vbo)
