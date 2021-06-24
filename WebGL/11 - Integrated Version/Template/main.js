@@ -143,11 +143,11 @@ function init() {
 	
 
 
-	GRInitScene2();
-	DL_initChair()
-	GRInitStageLights();
+	//GRInitScene2();
+	//DL_initChair()
+//	GRInitStageLights();
 
-
+	tejswini_hut_init();
 	
 
 	perspectiveMatrix = mat4.create()
@@ -189,9 +189,10 @@ function render() {
 	//animateFire();
 
 	// renderNormalMapRoad()
-	GRDisplayScene2();
-	DL_renderChair()
-	GRDisplayStageLights();
+//	GRDisplayScene2();
+	//DL_renderChair()
+	//GRDisplayStageLights();
+	tejswini_init_draw();
 
 
 //	Draw_Shadow();
@@ -209,10 +210,10 @@ function uninit() {
 
 
 
-	GRUninitialize()
-	GRUninitializeScene2()
-	GRUninitializeStageLights()
-
+	//GRUninitialize()
+	//GRUninitializeScene2()
+	//GRUninitializeStageLights()
+	tejswini_hut_uninit();
 	gl.deleteVertexArray(vao)
 	gl.deleteBuffer(vbo)
 	gl.deleteProgram(program)
