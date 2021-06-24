@@ -141,7 +141,7 @@ function init() {
 	// initNormalMapRoad()
 	// initCubeMap()
 
-	tejswini_hut_init()
+	//tejswini_hut_init()
 	
 	// initShadow();
 
@@ -150,7 +150,7 @@ function init() {
 	//tvn_init_tripod();
 	//tvn_init_lamp_arch();
 
-	
+	GRInitRoadside();
 
 
 	// GRInitScene2();
@@ -189,6 +189,7 @@ function render() {
 		// GRDisplay()
 		// animateFire();
 		// renderNormalMapRoad()
+		GRDisplayRoadside();
 	}
 	
 	//tvn_script_draw();
@@ -196,7 +197,7 @@ function render() {
 	//tvn_tripod_draw();
 	//tvn_draw_lamp_arch();
 
-	tejswini_hut_draw()
+	//tejswini_hut_draw()
 	
 	// GRDisplayScene2();
 	// DL_renderChair()
@@ -221,6 +222,7 @@ function uninit() {
 	GRUninitialize()
 	GRUninitializeScene2()
 	GRUninitializeStageLights()
+	GRUninitializeRoadside()
 
 	gl.deleteVertexArray(vao_footpath)
 	gl.deleteBuffer(vbo_footpath)
