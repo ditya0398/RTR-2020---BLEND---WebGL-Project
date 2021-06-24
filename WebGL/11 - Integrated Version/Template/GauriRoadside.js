@@ -8,8 +8,8 @@ var grgVaoRoadside;
 var grgVboPositionRoadside;
 var grgVboTextureRoadside;
 
-var grtransRoadsideX = 1.0;
-var grtransRoadsideY = -0.5;
+var grtransRoadsideX = 1.5;
+var grtransRoadsideY = -2.2;
 var grtransRoadsideZ = -6.0;
 
 
@@ -120,8 +120,8 @@ function GRInitRoadside()
      var grcubeTexcoords = new Float32Array(
          [
              0.0, 0.0,		// right		
-             4.0, 0.0,
-             4.0, 1.0,
+             12.0, 0.0,
+             12.0, 1.0,
              0.0, 1.0,
 
              0.9, 0.9,
@@ -129,10 +129,10 @@ function GRInitRoadside()
              0.9, 0.9,
              0.9, 0.9,
      
-             4.0, 0.0,  // left
+             12.0, 0.0,  // left
              0.0, 0.0,
              0.0, 1.0,
-             4.0, 1.0,
+             12.0, 1.0,
      
              0.9, 0.9,
              0.9, 0.9,
@@ -140,8 +140,8 @@ function GRInitRoadside()
              0.9, 0.9,
 
              0.0, 0.0,
-             4.0, 0.0,
-             4.0, 1.0,
+             12.0, 0.0,
+             12.0, 1.0,
              0.0, 1.0,
      
              0.9, 0.9,
@@ -241,7 +241,7 @@ function GRDisplayRoadside()
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [grtransRoadsideX, grtransRoadsideY, grtransRoadsideZ]);
     mat4.rotateY(grrotateMatrix, grrotateMatrix, deg2rad(90.0));
     mat4.rotateX(grrotateMatrix, grrotateMatrix, deg2rad(grfangleX));
-    mat4.scale(grscaleMatrix, grscaleMatrix, [4.0, 0.1, 0.1]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [12.0, 0.1, 0.1]);
     mat4.multiply(grtranslateMatrix, grtranslateMatrix, grrotateMatrix);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
 
@@ -268,6 +268,47 @@ function GRDisplayRoadside()
     gl.bindTexture(gl.TEXTURE_2D, null);
 
     GRPopFromStack();
+
+    grmodelMatrix = mat4.create();
+    grviewMatrix = mat4.create();
+    grprojectionMatrix = mat4.create();
+    grscaleMatrix = mat4.create();
+    grtranslateMatrix = mat4.create();
+    grrotateMatrix = mat4.create();
+
+    //************************************************************************************************ roadside ********************************************************
+    //***************************************************************************************************************************************************************
+    mat4.translate(grtranslateMatrix, grtranslateMatrix, [-grtransRoadsideX, grtransRoadsideY, grtransRoadsideZ]);
+    mat4.rotateY(grrotateMatrix, grrotateMatrix, deg2rad(90.0));
+    mat4.rotateX(grrotateMatrix, grrotateMatrix, deg2rad(grfangleX));
+    mat4.scale(grscaleMatrix, grscaleMatrix, [12.0, 0.1, 0.1]);
+    mat4.multiply(grtranslateMatrix, grtranslateMatrix, grrotateMatrix);
+    mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
+
+    GRPushToStack(grmodelMatrix);
+
+    mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
+    
+    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, grtextureRoadside);
+    gl.uniform1i(grtextureSamplerUniform, 0);
+
+    gl.bindVertexArray(grgVaoRoadside);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
+    gl.bindVertexArray(null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
+    GRPopFromStack();
+
 
     gl.useProgram(null);
 

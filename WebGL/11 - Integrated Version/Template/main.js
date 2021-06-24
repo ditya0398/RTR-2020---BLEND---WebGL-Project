@@ -70,22 +70,22 @@ function keyDown(event) {
             }
             break;
 		case 65: //A
-			grftransx_radio -= 0.1
+			grtransRoadsideX -= 0.1
 			break
 		case 83: //S
-			grftransz_radio -= 0.1
+			grtransRoadsideY -= 0.1
 			break
 		case 68: //D
-			grftransx_radio += 0.1
+			grtransRoadsideX += 0.1
 			break
 		case 87: //W
-			grftransz_radio += 0.1
+			grtransRoadsideY += 0.1
 			break
 		case 81: //Q
-			grftransy_radio -= 0.1
+			grtransRoadsideZ -= 0.1
 			break
 		case 69: //E
-			grftransy_radio += 0.1
+			grtransRoadsideZ += 0.1
 			break
 		case 77: //M
 			grscaling_radio += 0.01
@@ -137,9 +137,10 @@ function init() {
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
 	// initFire();
-	// GRInit()
-	// initNormalMapRoad()
-	// initCubeMap()
+	GRInit()
+	GRInitRoadside();
+	initNormalMapRoad()
+	initCubeMap()
 
 	//tejswini_hut_init()
 	
@@ -149,9 +150,6 @@ function init() {
 	//tvn_speaker_init();
 	//tvn_init_tripod();
 	//tvn_init_lamp_arch();
-
-	GRInitRoadside();
-
 
 	// GRInitScene2();
 	// DL_initChair()
@@ -185,10 +183,10 @@ function render() {
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 	if(currentScene == scenes.SCENE_1) {
-		// Display_CubeMap()
-		// GRDisplay()
+		Display_CubeMap()
+		GRDisplay()
 		// animateFire();
-		// renderNormalMapRoad()
+		renderNormalMapRoad()
 		GRDisplayRoadside();
 	}
 	

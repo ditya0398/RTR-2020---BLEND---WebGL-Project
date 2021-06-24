@@ -547,11 +547,11 @@ function renderNormalMapRoad() {
 
 	gl.bindVertexArray(vao_footpath)
 	
-	mat4.translate(modelMatLeft, modelMatLeft, [-3.0, 0.0, 0.0])
+	mat4.translate(modelMatLeft, modelMatLeft, [-3.1, 0.0, 0.0])
 	gl.uniformMatrix4fv(modelUniform, false, modelMatLeft)
 	gl.drawArrays(gl.TRIANGLES, 0, 6)
 	
-	mat4.translate(modelMatRight, modelMatRight, [3.0, 0.0, 0.0])
+	mat4.translate(modelMatRight, modelMatRight, [3.1, 0.0, 0.0])
 	gl.uniformMatrix4fv(modelUniform, false, modelMatRight)
 	gl.drawArrays(gl.TRIANGLES, 0, 6)
 
@@ -566,11 +566,11 @@ function renderNormalMapRoad() {
 	mat4.translate(modelMatLeft, modelMatLeft, [0.0, -2.0, -10.0])
 	mat4.translate(modelMatRight, modelMatRight, [0.0, -2.0, -10.0])
 	
-	mat4.translate(modelMatLeft, modelMatLeft, [-3.5, 0.0, 0.0])
+	mat4.translate(modelMatLeft, modelMatLeft, [-3.7, 0.0, 0.0])
 	gl.uniformMatrix4fv(modelUniform, false, modelMatLeft)
 	gl.drawArrays(gl.TRIANGLES, 0, 6)
 	
-	mat4.translate(modelMatRight, modelMatRight, [3.5, 0.0, 0.0])
+	mat4.translate(modelMatRight, modelMatRight, [3.7, 0.0, 0.0])
 	gl.uniformMatrix4fv(modelUniform, false, modelMatRight)
 	gl.drawArrays(gl.TRIANGLES, 0, 6)
 
