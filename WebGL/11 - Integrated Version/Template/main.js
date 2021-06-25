@@ -96,6 +96,36 @@ function keyDown(event) {
 		case 78: //N
 			tvn_scale -= 0.01
 			break
+
+			case 38: //up arrow
+			stove_Transz -= 0.01
+			break
+			case 40: //down arrow
+			stove_Transz += 0.01
+			break
+			case 37: //left arrow
+			stove_Transx -= 0.01
+			break
+			case 39: //right arrow
+			stove_Transx += 0.01
+			break
+
+			case 89: //Y
+			stove_Transy += 0.01
+			break
+
+			case 85: //U
+			stove_Transy -= 0.01
+			break
+
+			case 100: //4
+			stove_Scale -= 0.01
+			break
+
+			case 102: //6
+			stove_Scale += 0.01
+			break
+
 		case 27:
 			uninit()
 			window.close()

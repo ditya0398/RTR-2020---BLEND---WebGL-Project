@@ -15,6 +15,16 @@ var viewMatrixUniform_stove;
 var projectionMatrixUnifrom_stove;
 var stack_stove = [];
 var vbo_normal_stove;
+
+var stove_Transx =  2.4199999999999924;
+var stove_Transy = -0.3900000000000002;
+var stove_Transz =  -15.919999999999789;  
+
+var stove_Scale = 0.27999999999999936;
+
+
+
+
 function ASJ_init_stove() {
 	
 
@@ -267,7 +277,8 @@ function ASJ_draw_stove() {
 	gl.uniformMatrix4fv(viewMatrixUniform_stove, false, gViewMatrix);
 	gl.uniformMatrix4fv(projectionMatrixUnifrom_stove, false, perspectiveMatrix);
 
-	mat4.translate(modelViewMatrix, modelViewMatrix, [-0.8, -1.5, -8.0]);
+	mat4.translate(modelViewMatrix, modelViewMatrix, [stove_Transx, stove_Transy, stove_Transz]);
+	mat4.scale(modelViewMatrix, modelViewMatrix, [stove_Scale, stove_Scale, stove_Scale]);
 
 
 	gl.activeTexture(gl.TEXTURE0);
