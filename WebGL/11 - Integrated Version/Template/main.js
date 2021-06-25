@@ -158,7 +158,7 @@ function init() {
 	// DL_initChair()
 	// GRInitStageLights();
 
-	//ASJ_init_stove();
+	ASJ_init_stove();
 
 
 
@@ -202,7 +202,7 @@ function render() {
 		GRDisplayRoadside();
 		tvn_draw_lamp_arch();
 		//drawModel();
-		//ASJ_draw_stove(perspectiveMatrix);
+		ASJ_draw_stove(perspectiveMatrix);
 	}
 	
 	//tvn_script_draw();

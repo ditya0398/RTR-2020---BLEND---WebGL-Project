@@ -264,7 +264,7 @@ function ASJ_draw_stove() {
 	var scaleMatrix = mat4.create();
 	var burner = mat4.create();
 
-	gl.uniformMatrix4fv(viewMatrixUniform_stove, false, viewMatrix);
+	gl.uniformMatrix4fv(viewMatrixUniform_stove, false, gViewMatrix);
 	gl.uniformMatrix4fv(projectionMatrixUnifrom_stove, false, perspectiveMatrix);
 
 	mat4.translate(modelViewMatrix, modelViewMatrix, [-0.8, -1.5, -8.0]);
