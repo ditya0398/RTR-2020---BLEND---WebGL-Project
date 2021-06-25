@@ -8,9 +8,9 @@ var grgVaoCamera;
 var grgVboCamera;
 var grgVboTextureCamera;
 
-var grtransCameraX = 1.0;
-var grtransCameraY = -0.5;
-var grtransCameraZ = -6.0;
+var grtransCameraX = 6.9;
+var grtransCameraY = 0.84;
+var grtransCameraZ = -14.9;
 var grfangleCameraX = 0.0;
 var grfangleCameraY = 0.0;
 var grfangleCameraZ = 0.0;
@@ -266,7 +266,7 @@ function GRDisplayCamera()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
     
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);

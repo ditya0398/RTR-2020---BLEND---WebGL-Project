@@ -13,13 +13,13 @@ var grgVaoCube;
 var grgVboCubePosition;
 var grgVboCubeTexture;
 
-var grfangleX = 0.0;
+var grfangleX = 160.0;
 var grfangleY = 0.0;
 var grfangleXHandle = 0.0;
 var grtransStageLightX = 0.0;
-var grtransStageLightY = -0.5;
-var grtransStageLightZ = -9.0;
-
+var grtransStageLightY = 13.7;
+var grtransStageLightZ = -44.2;
+var grscaleStageLigth = 2.0
 
 
 // texture
@@ -307,8 +307,19 @@ function GRDisplayStageLights()
     gl.useProgram(grshaderProgramObject);
 
     // stage and stage-wing
-    mat4.translate(grtranslate, grtranslate, [grtransStageLightX - 6.0, grtransStageLightY, grtransStageLightZ]);
-    mat4.scale(scale, scale, [0.5, 0.5, 0.5]);
+    mat4.translate(grtranslate, grtranslate, [grtransStageLightX - 12.0, grtransStageLightY, grtransStageLightZ]);
+    mat4.scale(scale, scale, [grscaleStageLigth, grscaleStageLigth, grscaleStageLigth]);
+    mat4.multiply(grmodel, grtranslate, scale);
+    GRPushToStack(grmodel);
+    GRLightHolderScrew();
+    GRStageLights();
+    GRPopFromStack();
+
+    grmodel = mat4.create();
+    grtranslate = mat4.create();
+    scale = mat4.create(); 
+    mat4.translate(grtranslate, grtranslate, [grtransStageLightX - 8.0, grtransStageLightY, grtransStageLightZ]);
+    mat4.scale(scale, scale, [grscaleStageLigth, grscaleStageLigth, grscaleStageLigth]);
     mat4.multiply(grmodel, grtranslate, scale);
     GRPushToStack(grmodel);
     GRLightHolderScrew();
@@ -319,18 +330,7 @@ function GRDisplayStageLights()
     grtranslate = mat4.create();
     scale = mat4.create(); 
     mat4.translate(grtranslate, grtranslate, [grtransStageLightX - 4.0, grtransStageLightY, grtransStageLightZ]);
-    mat4.scale(scale, scale, [0.5, 0.5, 0.5]);
-    mat4.multiply(grmodel, grtranslate, scale);
-    GRPushToStack(grmodel);
-    GRLightHolderScrew();
-    GRStageLights();
-    GRPopFromStack();
-
-    grmodel = mat4.create();
-    grtranslate = mat4.create();
-    scale = mat4.create(); 
-    mat4.translate(grtranslate, grtranslate, [grtransStageLightX - 2.0, grtransStageLightY, grtransStageLightZ]);
-    mat4.scale(scale, scale, [0.5, 0.5, 0.5]);
+    mat4.scale(scale, scale, [grscaleStageLigth, grscaleStageLigth, grscaleStageLigth]);
     mat4.multiply(grmodel, grtranslate, scale);
     GRPushToStack(grmodel);
     GRLightHolderScrew();
@@ -341,18 +341,7 @@ function GRDisplayStageLights()
     grtranslate = mat4.create();
     scale = mat4.create(); 
     mat4.translate(grtranslate, grtranslate, [grtransStageLightX, grtransStageLightY, grtransStageLightZ]);
-    mat4.scale(scale, scale, [0.5, 0.5, 0.5]);
-    mat4.multiply(grmodel, grtranslate, scale);
-    GRPushToStack(grmodel);
-    GRLightHolderScrew();
-    GRStageLights();
-    GRPopFromStack();
-
-    grmodel = mat4.create();
-    grtranslate = mat4.create();
-    scale = mat4.create(); 
-    mat4.translate(grtranslate, grtranslate, [grtransStageLightX + 2.0, grtransStageLightY, grtransStageLightZ]);
-    mat4.scale(scale, scale, [0.5, 0.5, 0.5]);
+    mat4.scale(scale, scale, [grscaleStageLigth, grscaleStageLigth, grscaleStageLigth]);
     mat4.multiply(grmodel, grtranslate, scale);
     GRPushToStack(grmodel);
     GRLightHolderScrew();
@@ -363,7 +352,7 @@ function GRDisplayStageLights()
     grtranslate = mat4.create();
     scale = mat4.create(); 
     mat4.translate(grtranslate, grtranslate, [grtransStageLightX + 4.0, grtransStageLightY, grtransStageLightZ]);
-    mat4.scale(scale, scale, [0.5, 0.5, 0.5]);
+    mat4.scale(scale, scale, [grscaleStageLigth, grscaleStageLigth, grscaleStageLigth]);
     mat4.multiply(grmodel, grtranslate, scale);
     GRPushToStack(grmodel);
     GRLightHolderScrew();
@@ -373,8 +362,19 @@ function GRDisplayStageLights()
     grmodel = mat4.create();
     grtranslate = mat4.create();
     scale = mat4.create(); 
-    mat4.translate(grtranslate, grtranslate, [grtransStageLightX + 6.0, grtransStageLightY, grtransStageLightZ]);
-    mat4.scale(scale, scale, [0.5, 0.5, 0.5]);
+    mat4.translate(grtranslate, grtranslate, [grtransStageLightX + 8.0, grtransStageLightY, grtransStageLightZ]);
+    mat4.scale(scale, scale, [grscaleStageLigth, grscaleStageLigth, grscaleStageLigth]);
+    mat4.multiply(grmodel, grtranslate, scale);
+    GRPushToStack(grmodel);
+    GRLightHolderScrew();
+    GRStageLights();
+    GRPopFromStack();
+
+    grmodel = mat4.create();
+    grtranslate = mat4.create();
+    scale = mat4.create(); 
+    mat4.translate(grtranslate, grtranslate, [grtransStageLightX + 12.0, grtransStageLightY, grtransStageLightZ]);
+    mat4.scale(scale, scale, [grscaleStageLigth, grscaleStageLigth, grscaleStageLigth]);
     mat4.multiply(grmodel, grtranslate, scale);
     GRPushToStack(grmodel);
     GRLightHolderScrew();
@@ -398,7 +398,7 @@ function GRLightHolderPipe()
     grtranslateMatrix = mat4.create();
     grrotateMatrix = mat4.create();
 
-    mat4.translate(grtranslateMatrix, grtranslateMatrix, [grtransStageLightX, grtransStageLightY, grtransStageLightZ]);
+    mat4.translate(grtranslateMatrix, grtranslateMatrix, [grtransStageLightX, grtransStageLightY + 1.0, grtransStageLightZ]);
     mat4.rotateX(grrotateMatrix, grrotateMatrix, deg2rad(grfangleX));
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grrotateMatrix);
     GRPushToStack(grmodelMatrix);
@@ -409,7 +409,8 @@ function GRLightHolderPipe()
     grscaleMatrix = mat4.create();
 
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [0.0, - 0.4, 0.0]);
-    mat4.scale(grscaleMatrix, grscaleMatrix, [6.5, 0.1, 0.1]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [8.0, 0.1, 0.1]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [grscaleStageLigth, grscaleStageLigth, grscaleStageLigth])
    // mat4.multiply(grtranslateMatrix, grtranslateMatrix, grrotateMatrix);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
 
@@ -419,7 +420,7 @@ function GRLightHolderPipe()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
@@ -472,7 +473,7 @@ function GRLightHolderScrew()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
@@ -531,7 +532,7 @@ function GRStageLights()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
@@ -565,7 +566,7 @@ function GRStageLights()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
@@ -596,7 +597,7 @@ function GRStageLights()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
@@ -632,7 +633,7 @@ function GRStageLights()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
@@ -690,7 +691,7 @@ function GRStageLights()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
@@ -726,7 +727,7 @@ function GRStageLights()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
@@ -763,7 +764,7 @@ function GRStageLights()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
@@ -803,7 +804,7 @@ function GRStageLights()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);

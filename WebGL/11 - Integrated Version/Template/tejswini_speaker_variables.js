@@ -13,6 +13,11 @@ var tvn_projectionMatrix_speaker;
 var tvn_modelMatrix_speaker;
 var tvn_viewMatrix_speaker;
 
+var tvn_trans_x_speaker = 21.4
+var tvn_trans_y_speaker = -3.9
+var tvn_trans_z_speaker = -24.3
+var tvn_scale_speaker = 1.52
+
 var speaker_texture
 
 function tvn_speaker_init() {
@@ -231,15 +236,16 @@ function tvn_speaker_draw() {
     var rotateMatrix = mat4.create();
 
 
-    mat4.translate(translateMatrix, translateMatrix, [-2.0, 0.0, -6.0]);//resulting matrix, act on the matrix, open square bracket
+    mat4.translate(translateMatrix, translateMatrix, [-tvn_trans_x_speaker, tvn_trans_y_speaker, tvn_trans_z_speaker]);//resulting matrix, act on the matrix, open square bracket
     mat4.rotateY(rotateMatrix, rotateMatrix, deg2rad(45));
 
     mat4.multiply
         (modelMatrix, translateMatrix, rotateMatrix);
+    mat4.scale(modelMatrix, modelMatrix, [tvn_scale_speaker, tvn_scale_speaker, tvn_scale_speaker])
 
     mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
     gl.uniformMatrix4fv(tvn_modelMatrix_speaker, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix_speaker, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_speaker, false, gViewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix_speaker, false, projectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -249,6 +255,20 @@ function tvn_speaker_draw() {
 
     gl.bindVertexArray(tvn_vao_rectangle);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
+    gl.bindVertexArray(null);
+
+    mat4.translate(modelMatrix, modelMatrix, [0.0, 2.0, 0.0])
+    gl.bindTexture(gl.TEXTURE_2D, speaker_texture);
+    gl.uniformMatrix4fv(tvn_modelMatrix_speaker, false, modelMatrix);
+    gl.bindVertexArray(tvn_vao_rectangle);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    gl.bindTexture(gl.TEXTURE_2D, null);
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
@@ -264,17 +284,18 @@ function tvn_speaker_draw() {
     rotateMatrix = mat4.create();
 
 
-    mat4.translate(translateMatrix, translateMatrix, [2.0, 0.0, -6.0]);//resulting matrix, act on the matrix, open square bracket
+    mat4.translate(translateMatrix, translateMatrix, [tvn_trans_x_speaker, tvn_trans_y_speaker, tvn_trans_z_speaker]);//resulting matrix, act on the matrix, open square bracket
     mat4.rotateY(rotateMatrix, rotateMatrix, deg2rad(-45));
 
 
 
     mat4.multiply
         (modelMatrix, translateMatrix, rotateMatrix);
-
+    mat4.scale(modelMatrix, modelMatrix, [tvn_scale_speaker, tvn_scale_speaker, tvn_scale_speaker])
+    
     mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
     gl.uniformMatrix4fv(tvn_modelMatrix_speaker, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix_speaker, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_speaker, false, gViewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix_speaker, false, projectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -284,6 +305,7 @@ function tvn_speaker_draw() {
 
     gl.bindVertexArray(tvn_vao_rectangle);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    gl.bindTexture(gl.TEXTURE_2D, null);
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
@@ -291,6 +313,18 @@ function tvn_speaker_draw() {
     gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
 
+    mat4.translate(modelMatrix, modelMatrix, [0.0, 2.0, 0.0])
+    gl.bindTexture(gl.TEXTURE_2D, speaker_texture);
+    gl.uniformMatrix4fv(tvn_modelMatrix_speaker, false, modelMatrix);
+    gl.bindVertexArray(tvn_vao_rectangle);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
+    gl.bindVertexArray(null);
 
     gl.useProgram(null);
 

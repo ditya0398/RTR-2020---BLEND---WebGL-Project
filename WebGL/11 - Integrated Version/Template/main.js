@@ -59,10 +59,10 @@ function keyDown(event) {
 			gbLight = !gbLight
 			break
 		case 88 :                   // x key
-            grfangleX_radio = grfangleX_radio + 1.0;
-            if(grfangleX_radio >= 360.0)
+            grfangleX = grfangleX + 1.0;
+            if(grfangleX >= 360.0)
             {
-                grfangleX_radio = 0.0;
+                grfangleX = 0.0;
             }
             break;
         case 89 :                   // y key
@@ -91,10 +91,10 @@ function keyDown(event) {
 			view[1] += 0.1
 			break
 		case 77: //M
-			tvn_scale += 0.01
+			grscaleStageLigth += 0.1
 			break
 		case 78: //N
-			tvn_scale -= 0.01
+			grscaleStageLigth -= 0.1
 			break
 
 			case 38: //up arrow
@@ -178,16 +178,16 @@ function init() {
 	tvn_init_lamp_arch();
 
 	// initShadow();
-//	GRInitMic();
-//	tvn_script_init();
-//	tvn_speaker_init();
-//	tvn_init_tripod();
-	
-//	GRInitScene2();
-	// DL_initChair()
-	//GRInitStageLights();
-	//GRInitCamera();
-	ASJ_init_stove();
+
+	GRInitMic();
+	tvn_script_init();
+	tvn_speaker_init();
+	tvn_init_tripod();
+	GRInitScene2();
+	DL_initChair()
+	GRInitStageLights();
+	GRInitCamera();
+	//ASJ_init_stove();
 	//utensil_init();
 
 
@@ -240,7 +240,7 @@ function reshape() {
 function render() {
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-	mat4.lookAt(gViewMatrix, view, [0.0, 0.0, view[2] - 20.0], [0.0, 1.0, 0.0])
+	mat4.lookAt(gViewMatrix, view, [0.0, 3.0, view[2] - 20.0], [0.0, 1.0, 0.0])
 
 	if(currentScene == scenes.SCENE_1) {
 		// animateFire();
@@ -254,16 +254,16 @@ function render() {
 		ASJ_draw_stove();
 		// utensil_display();
 	} else if(currentScene == scenes.SCENE_2) {
-		// GRDisplayScene2();
-		// // tvn_tripod_draw();
-		// // tvn_speaker_draw();
-		// // tvn_script_draw();
-		// GRDisplayMic();
-		// GRDisplayCamera();
-		// GRDisplayStageLights();
+		GRDisplayScene2();
+		GRDisplayStageLights();
+		tvn_tripod_draw();
+		GRDisplayMic();
+		tvn_speaker_draw();
+		DL_renderChair()
+		GRDisplayCamera();
+		tvn_script_draw();
 	}
 	
-	// DL_renderChair()
 	
 
 //	Draw_Shadow();
