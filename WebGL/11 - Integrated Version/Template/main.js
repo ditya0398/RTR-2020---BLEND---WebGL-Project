@@ -158,6 +158,10 @@ function init() {
 	// DL_initChair()
 	// GRInitStageLights();
 
+	//ASJ_init_stove();
+
+
+
 	loadModel('Models/car.obj',vao_mercedes_modelLoading,vbo_mercedes_modelLoading);
 	MercedesProgramObject = initializeModel();
 
@@ -191,13 +195,14 @@ function render() {
 
 	if(currentScene == scenes.SCENE_1) {
 		// animateFire();
-	//	Display_CubeMap()
-		// GRDisplay()
-		// tejswini_hut_draw()
-		// renderNormalMapRoad()
-		// GRDisplayRoadside();
-		// tvn_draw_lamp_arch();
-		drawModel();
+		// Display_CubeMap()
+		GRDisplay()
+		tejswini_hut_draw()
+		renderNormalMapRoad()
+		GRDisplayRoadside();
+		tvn_draw_lamp_arch();
+		//drawModel();
+		//ASJ_draw_stove(perspectiveMatrix);
 	}
 	
 	//tvn_script_draw();
