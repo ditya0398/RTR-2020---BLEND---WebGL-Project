@@ -143,7 +143,7 @@ function init() {
 	GRInit()
 	GRInitRoadside();
 	initNormalMapRoad()
-	initCubeMap()
+	//initCubeMap()
 
 	tejswini_hut_init()
 	tvn_init_lamp_arch();
@@ -157,6 +157,10 @@ function init() {
 	// GRInitScene2();
 	// DL_initChair()
 	// GRInitStageLights();
+
+	loadModel('Models/car.obj',vao_mercedes_modelLoading,vbo_mercedes_modelLoading);
+	MercedesProgramObject = initializeModel();
+
 
 	gViewMatrix = mat4.create()
 	perspectiveMatrix = mat4.create()
@@ -187,12 +191,13 @@ function render() {
 
 	if(currentScene == scenes.SCENE_1) {
 		// animateFire();
-		// Display_CubeMap()
-		GRDisplay()
-		tejswini_hut_draw()
-		renderNormalMapRoad()
-		GRDisplayRoadside();
-		tvn_draw_lamp_arch();
+	//	Display_CubeMap()
+		// GRDisplay()
+		// tejswini_hut_draw()
+		// renderNormalMapRoad()
+		// GRDisplayRoadside();
+		// tvn_draw_lamp_arch();
+		drawModel();
 	}
 	
 	//tvn_script_draw();
