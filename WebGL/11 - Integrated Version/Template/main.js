@@ -29,7 +29,7 @@ const scenes = {
 	SCENE_4:4
 }
 
-var currentScene = scenes.SCENE_1
+var currentScene = scenes.SCENE_2
 
 function main() {
 	//Get Canvas from DOM
