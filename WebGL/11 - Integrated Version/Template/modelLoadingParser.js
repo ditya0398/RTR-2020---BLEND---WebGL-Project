@@ -1,7 +1,13 @@
 var materials_ModelLoading;
-var parts_modelLoading;
+
 var material_modelLoading;
 var samplerUniform_modelLoading;
+
+var gParts_Table;
+
+var gParts_Teapot;
+
+var gParts_TeaCup;
 
 
 
@@ -36,22 +42,51 @@ var sphere_modelLoading=null;
 
 
 
-var numElements_modelLoading = [];
-var numElementsCounter_modelLoading  =0;
+var numElements_Teapot = [];
+var numElements_table = [];
+var numElements_Teacup = [];
+
 var vao_cube_modelLoading = [];
 var vao_mercedes_modelLoading = [];
 var vbo_mercedes_modelLoading = [];
 
 
+var vao_teapot = [];
+var vbo_teapot = [];
+
+
+var vao_teacup = [];
+var vbo_teacup = [];
+
+
 var vbo_cube_tp_modelLoading ;
     
 
-var MercedesProgramObject;
+var modelLoadingProgramObject;
 
+var TeapotTransX = 2.0500000000000007;
+var TeapotTransY = 0.9000000000000002;
+var TeapotTransZ = -16.100000000000016;
+var TeapotScale = 0.1199999999999994;
+
+
+
+var TeacupTransX = 2.2;
+var TeacupTransY = -1.1000000000000003;
+var TeacupTransZ = -15.0;
+var TeacupScale = 0.03999999999999938;
 
 function initializeModel(){
 	//Get OpenGL context
-
+	gl=canvas.getContext("webgl2");
+	if(gl == null)
+		console.log("Obtaining 2D webgl2 failed\n");
+	else
+		console.log("Obtaining 2D webgl2 succeeded\n");
+	
+	gl.viewportWidth  = canvas.width;
+	gl.viewportHeight  = canvas.height;
+	
 
 	var modelLoadingProgramObject;
 	//vertex shaderProgramObject
@@ -194,10 +229,9 @@ function initializeModel(){
 	// makeSphere(sphere,2.0,30,30);
 	
 
+
 	return modelLoadingProgramObject;
 }
-
-
 
 function parseOBJ(text) {
     // because indices are base 1 let's just fill in the 0th data
@@ -368,48 +402,48 @@ return unparsedArgs;
 }
 
 function parseMTL(text) {
-      const materials = {};
-      let material;
+const materials = {};
+let material;
 
-      const keywords = {
-      newmtl(parts, unparsedArgs) {
-      material = {};
-      materials[unparsedArgs] = material;
-      },
-      /* eslint brace-style:0 */
-      Ns(parts)       { material.shininess      = parseFloat(parts[0]); },
-      Ka(parts)       { material.ambient        = parts.map(parseFloat); },
-      Kd(parts)       { material.diffuse        = parts.map(parseFloat); },
-      Ks(parts)       { material.specular       = parts.map(parseFloat); },
-      Ke(parts)       { material.emissive       = parts.map(parseFloat); },
-      map_Kd(parts, unparsedArgs)   { material.diffuseMap = parseMapArgs(unparsedArgs); },
-      map_Ns(parts, unparsedArgs)   { material.specularMap = parseMapArgs(unparsedArgs); },
-      map_Bump(parts, unparsedArgs) { material.normalMap = parseMapArgs(unparsedArgs); },
-      Ni(parts)       { material.opticalDensity = parseFloat(parts[0]); },
-      d(parts)        { material.opacity        = parseFloat(parts[0]); },
-      illum(parts)    { material.illum          = parseInt(parts[0]); },
-      };
+const keywords = {
+newmtl(parts, unparsedArgs) {
+material = {};
+materials[unparsedArgs] = material;
+},
+/* eslint brace-style:0 */
+Ns(parts)       { material.shininess      = parseFloat(parts[0]); },
+Ka(parts)       { material.ambient        = parts.map(parseFloat); },
+Kd(parts)       { material.diffuse        = parts.map(parseFloat); },
+Ks(parts)       { material.specular       = parts.map(parseFloat); },
+Ke(parts)       { material.emissive       = parts.map(parseFloat); },
+map_Kd(parts, unparsedArgs)   { material.diffuseMap = parseMapArgs(unparsedArgs); },
+map_Ns(parts, unparsedArgs)   { material.specularMap = parseMapArgs(unparsedArgs); },
+map_Bump(parts, unparsedArgs) { material.normalMap = parseMapArgs(unparsedArgs); },
+Ni(parts)       { material.opticalDensity = parseFloat(parts[0]); },
+d(parts)        { material.opacity        = parseFloat(parts[0]); },
+illum(parts)    { material.illum          = parseInt(parts[0]); },
+};
 
-      const keywordRE = /(\w*)(?: )*(.*)/;
-      const lines = text.split('\n');
-      for (let lineNo = 0; lineNo < lines.length; ++lineNo) {
-      const line = lines[lineNo].trim();
-      if (line === '' || line.startsWith('#')) {
-      continue;
-      }
-      const m = keywordRE.exec(line);
-      if (!m) {
-          continue;
-      }
-      const [, keyword, unparsedArgs] = m;
-      const parts = line.split(/\s+/).slice(1);
-      const handler = keywords[keyword];
-      if (!handler) {
-          console.warn('unhandled keyword:', keyword);  // eslint-disable-line no-console
-          continue;
-      }
-          handler(parts, unparsedArgs);
-    }
+const keywordRE = /(\w*)(?: )*(.*)/;
+const lines = text.split('\n');
+for (let lineNo = 0; lineNo < lines.length; ++lineNo) {
+const line = lines[lineNo].trim();
+if (line === '' || line.startsWith('#')) {
+continue;
+}
+const m = keywordRE.exec(line);
+if (!m) {
+    continue;
+}
+const [, keyword, unparsedArgs] = m;
+const parts = line.split(/\s+/).slice(1);
+const handler = keywords[keyword];
+if (!handler) {
+    console.warn('unhandled keyword:', keyword);  // eslint-disable-line no-console
+    continue;
+}
+    handler(parts, unparsedArgs);
+}
 
 return materials;
 }
@@ -452,8 +486,14 @@ return texture;
 }
 
 
-async function loadModel(modelName,vao_cube,vbo_cube)
+async function loadModel(modelName,vao_cube,vbo_cube,callback)
 {
+  var parts_modelLoading;
+  
+  let numElements_modelLoading = [];
+  numElements_modelLoading.length = 0;
+  var numElementsCounter_modelLoading = 0;
+
                 const objHref = modelName;  /* webglfundamentals: url */
                 const response = await fetch(objHref);
                 const text = await response.text();
@@ -561,6 +601,8 @@ async function loadModel(modelName,vao_cube,vbo_cube)
                 gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
                 }
+
+               
                 if(obj.geometries[i].data.color != null)
                 {
                 j += 1;        
@@ -603,8 +645,9 @@ async function loadModel(modelName,vao_cube,vbo_cube)
                 //  bufferInfo.numElements = indices.length;
                 } else {
                 numElements_modelLoading[numElementsCounter_modelLoading] = getNumElementsFromNonIndexedArrays(arrays);
+                console.log(numElementsCounter_modelLoading);
                 numElementsCounter_modelLoading += 1;
-                console.log(numElements_modelLoading);
+             
                 }
                 }
 
@@ -657,36 +700,46 @@ async function loadModel(modelName,vao_cube,vbo_cube)
                 return array.numComponents || array.size || guessNumComponentsFromName(arrayName, getArray(array).length);
                 }
 
-
+                if(parts_modelLoading.length > 0)
+                  callback(parts_modelLoading,numElements_modelLoading)                  
+                else
+                  console.log("did not succeeed");
 
 }
 
 
 function drawModel()
 {
-	
-	gl.useProgram(MercedesProgramObject);
+	gl.useProgram(modelLoadingProgramObject);
 	//lighting details
 	
+// if(gParts_Table)
+//   console.log(gParts_Table.length);
+
+
 	var modelMatrix = mat4.create();
 	var viewMatrix = mat4.create();
 	
 	//var angleInRadian = degreeToRadian(gAngle);
-	mat4.translate(modelMatrix, modelMatrix, [0.0,0.0,-100.0]);
-	mat4.rotateY(modelMatrix,modelMatrix,deg2rad(gAngleTriangle_modelLoading));
+	mat4.translate(modelMatrix, modelMatrix, [TeapotTransX,-TeapotTransY,TeapotTransZ]);
+  mat4.scale(modelMatrix,modelMatrix,[TeapotScale,TeapotScale,TeapotScale]);
+	//mat4.rotateY(modelMatrix,modelMatrix,deg2rad(gAngleTriangle_modelLoading));
 	
-	gAngleTriangle_modelLoading += 0.02;
+//	gAngleTriangle_modelLoading += 0.02;
 	//mat4.rotateY(modelMatrix,modelMatrix,degreeToRadian(gAngleTriangle));
 	//mat4.multiply(modelViewMatrix, modelViewMatrix, modelMatrix);
 	gl.uniformMatrix4fv(modelUniform_modelLoading,false,modelMatrix);
-	gl.uniformMatrix4fv(viewUniform_modelLoading,false,viewMatrix);
+	gl.uniformMatrix4fv(viewUniform_modelLoading,false,gViewMatrix);
 	gl.uniformMatrix4fv(projectionUniform_modelLoading,false,perspectiveMatrix);
 	
-	if(parts_modelLoading)
+/************ TEAPOT ************************ */
+
+
+  if(gParts_Teapot)
 	{
 		
 
-		for(var i = 0; i < parts_modelLoading.length;i++)
+		for(var i = 0; i < gParts_Teapot.length;i++)
 		{
 
 			if(gbLighting_modelLoading){
@@ -698,33 +751,81 @@ function drawModel()
 				gl.uniform4fv(LightPositionUniform_modelLoading, light_position_modelLoading);
 				
 				//set material properties
-				gl.uniform3fv(KAUniform_modelLoading, parts_modelLoading[i].material.ambient);
-				gl.uniform3fv(KDUniform_modelLoading, parts_modelLoading[i].material.diffuse);
-				gl.uniform3fv(KSUniform_modelLoading, parts_modelLoading[i].material.specular);
-				gl.uniform1f(MaterialShininessUniform_modelLoading,parts_modelLoading[i].material.shininess);
+				gl.uniform3fv(KAUniform_modelLoading, gParts_Teapot[i].material.ambient);
+				gl.uniform3fv(KDUniform_modelLoading, gParts_Teapot[i].material.diffuse);
+				gl.uniform3fv(KSUniform_modelLoading, gParts_Teapot[i].material.specular);
+				gl.uniform1f(MaterialShininessUniform_modelLoading,gParts_Teapot[i].material.shininess);
 				
 				}
 				else
 				{
 						gl.uniform1i(LKeyPressed_modelLoading, 0);
 				}
-			gl.bindTexture(gl.TEXTURE_2D, parts_modelLoading[i].material.diffuseMap);
+			gl.bindTexture(gl.TEXTURE_2D, gParts_Teapot[i].material.diffuseMap);
 
-				gl.bindVertexArray(vao_mercedes_modelLoading[i]);
+				gl.bindVertexArray(vao_teapot[i]);
 		
-				gl.drawArrays(gl.TRIANGLES,0,numElements_modelLoading[i]);
-        
-
+				gl.drawArrays(gl.TRIANGLES,0,numElements_Teapot[i]);
 		}
         
 	}
+
+
+
+/*****************************************    -------------------------        ************************** */
+
+
+drawTeacup();
+
+
+
+
+	// if(gParts_Table)
+	// {
+		
+
+	// 	for(var i = 0; i < gParts_Table.length;i++)
+	// 	{
+
+	// 		if(gbLighting_modelLoading){
+	// 			gl.uniform1i(LKeyPressed_modelLoading, 1);
+	// 			gl.uniform3fv(LAUniform_modelLoading, light_ambient_modelLoading);
+	// 			gl.uniform3fv(LDUniform_modelLoading, light_diffuse_modelLoading);
+	// 			gl.uniform3fv(LSUniform_modelLoading, light_specular_modelLoading);
+				
+	// 			gl.uniform4fv(LightPositionUniform_modelLoading, light_position_modelLoading);
+				
+	// 			//set material properties
+	// 			gl.uniform3fv(KAUniform_modelLoading, gParts_Table[i].material.ambient);
+	// 			gl.uniform3fv(KDUniform_modelLoading, gParts_Table[i].material.diffuse);
+	// 			gl.uniform3fv(KSUniform_modelLoading, gParts_Table[i].material.specular);
+	// 			gl.uniform1f(MaterialShininessUniform_modelLoading,gParts_Table[i].material.shininess);
+				
+	// 			}
+	// 			else
+	// 			{
+	// 					gl.uniform1i(LKeyPressed_modelLoading, 0);
+	// 			}
+	// 		gl.bindTexture(gl.TEXTURE_2D, gParts_Table[i].material.diffuseMap);
+
+	// 			gl.bindVertexArray(vao_mercedes_modelLoading[i]);
+		
+	// 			gl.drawArrays(gl.TRIANGLES,0,numElements_Teapot[i]);
+	// 	}
+        
+	// }
+
+
+  
+	
 	
 	gl.useProgram(null);
 
 
 
-	
-	//console.log(i);
+
+
+	console.log(i);
 	
 	// if( gAngleTriangle_modelLoading >= 360.0)
 	// 		gAngleTriangle_modelLoading = 0.0;
@@ -735,4 +836,61 @@ function drawModel()
 	// 		gAngleSquare_modelLoading = 0.0;
 	// 	else
 	// 		gAngleSquare_modelLoading = gAngleSquare_modelLoading + 1.0;
+}
+
+function drawTeacup()
+{
+	var modelMatrix = mat4.create();
+	var viewMatrix = mat4.create();
+	
+	//var angleInRadian = degreeToRadian(gAngle);
+	mat4.translate(modelMatrix, modelMatrix, [TeacupTransX, TeacupTransY,TeacupTransZ]);
+  mat4.scale(modelMatrix,modelMatrix,[TeacupScale,TeacupScale,TeacupScale]);
+	//mat4.rotateY(modelMatrix,modelMatrix,deg2rad(gAngleTriangle_modelLoading));
+	
+//	gAngleTriangle_modelLoading += 0.02;
+	//mat4.rotateY(modelMatrix,modelMatrix,degreeToRadian(gAngleTriangle));
+	//mat4.multiply(modelViewMatrix, modelViewMatrix, modelMatrix);
+	gl.uniformMatrix4fv(modelUniform_modelLoading,false,modelMatrix);
+	gl.uniformMatrix4fv(viewUniform_modelLoading,false,gViewMatrix);
+	gl.uniformMatrix4fv(projectionUniform_modelLoading,false,perspectiveMatrix);
+	
+/************ TEAPOT ************************ */
+
+
+  if(gParts_TeaCup)
+	{
+		
+
+		for(var i = 0; i < gParts_TeaCup.length;i++)
+		{
+
+			if(gbLighting_modelLoading){
+				gl.uniform1i(LKeyPressed_modelLoading, 1);
+				gl.uniform3fv(LAUniform_modelLoading, light_ambient_modelLoading);
+				gl.uniform3fv(LDUniform_modelLoading, light_diffuse_modelLoading);
+				gl.uniform3fv(LSUniform_modelLoading, light_specular_modelLoading);
+				
+				gl.uniform4fv(LightPositionUniform_modelLoading, light_position_modelLoading);
+				
+				//set material properties
+				gl.uniform3fv(KAUniform_modelLoading, gParts_TeaCup[i].material.ambient);
+				gl.uniform3fv(KDUniform_modelLoading, gParts_TeaCup[i].material.diffuse);
+				gl.uniform3fv(KSUniform_modelLoading, gParts_TeaCup[i].material.specular);
+				gl.uniform1f(MaterialShininessUniform_modelLoading,gParts_TeaCup[i].material.shininess);
+				
+				}
+				else
+				{
+						gl.uniform1i(LKeyPressed_modelLoading, 0);
+				}
+			gl.bindTexture(gl.TEXTURE_2D, gParts_TeaCup[i].material.diffuseMap);
+
+				gl.bindVertexArray(vao_teacup[i]);
+		
+				gl.drawArrays(gl.TRIANGLES,0,numElements_Teacup[i]);
+		}
+        
+	}
+
 }

@@ -16,6 +16,8 @@ var projectionMatrixUnifrom_stove;
 var stack_stove = [];
 var vbo_normal_stove;
 
+var textureSamplerUnifrom;
+
 var stove_Transx =  2.4199999999999924;
 var stove_Transy = -0.3900000000000002;
 var stove_Transz =  -15.919999999999789;  
