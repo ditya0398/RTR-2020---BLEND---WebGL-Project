@@ -212,6 +212,16 @@ function init() {
 		//numElem = null;
 	});
 
+
+	loadModel('Models/car.obj',vao_car,vbo_car,function(parts_car,numElem2){
+		console.log("succeeded");
+		numElements_Car = numElem2;
+		console.log(numElements_Car);
+		 gParts_Car = parts_car;
+		console.log(gParts_Car.length);
+		//numElem = null;
+	});
+
 	modelLoadingProgramObject = initializeModel();
 
 
@@ -265,6 +275,7 @@ function render() {
 	}
 	else if(currentScene == scenes.SCENE_3){
 		displayStarBucksOuter();
+		drawCar();
 	}
 	
 

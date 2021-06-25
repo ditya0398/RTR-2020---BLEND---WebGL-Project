@@ -8,7 +8,7 @@ var gParts_Table;
 var gParts_Teapot;
 
 var gParts_TeaCup;
-
+var gParts_Car;
 
 
 var vertexShaderObject_modelLoading;
@@ -45,6 +45,7 @@ var sphere_modelLoading=null;
 var numElements_Teapot = [];
 var numElements_table = [];
 var numElements_Teacup = [];
+var numElements_Car = [];
 
 var vao_cube_modelLoading = [];
 var vao_mercedes_modelLoading = [];
@@ -57,6 +58,11 @@ var vbo_teapot = [];
 
 var vao_teacup = [];
 var vbo_teacup = [];
+
+
+
+var vao_car = [];
+var vbo_car = [];
 
 
 var vbo_cube_tp_modelLoading ;
@@ -892,5 +898,64 @@ function drawTeacup()
 		}
         
 	}
+
+}
+
+function drawCar()
+{
+  gl.useProgram(modelLoadingProgramObject);
+	var modelMatrix = mat4.create();
+	var viewMatrix = mat4.create();
+	
+	//var angleInRadian = degreeToRadian(gAngle);
+	mat4.translate(modelMatrix, modelMatrix, [TeacupTransX, TeacupTransY,TeacupTransZ]);
+  mat4.scale(modelMatrix,modelMatrix,[TeacupScale,TeacupScale,TeacupScale]);
+	//mat4.rotateY(modelMatrix,modelMatrix,deg2rad(gAngleTriangle_modelLoading));
+	
+//	gAngleTriangle_modelLoading += 0.02;
+	//mat4.rotateY(modelMatrix,modelMatrix,degreeToRadian(gAngleTriangle));
+	//mat4.multiply(modelViewMatrix, modelViewMatrix, modelMatrix);
+	gl.uniformMatrix4fv(modelUniform_modelLoading,false,modelMatrix);
+	gl.uniformMatrix4fv(viewUniform_modelLoading,false,gViewMatrix);
+	gl.uniformMatrix4fv(projectionUniform_modelLoading,false,perspectiveMatrix);
+	
+/************ TEAPOT ************************ */
+
+
+  if(gParts_Car)
+	{
+		
+
+		for(var i = 0; i < gParts_Car.length;i++)
+		{
+
+			if(gbLighting_modelLoading){
+				gl.uniform1i(LKeyPressed_modelLoading, 1);
+				gl.uniform3fv(LAUniform_modelLoading, light_ambient_modelLoading);
+				gl.uniform3fv(LDUniform_modelLoading, light_diffuse_modelLoading);
+				gl.uniform3fv(LSUniform_modelLoading, light_specular_modelLoading);
+				
+				gl.uniform4fv(LightPositionUniform_modelLoading, light_position_modelLoading);
+				
+				//set material properties
+				gl.uniform3fv(KAUniform_modelLoading, gParts_Car[i].material.ambient);
+				gl.uniform3fv(KDUniform_modelLoading, gParts_Car[i].material.diffuse);
+				gl.uniform3fv(KSUniform_modelLoading, gParts_Car[i].material.specular);
+				gl.uniform1f(MaterialShininessUniform_modelLoading,gParts_Car[i].material.shininess);
+				
+				}
+				else
+				{
+						gl.uniform1i(LKeyPressed_modelLoading, 0);
+				}
+			gl.bindTexture(gl.TEXTURE_2D, gParts_Car[i].material.diffuseMap);
+
+				gl.bindVertexArray(vao_car[i]);
+		
+				gl.drawArrays(gl.TRIANGLES,0,numElements_Car[i]);
+		}
+        
+	}
+  gl.useProgram(null);
 
 }
