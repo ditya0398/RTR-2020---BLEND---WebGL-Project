@@ -1,7 +1,7 @@
 
-var grgVertexShaderObjectStage;
-var grgFragmentShadeerObjectStage;
-var grgShaderProgramObjectStage;
+var grvertexShaderObjectStage;
+var grfragmentShaderObjectStage;
+var grshaderProgramObjectStage;
 
 
 var grgVaoStage;
@@ -18,16 +18,19 @@ var grtransStageX = 0.0;
 var grtransStageY = 0.0;
 var grtransStageZ = -10.0;
 
-
 // texture
 var grgtextureStageFloor;
 var grgtextureStageWall;
 var grgtextureWings;
-var grgtextureSamplerUniform;
+var grgtextureSamplerUniformStage;
+var grgtextureFloor;
 
-var grgModelMatrixUniform;
-var grgViewMatrixUniform;
-var grgProjectionMatrixUniform;
+var grgModelMatrixUniformStage;
+var grgViewMatrixUniformStage;
+var grgProjectionMatrixUniformStage;
+
+var grColorUniform;
+var grTexCoordPowerUnifrom;
 
 var grstackMatrix = [];
 var grmatrixPosition = -1;
@@ -43,19 +46,20 @@ function GRInitScene2()
      "uniform mat4 u_model_matrix;" +
      "uniform mat4 u_view_matrix;" +
      "uniform mat4 u_projection_matrix;" +
+     "uniform vec2 u_texCoordPower;" +
      "out vec2 out_texcoord;" +
      "void main(void)" +
      "{" +
      "gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * vPosition;" +
-     "out_texcoord = vTexCoord;" +
+     "out_texcoord = vTexCoord * u_texCoordPower;" +
      "}";
  
-     grvertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
-     gl.shaderSource(grvertexShaderObject, grvertexShaderSourceCode);
-     gl.compileShader(grvertexShaderObject);
-     if(gl.getShaderParameter(grvertexShaderObject, gl.COMPILE_STATUS) == false)
+     grvertexShaderObjectStage = gl.createShader(gl.VERTEX_SHADER);
+     gl.shaderSource(grvertexShaderObjectStage, grvertexShaderSourceCode);
+     gl.compileShader(grvertexShaderObjectStage);
+     if(gl.getShaderParameter(grvertexShaderObjectStage, gl.COMPILE_STATUS) == false)
      {
-         var error = gl.getShaderInfoLog(grvertexShaderObject);
+         var error = gl.getShaderInfoLog(grvertexShaderObjectStage);
          if(error.length > 0)
          {
              alert(error);
@@ -71,41 +75,41 @@ function GRInitScene2()
      "precision highp float;" +
      "in vec2 out_texcoord;" +
      "uniform highp sampler2D u_texture_sampler;" +
+     "uniform vec4 u_color;" +
      "out vec4 FragColor;" +
      "void main(void)" +
      "{" +
-     "FragColor = texture(u_texture_sampler, out_texcoord);" +
+     "FragColor = texture(u_texture_sampler, out_texcoord) * u_color;" +
      "}";
  
-     grfragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
-     gl.shaderSource(grfragmentShaderObject, grfragmentShaderSourceCode);
-     gl.compileShader(grfragmentShaderObject);
-     if(gl.getShaderParameter(grfragmentShaderObject, gl.COMPILE_STATUS) == false)
+     grfragmentShaderObjectStage = gl.createShader(gl.FRAGMENT_SHADER);
+     gl.shaderSource(grfragmentShaderObjectStage, grfragmentShaderSourceCode);
+     gl.compileShader(grfragmentShaderObjectStage);
+     if(gl.getShaderParameter(grfragmentShaderObjectStage, gl.COMPILE_STATUS) == false)
      {
-         var error = gl.getShaderInfoLog(grfragmentShaderObject);
+         var error = gl.getShaderInfoLog(grfragmentShaderObjectStage);
          if(error.length > 0)
          {
              alert(error);
              uninitialize(); 
          }
          alert("in compile fragment shader error");
-         
      }
  
      // shader program
-     grshaderProgramObject = gl.createProgram();
+     grshaderProgramObjectStage = gl.createProgram();
      //attach shader object
-     gl.attachShader(grshaderProgramObject, grvertexShaderObject);
-     gl.attachShader(grshaderProgramObject, grfragmentShaderObject);
+     gl.attachShader(grshaderProgramObjectStage, grvertexShaderObjectStage);
+     gl.attachShader(grshaderProgramObjectStage, grfragmentShaderObjectStage);
      // pre-linking
-     gl.bindAttribLocation(grshaderProgramObject, macros.AMC_ATTRIB_POSITION, "vPosition");
-     gl.bindAttribLocation(grshaderProgramObject, macros.AMC_ATTRIB_TEXCOORD, "vTexCoord");
+     gl.bindAttribLocation(grshaderProgramObjectStage, macros.AMC_ATTRIB_POSITION, "vPosition");
+     gl.bindAttribLocation(grshaderProgramObjectStage, macros.AMC_ATTRIB_TEXCOORD, "vTexCoord");
  
      // linking
-     gl.linkProgram(grshaderProgramObject);
-     if(!gl.getProgramParameter(grshaderProgramObject, gl.LINK_STATUS))
+     gl.linkProgram(grshaderProgramObjectStage);
+     if(!gl.getProgramParameter(grshaderProgramObjectStage, gl.LINK_STATUS))
      {
-         var err = gl.getProgramInfoLog(grshaderProgramObject);
+         var err = gl.getProgramInfoLog(grshaderProgramObjectStage);
          if(err.length > 0)
          {
              alert(err);
@@ -118,19 +122,20 @@ function GRInitScene2()
      }
  
      // mvp uniform binding
-     grgModelMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_model_matrix");
-     grgViewMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_view_matrix");
-     grgProjectionMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_projection_matrix");
-     grtextureSamplerUniform = gl.getUniformLocation(grshaderProgramObject, "u_texture_sampler");
- 
-   
+     grgModelMatrixUniformStage = gl.getUniformLocation(grshaderProgramObjectStage, "u_model_matrix");
+     grgViewMatrixUniformStage = gl.getUniformLocation(grshaderProgramObjectStage, "u_view_matrix");
+     grgProjectionMatrixUniformStage = gl.getUniformLocation(grshaderProgramObjectStage, "u_projection_matrix");
+     grtextureSamplerUniform = gl.getUniformLocation(grshaderProgramObjectStage, "u_texture_sampler");
+     grColorUniform = gl.getUniformLocation(grshaderProgramObjectStage, "u_color");
+     grTexCoordPowerUnifrom = gl.getUniformLocation(grshaderProgramObjectStage, "u_texCoordPower");
+     
  
      var grstageTexcoords = new Float32Array(
          [
-            0.3, 0.0,
-            0.3, 1.0,
-            0.1, 1.0,
-            0.1, 0.0,
+            10.0, 0.0,
+            0.0, 1.0,
+            0.0, 0.0,
+            10.0, 1.0,
 
              1.0, 0.0,
              1.0, 1.0,
@@ -314,14 +319,26 @@ function GRInitScene2()
      };
 
      
-     
+     grgtextureFloor = gl.createTexture();
+     grgtextureFloor.image = new Image();
+     grgtextureFloor.image.src = "GauriResources/floor.jpg";
+     grgtextureFloor.image.onload = function()
+     {
+         gl.bindTexture(gl.TEXTURE_2D, grgtextureFloor);
+         //gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, grgtextureFloor.image);
+         gl.bindTexture(gl.TEXTURE_2D, null);
+     }; 
 }
 
 
 function GRDisplayScene2()
 {
   //  console.log("p matrix "+ perspectiveMatrix);
-    gl.useProgram(grshaderProgramObject);
+    gl.useProgram(grshaderProgramObjectStage);
 
    // stage and stage-wing
     GRStage();
@@ -372,20 +389,64 @@ function GRStage()
     grtranslateMatrix = mat4.create();
     grrotateMatrix = mat4.create();
 
-    mat4.translate(grtranslateMatrix, grtranslateMatrix, [0.0, -1.0, 0.0]);
-    mat4.scale(grscaleMatrix, grscaleMatrix, [24.0, 1.2, 12.0]);
+    mat4.translate(grtranslateMatrix, grtranslateMatrix, [0.0, -2.2, 0.0]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [24.0, 2.5, 12.0]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStackScene2(grmodelMatrix);
     GRPopFromStackScene2();
     
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
+    gl.uniform4f(grColorUniform, 0.9, 0.4, 0.15, 1.0)
+    gl.uniform2f(grTexCoordPowerUnifrom, 1.0, 1.0)
+
+    gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
+    
+    gl.bindVertexArray(grgVaoStage);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    gl.activeTexture(gl.TEXTURE0);
+
+    gl.bindTexture(gl.TEXTURE_2D, grgtextureStageFloor);
+    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform4f(grColorUniform, 1.0, 1.0, 1.0, 1.0) 
+    gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
+    gl.bindVertexArray(null);
+
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
+
+
+    //Floor
+    grmodelMatrix = mat4.create();
+    grviewMatrix = mat4.create();
+    grprojectionMatrix = mat4.create();
+    grscaleMatrix = mat4.create();
+    grtranslateMatrix = mat4.create();
+    grrotateMatrix = mat4.create();
+
+    mat4.translate(grtranslateMatrix, grtranslateMatrix, [0.0, -4.0, 12.0]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [24.0, 1.2, 20.0]);
+    mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
+    grmodelMatrix = GRPushToStackScene2(grmodelMatrix);
+    GRPopFromStackScene2();
+    
+    mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
+
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
+    gl.uniform4f(grColorUniform, 1.0, 1.0, 1.0, 1.0)
+    gl.uniform2f(grTexCoordPowerUnifrom, 10.0, 10.0)
 
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, grgtextureStageFloor);
+    gl.bindTexture(gl.TEXTURE_2D, grgtextureFloor);
     gl.uniform1i(grtextureSamplerUniform, 0);
 
     gl.bindVertexArray(grgVaoStage);
@@ -399,6 +460,49 @@ function GRStage()
 
     gl.bindTexture(gl.TEXTURE_2D, null);
 
+
+
+    //Stage roof
+    grmodelMatrix = mat4.create();
+    grviewMatrix = mat4.create();
+    grprojectionMatrix = mat4.create();
+    grscaleMatrix = mat4.create();
+    grtranslateMatrix = mat4.create();
+    grrotateMatrix = mat4.create();
+
+    mat4.translate(grtranslateMatrix, grtranslateMatrix, [0.0, 19.2, 0.0]);
+    mat4.rotateZ(grrotateMatrix, grrotateMatrix, Math.PI);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [24.0, 1.2, 12.0]);
+    mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
+    mat4.multiply(grmodelMatrix, grmodelMatrix, grrotateMatrix);
+    grmodelMatrix = GRPushToStackScene2(grmodelMatrix);
+    GRPopFromStackScene2();
+    
+    mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
+
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
+    gl.uniform4f(grColorUniform, 0.7, 0.2, 0.15, 1.0)
+    gl.uniform2f(grTexCoordPowerUnifrom, 1.0, 1.0)
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
+    gl.uniform1i(grtextureSamplerUniform, 0);
+
+    gl.bindVertexArray(grgVaoStage);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
+    gl.bindVertexArray(null);
+
+    gl.uniform4f(grColorUniform, 1.0, 1.0, 1.0, 1.0)
+
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
     // Stage wall - right
     grmodelMatrix = mat4.create();
     grviewMatrix = mat4.create();
@@ -408,8 +512,8 @@ function GRStage()
     grrotateMatrix = mat4.create();
     
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [25.0, 8.0, 0.0]);
-    mat4.scale(grscaleMatrix, grscaleMatrix, [10.4, 0.5, 12.0]);
-    mat4.rotateZ(grrotateMatrix, grrotateMatrix, deg2rad(90.0));
+    mat4.scale(grscaleMatrix, grscaleMatrix, [13.0, 0.5, 12.0]);
+    mat4.rotateZ(grrotateMatrix, grrotateMatrix, deg2rad(-90.0));
     mat4.multiply(grtranslateMatrix, grtranslateMatrix, grrotateMatrix);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStackScene2(grmodelMatrix);
@@ -417,9 +521,9 @@ function GRStage()
     
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureStageWall);
@@ -445,7 +549,7 @@ function GRStage()
     grrotateMatrix = mat4.create();
     
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [-25.0, 8.0, 0.0]);
-    mat4.scale(grscaleMatrix, grscaleMatrix, [10.4, 0.5, 12.0]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [13.0, 0.5, 12.0]);
     mat4.rotateZ(grrotateMatrix, grrotateMatrix, deg2rad(90.0));
     mat4.multiply(grtranslateMatrix, grtranslateMatrix, grrotateMatrix);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
@@ -454,9 +558,9 @@ function GRStage()
     
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureStageWall);
@@ -471,7 +575,7 @@ function GRStage()
     gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
 
-    gl.bindTexture(gl.TEXTURE_2D, null);
+    // gl.bindTexture(gl.TEXTURE_2D, null);
 
     // stage wall back
     grmodelMatrix = mat4.create();
@@ -491,9 +595,9 @@ function GRStage()
     
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
 
 
     gl.bindVertexArray(grgVaoStageWall);
@@ -507,7 +611,7 @@ function GRStage()
 
     gl.bindTexture(gl.TEXTURE_2D, null);
 
-
+    
     //****************************************************** Wing - 1 Right
     // right - 1
     grmodelMatrix = mat4.create();
@@ -518,16 +622,16 @@ function GRStage()
     grrotateMatrix = mat4.create();
 
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [23.0, 4.2, 10.0]);
-    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 6.3, 0.0]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 15.0, 0.0]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStackScene2(grmodelMatrix);
     GRPopFromStackScene2();
     
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
@@ -548,16 +652,16 @@ function GRStage()
     grrotateMatrix = mat4.create();
     
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [23.0, 4.2, 6.0]);
-    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 6.3, 0.0]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 15.0, 0.0]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStackScene2(grmodelMatrix);
     GRPopFromStackScene2();
     
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
@@ -578,16 +682,16 @@ function GRStage()
     grrotateMatrix = mat4.create();
     
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [23.0, 4.2, 2.0]);
-    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 6.3, 0.0]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 15.0, 0.0]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStackScene2(grmodelMatrix);
     GRPopFromStackScene2();
     
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
@@ -608,16 +712,16 @@ function GRStage()
     grrotateMatrix = mat4.create();
     
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [23.0, 4.2, -4.0]);
-    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 6.3, 0.0]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 15.0, 0.0]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStackScene2(grmodelMatrix);
     GRPopFromStackScene2();
     
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
@@ -640,16 +744,16 @@ function GRStage()
     grrotateMatrix = mat4.create();
 
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [-23.0, 4.2, 10.0]);
-    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 6.3, 0.0]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 15.0, 0.0]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStackScene2(grmodelMatrix);
     GRPopFromStackScene2();
     
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
@@ -670,16 +774,16 @@ function GRStage()
     grrotateMatrix = mat4.create();
     
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [-23.0, 4.2, 6.0]);
-    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 6.3, 0.0]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 15.0, 0.0]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStackScene2(grmodelMatrix);
     GRPopFromStackScene2();
     
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
@@ -700,16 +804,16 @@ function GRStage()
     grrotateMatrix = mat4.create();
     
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [-23.0, 4.2, 2.0]);
-    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 6.3, 0.0]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 15.0, 0.0]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStackScene2(grmodelMatrix);
     GRPopFromStackScene2();
     
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
@@ -730,16 +834,16 @@ function GRStage()
     grrotateMatrix = mat4.create();
     
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [-23.0, 4.2, -4.0]);
-    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 6.3, 0.0]);
+    mat4.scale(grscaleMatrix, grscaleMatrix, [2.5, 15.0, 0.0]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStackScene2(grmodelMatrix);
     GRPopFromStackScene2();
     
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformStage, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformStage, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformStage, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
@@ -751,11 +855,8 @@ function GRStage()
 
     gl.bindTexture(gl.TEXTURE_2D, null);
     
-  
-    
     GRPopFromStackScene2();
     GRPopFromStackScene2();
-
 }
 
 

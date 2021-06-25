@@ -9,13 +9,13 @@ var grgVaoMic;
 var grgVboMicPosition;
 var grglightSphere;
 
-var grfangleXMic = 0.0;
+var grfangleXMic = -50.0;
 var grfangleYMic = 0.0;
 var grfangleXHandle = 0.0;
 var grtransMicX = 0.0;
-var grtransMicY = 0.0;
-var grtransMicZ = -10.0;
-
+var grtransMicY = 0.7;
+var grtransMicZ = -11.0;
+var grscale = 1.44
 
 // texture
 var grgtextureMicSphere;
@@ -209,10 +209,12 @@ function GRDisplayMic()
 }
 
 
-
+var temp1 = 1.0, temp2 = 0.0
 
 function GRMic() 
 {
+
+    gl.bindTexture(gl.TEXTURE_2D, null)
 
     grmodelMatrix = mat4.create();
     grviewMatrix = mat4.create();
@@ -222,10 +224,12 @@ function GRMic()
     grrotateMatrix = mat4.create();
 
     // push matrix for stage - light geometry
-    mat4.translate(grtranslateMatrix, grtranslateMatrix, [grtransMicX, grtransMicY, grtransMicZ]);
-    //mat4.rotateX(grrotateMatrix, grrotateMatrix, deg2rad(180 + grfangleXMic));
-    mat4.rotateY(grrotateMatrix, grrotateMatrix, deg2rad(grfangleYMic));
+    mat4.translate(grtranslateMatrix, grtranslateMatrix, [grtransMicX, grtransMicY + 3.4, grtransMicZ - 16.3]);
+    mat4.rotateX(grrotateMatrix, grrotateMatrix, deg2rad(grfangleXMic));
+    mat4.scale(grscaleMatrix, grscaleMatrix, [grscale * 0.7, grscale * 0.7, grscale * 0.7])
+    // mat4.rotateY(grrotateMatrix, grrotateMatrix, deg2rad(grfangleYMic));
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grrotateMatrix);
+    mat4.multiply(grmodelMatrix, grmodelMatrix, grscaleMatrix)
     GRPushToStack(grmodelMatrix);
 
 
@@ -248,7 +252,7 @@ function GRMic()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
     
 
@@ -279,7 +283,7 @@ function GRMic()
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, grviewMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);

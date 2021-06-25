@@ -19,6 +19,13 @@ var tvn_projectionMatrix_tripod;
 
 var tvn_tripod_texture
 
+var tvn_trans_x_tripod = 2.8
+var tvn_trans_y_tripod = -0.7
+var tvn_trans_z_tripod = -6.1
+
+var tvn_trans_x_script = -6.2
+var tvn_trans_y_script = -0.5
+var tvn_trans_z_script = -9.9
 
 function tvn_init_tripod() {
     /*************Cylinder **********************/
@@ -132,20 +139,17 @@ function tvn_init_tripod() {
 
 
     tvn_tripod_texture = gl.createTexture();
-    tvn_tripod_texture.image = new Image();
-    tvn_tripod_texture.image.src = "Tejswini_Resources/tripod.png";
+    blackTex = new Uint8Array(
+        [10, 10, 10, 255]
+    )
+    gl.bindTexture(gl.TEXTURE_2D, tvn_tripod_texture);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
-    tvn_tripod_texture.image.onload = function () {
-        gl.bindTexture(gl.TEXTURE_2D, tvn_tripod_texture);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tvn_tripod_texture.image);
-        gl.bindTexture(gl.TEXTURE_2D, null);
-
-    }
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, blackTex);
+    gl.bindTexture(gl.TEXTURE_2D, null);
 
 }
 
@@ -205,16 +209,17 @@ function tvn_tripod_draw() {
     //console.log("draww" + modelMatrix);
     modelMatrix = stackpush(modelMatrix);
 
-    mat4.translate(translateMatrix, translateMatrix, [0.0, 0.0, -4.0]);//resulting matrix, act on the matrix, open square bracket
+    mat4.translate(translateMatrix, translateMatrix, [grtransMicX, grtransMicY, grtransMicZ]);//resulting matrix, act on the matrix, open square bracket
 
     //console.log("second" + modelMatrix);
     mat4.multiply
         (modelMatrix, translateMatrix, rotateMatrix);
+    mat4.scale(modelMatrix, modelMatrix, [grscale, grscale, grscale])
     modelMatrix = stackpush(modelMatrix); // -4
     mat4.multiply
         (projectionMatrix, projectionMatrix, perspectiveMatrix);
     gl.uniformMatrix4fv(tvn_modelMatrix_tripod, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, gViewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix_tripod, false, projectionMatrix);
 
 
@@ -246,7 +251,7 @@ function tvn_tripod_draw() {
         (projectionMatrix, projectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(tvn_modelMatrix_tripod, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, gViewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix_tripod, false, projectionMatrix);
 
 
@@ -275,7 +280,7 @@ function tvn_tripod_draw() {
     stackpop();
 
     gl.uniformMatrix4fv(tvn_modelMatrix_tripod, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, gViewMatrix);
     gl.uniformMatrix4fv(tvn_projectionMatrix_tripod, false, projectionMatrix);
 
 
@@ -288,11 +293,205 @@ function tvn_tripod_draw() {
     stackpop();
 
 
+    //Camera Tripod
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, tvn_tripod_texture);
+    gl.uniform1i(textureSamplerUniform_tripod, 0);
+
+
+    modelMatrix = mat4.create();
+    viewMatrix = mat4.create();
+    projectionMatrix = mat4.create();
+    translateMatrix = mat4.create();
+    rotateMatrix = mat4.create();
+
+
+    //console.log("draww" + modelMatrix);
+    modelMatrix = stackpush(modelMatrix);
+
+    mat4.translate(translateMatrix, translateMatrix, [tvn_trans_x_tripod, tvn_trans_y_tripod, tvn_trans_z_tripod]);//resulting matrix, act on the matrix, open square bracket
+
+    //console.log("second" + modelMatrix);
+    mat4.multiply
+        (modelMatrix, translateMatrix, rotateMatrix);
+    mat4.scale(modelMatrix, modelMatrix, [grscale, grscale, grscale])
+    modelMatrix = stackpush(modelMatrix); // -4
+    mat4.multiply
+        (projectionMatrix, projectionMatrix, perspectiveMatrix);
+    gl.uniformMatrix4fv(tvn_modelMatrix_tripod, false, modelMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, gViewMatrix);
+    gl.uniformMatrix4fv(tvn_projectionMatrix_tripod, false, projectionMatrix);
+
+
+    gl.bindVertexArray(tvn_vao_tripod);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12560);
+
+
+
+    /***********************************************************************/
+    modelMatrix = mat4.create();
+    viewMatrix = mat4.create();
+    projectionMatrix = mat4.create();
+    translateMatrix = mat4.create();
+    rotateMatrix = mat4.create();
+
+    mat4.translate(translateMatrix, translateMatrix, [rCylinderx, -rCylindery, 0.0]);//resulting matrix, act on the matrix, open square bracket
+    //console.log("second cyl " + modelViewMatrix);
+    mat4.rotateZ(rotateMatrix, rotateMatrix, deg2rad(20));
+
+
+    mat4.multiply
+        (modelMatrix, translateMatrix, rotateMatrix);
+
+
+    modelMatrix = stackpush(modelMatrix);
+    stackpop();
+
+    mat4.multiply
+        (projectionMatrix, projectionMatrix, perspectiveMatrix);
+
+    gl.uniformMatrix4fv(tvn_modelMatrix_tripod, false, modelMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, gViewMatrix);
+    gl.uniformMatrix4fv(tvn_projectionMatrix_tripod, false, projectionMatrix);
+
+
+
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12560);
+
+    /*******************************************************************/
+    modelMatrix = mat4.create();
+    viewMatrix = mat4.create();
+    projectionMatrix = mat4.create();
+    translateMatrix = mat4.create();
+    rotateMatrix = mat4.create();
+    modelViewMatrix = mat4.create();
+
+
+    mat4.translate(translateMatrix, translateMatrix, [-rCylinderx, -rCylindery, 0.0]);//resulting matrix, act on the matrix, open square bracket
+    mat4.rotateZ(rotateMatrix, rotateMatrix, deg2rad(-20));
+
+    mat4.multiply
+        (modelMatrix, translateMatrix, rotateMatrix);
+    mat4.multiply
+        (projectionMatrix, projectionMatrix, perspectiveMatrix);
+
+
+    modelMatrix = stackpush(modelMatrix);
+    stackpop();
+
+    gl.uniformMatrix4fv(tvn_modelMatrix_tripod, false, modelMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, gViewMatrix);
+    gl.uniformMatrix4fv(tvn_projectionMatrix_tripod, false, projectionMatrix);
+
+
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12560);
+
+
+    // modelViewMatrix = stack.pop();
+
+    stackpop();
+    stackpop();
+
+
+    //Script Tripod
+    var modelMatrix = mat4.create();
+    var viewMatrix = mat4.create();
+    var projectionMatrix = mat4.create();
+    var translateMatrix = mat4.create();
+    var rotateMatrix = mat4.create();
+
+
+    //console.log("draww" + modelMatrix);
+    modelMatrix = stackpush(modelMatrix);
+
+    mat4.translate(translateMatrix, translateMatrix, [tvn_trans_x_script, tvn_trans_y_script, tvn_trans_z_script]);//resulting matrix, act on the matrix, open square bracket
+
+    //console.log("second" + modelMatrix);
+    mat4.multiply
+        (modelMatrix, translateMatrix, rotateMatrix);
+    mat4.scale(modelMatrix, modelMatrix, [grscale, grscale, grscale])
+    modelMatrix = stackpush(modelMatrix); // -4
+    mat4.multiply
+        (projectionMatrix, projectionMatrix, perspectiveMatrix);
+    gl.uniformMatrix4fv(tvn_modelMatrix_tripod, false, modelMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, gViewMatrix);
+    gl.uniformMatrix4fv(tvn_projectionMatrix_tripod, false, projectionMatrix);
+
+
+    gl.bindVertexArray(tvn_vao_tripod);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12560);
+
+
+
+    /***********************************************************************/
+    modelMatrix = mat4.create();
+    viewMatrix = mat4.create();
+    projectionMatrix = mat4.create();
+    translateMatrix = mat4.create();
+    rotateMatrix = mat4.create();
+
+    mat4.translate(translateMatrix, translateMatrix, [rCylinderx, -rCylindery, 0.0]);//resulting matrix, act on the matrix, open square bracket
+    //console.log("second cyl " + modelViewMatrix);
+    mat4.rotateZ(rotateMatrix, rotateMatrix, deg2rad(20));
+
+
+    mat4.multiply
+        (modelMatrix, translateMatrix, rotateMatrix);
+
+
+    modelMatrix = stackpush(modelMatrix);
+    stackpop();
+
+    mat4.multiply
+        (projectionMatrix, projectionMatrix, perspectiveMatrix);
+
+    gl.uniformMatrix4fv(tvn_modelMatrix_tripod, false, modelMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, gViewMatrix);
+    gl.uniformMatrix4fv(tvn_projectionMatrix_tripod, false, projectionMatrix);
+
+
+
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12560);
+
+    /*******************************************************************/
+    modelMatrix = mat4.create();
+    viewMatrix = mat4.create();
+    projectionMatrix = mat4.create();
+    translateMatrix = mat4.create();
+    rotateMatrix = mat4.create();
+    modelViewMatrix = mat4.create();
+
+
+    mat4.translate(translateMatrix, translateMatrix, [-rCylinderx, -rCylindery, 0.0]);//resulting matrix, act on the matrix, open square bracket
+    mat4.rotateZ(rotateMatrix, rotateMatrix, deg2rad(-20));
+
+    mat4.multiply
+        (modelMatrix, translateMatrix, rotateMatrix);
+    mat4.multiply
+        (projectionMatrix, projectionMatrix, perspectiveMatrix);
+
+
+    modelMatrix = stackpush(modelMatrix);
+    stackpop();
+
+    gl.uniformMatrix4fv(tvn_modelMatrix_tripod, false, modelMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, gViewMatrix);
+    gl.uniformMatrix4fv(tvn_projectionMatrix_tripod, false, projectionMatrix);
+
+
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12560);
+
+
+    // modelViewMatrix = stack.pop();
+
+    stackpop();
+    stackpop();
+
 
     //   gl.bindVertexArray(null);
     gl.bindVertexArray(null);
     gl.useProgram(null);
-
 
 
 }
