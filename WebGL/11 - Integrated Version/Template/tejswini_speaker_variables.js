@@ -1,27 +1,19 @@
-//global variable
-var gl = null;  // webgl context
-var bFullscreen = false;
-var canvas_orignal_width;
-var canvas_orignal_height;
-
-
 var degrees;
-var tvn_vertexShaderObject;
-var tvn_fragmentShaderObject;
-var tvn_shaderProgramObject;
+var tvn_vertexShaderObject_speaker;
+var tvn_fragmentShaderObject_speaker;
+var tvn_shaderProgramObject_speaker;
+var textureSamplerUniform_speaker;
 
-var tvn_vao;
-var tvn_vao_rectangle;
+var tvn_vao_speaker;
 var tvn_vbo;
-var tvn_vbo_rectangle;
-var tvn_vbo_rectangle_color;
-var tvn_vbo_color;
-var tvn_vbo_tex_coord;
-var tvn_mvpUniform;
+var tvn_vbo_rectangle_speaker;
+var tvn_vbo_tex_coord_speaker;
 var rangle = 0.0;
-var tvn_projectionMatrix;
-var tvn_modelMatrix;
-var tvn_viewMatrix;
+var tvn_projectionMatrix_speaker;
+var tvn_modelMatrix_speaker;
+var tvn_viewMatrix_speaker;
+
+var speaker_texture
 
 function tvn_speaker_init() {
     //vertex shader 
@@ -41,11 +33,11 @@ function tvn_speaker_init() {
 
         "}";
 
-    tvn_vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(tvn_vertexShaderObject, vertexShaderSourcedCode);
-    gl.compileShader(tvn_vertexShaderObject);
-    if (gl.getShaderParameter(tvn_vertexShaderObject, gl.COMPILE_STATUS) == false) {
-        var error = gl.getShaderInfoLog(tvn_vertexShaderObject);
+    tvn_vertexShaderObject_speaker = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(tvn_vertexShaderObject_speaker, vertexShaderSourcedCode);
+    gl.compileShader(tvn_vertexShaderObject_speaker);
+    if (gl.getShaderParameter(tvn_vertexShaderObject_speaker, gl.COMPILE_STATUS) == false) {
+        var error = gl.getShaderInfoLog(tvn_vertexShaderObject_speaker);
         if (error.length > 0) {
             alert(error);
             tvn_speaker_uninit();
@@ -65,11 +57,11 @@ function tvn_speaker_init() {
         "FragColor = texture(u_texture_sampler, out_tex_coord);" +
         "}";
 
-    tvn_fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(tvn_fragmentShaderObject, fragmentShaderSourceCode);
-    gl.compileShader(tvn_fragmentShaderObject);
-    if (gl.getShaderParameter(tvn_fragmentShaderObject, gl.COMPILE_STATUS) == false) {
-        var error = gl.getShaderInfoLog(tvn_fragmentShaderObject);
+    tvn_fragmentShaderObject_speaker = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(tvn_fragmentShaderObject_speaker, fragmentShaderSourceCode);
+    gl.compileShader(tvn_fragmentShaderObject_speaker);
+    if (gl.getShaderParameter(tvn_fragmentShaderObject_speaker, gl.COMPILE_STATUS) == false) {
+        var error = gl.getShaderInfoLog(tvn_fragmentShaderObject_speaker);
         if (error.length > 0) {
             alert(error);
             tvn_speaker_uninit();
@@ -77,19 +69,19 @@ function tvn_speaker_init() {
     }
 
     //shader program 
-    tvn_shaderProgramObject = gl.createProgram();
-    gl.attachShader(tvn_shaderProgramObject, tvn_vertexShaderObject);
-    gl.attachShader(tvn_shaderProgramObject, tvn_fragmentShaderObject);
+    tvn_shaderProgramObject_speaker = gl.createProgram();
+    gl.attachShader(tvn_shaderProgramObject_speaker, tvn_vertexShaderObject_speaker);
+    gl.attachShader(tvn_shaderProgramObject_speaker, tvn_fragmentShaderObject_speaker);
 
     //pre-link binding of shader program object with vertex shader attributes
-    gl.bindAttribLocation(tvn_shaderProgramObject, macros.AMC_ATTRIB_POSITION, "vPosition");
-    gl.bindAttribLocation(tvn_shaderProgramObject, macros.AMC_ATTRIB_TEXCOORD, "vtexcoord");
+    gl.bindAttribLocation(tvn_shaderProgramObject_speaker, macros.AMC_ATTRIB_POSITION, "vPosition");
+    gl.bindAttribLocation(tvn_shaderProgramObject_speaker, macros.AMC_ATTRIB_TEXCOORD, "vtexcoord");
 
 
     //linking 
-    gl.linkProgram(tvn_shaderProgramObject);
-    if (!gl.getProgramParameter(tvn_shaderProgramObject, gl.LINK_STATUS)) {
-        var error = gl.getProgramInfoLog(tvn_shaderProgramObject);
+    gl.linkProgram(tvn_shaderProgramObject_speaker);
+    if (!gl.getProgramParameter(tvn_shaderProgramObject_speaker, gl.LINK_STATUS)) {
+        var error = gl.getProgramInfoLog(tvn_shaderProgramObject_speaker);
         if (error.length > 0) {
             alert(error);
             tvn_speaker_uninit();
@@ -98,10 +90,10 @@ function tvn_speaker_init() {
 
 
     //get MVP uniform location
-    tvn_projectionMatrix = gl.getUniformLocation(tvn_shaderProgramObject, "projection_matrix");
-    tvn_viewMatrix = gl.getUniformLocation(tvn_shaderProgramObject, "view_matrix");
-    tvn_modelMatrix = gl.getUniformLocation(tvn_shaderProgramObject, "model_matrix");
-    textureSamplerUniform = gl.getUniformLocation(tvn_shaderProgramObject, "u_texture_sampler");
+    tvn_projectionMatrix_speaker = gl.getUniformLocation(tvn_shaderProgramObject_speaker, "projection_matrix");
+    tvn_viewMatrix_speaker = gl.getUniformLocation(tvn_shaderProgramObject_speaker, "view_matrix");
+    tvn_modelMatrix_speaker = gl.getUniformLocation(tvn_shaderProgramObject_speaker, "model_matrix");
+    textureSamplerUniform_speaker = gl.getUniformLocation(tvn_shaderProgramObject_speaker, "u_texture_sampler");
 
     // ** vertices , color , shader attribs, vbo initialization***
 
@@ -187,8 +179,8 @@ function tvn_speaker_init() {
     tvn_vao_rectangle = gl.createVertexArray();
     gl.bindVertexArray(tvn_vao_rectangle);
 
-    tvn_vbo_rectangle = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo_rectangle);
+    tvn_vbo_rectangle_speaker = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo_rectangle_speaker);
     gl.bufferData(gl.ARRAY_BUFFER, squareVertices, gl.STATIC_DRAW);
     gl.vertexAttribPointer(macros.AMC_ATTRIB_POSITION,
         3, // 3 is for x,y,z co-cordinates is our triangle Verteices array
@@ -200,8 +192,8 @@ function tvn_speaker_init() {
 
 
     /**************************************************************/
-    tvn_vbo_tex_coord = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo_tex_coord);
+    tvn_vbo_tex_coord_speaker = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo_tex_coord_speaker);
     gl.bufferData(gl.ARRAY_BUFFER, cubeTexCoord, gl.STATIC_DRAW);
     gl.vertexAttribPointer(macros.AMC_ATTRIB_TEXCOORD, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(macros.AMC_ATTRIB_TEXCOORD);
@@ -210,18 +202,18 @@ function tvn_speaker_init() {
     gl.bindVertexArray(null);
 
     /*******************************************************************/
-    pyramid_texture = gl.createTexture();
-    pyramid_texture.image = new Image();
-    pyramid_texture.image.src = "Tejswini_Resources/speaker.png";
+    speaker_texture = gl.createTexture();
+    speaker_texture.image = new Image();
+    speaker_texture.image.src = "Tejswini_Resources/speaker.png";
 
-    pyramid_texture.image.onload = function () {
-        gl.bindTexture(gl.TEXTURE_2D, pyramid_texture);
+    speaker_texture.image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, speaker_texture);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, pyramid_texture.image);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, speaker_texture.image);
         gl.bindTexture(gl.TEXTURE_2D, null);
 
     }
@@ -230,7 +222,7 @@ function tvn_speaker_init() {
 
 
 function tvn_speaker_draw() {
-    gl.useProgram(tvn_shaderProgramObject);
+    gl.useProgram(tvn_shaderProgramObject_speaker);
 
     var modelMatrix = mat4.create();
     var viewMatrix = mat4.create();
@@ -246,13 +238,13 @@ function tvn_speaker_draw() {
         (modelMatrix, translateMatrix, rotateMatrix);
 
     mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
-    gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
-    gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
+    gl.uniformMatrix4fv(tvn_modelMatrix_speaker, false, modelMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_speaker, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_projectionMatrix_speaker, false, projectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, pyramid_texture);
-    gl.uniform1i(textureSamplerUniform, 0);
+    gl.bindTexture(gl.TEXTURE_2D, speaker_texture);
+    gl.uniform1i(textureSamplerUniform_speaker, 0);
 
 
     gl.bindVertexArray(tvn_vao_rectangle);
@@ -281,13 +273,13 @@ function tvn_speaker_draw() {
         (modelMatrix, translateMatrix, rotateMatrix);
 
     mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
-    gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
-    gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
+    gl.uniformMatrix4fv(tvn_modelMatrix_speaker, false, modelMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_speaker, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_projectionMatrix_speaker, false, projectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, pyramid_texture);
-    gl.uniform1i(textureSamplerUniform, 0);
+    gl.bindTexture(gl.TEXTURE_2D, speaker_texture);
+    gl.uniform1i(textureSamplerUniform_speaker, 0);
 
 
     gl.bindVertexArray(tvn_vao_rectangle);
@@ -306,9 +298,9 @@ function tvn_speaker_draw() {
 
 
 function tvn_speaker_uninit() {
-    if (tvn_vao) {
-        gl.deleteVertexArary(tvn_vao);
-        tvn_vao = null;
+    if (tvn_vao_speaker) {
+        gl.deleteVertexArary(tvn_vao_speaker);
+        tvn_vao_speaker = null;
     }
 
     if (tvn_vbo) {
@@ -316,20 +308,20 @@ function tvn_speaker_uninit() {
         tvn_vbo = null;
     }
 
-    if (tvn_shaderProgramObject) {
-        if (tvn_fragmentShaderObject) {
-            gl.detachShader(tvn_shaderProgramObject, tvn_fragmentShaderObject);
-            gl.deleteShader(tvn_fragmentShaderObject);
-            tvn_fragmentShaderObject = null;
+    if (tvn_shaderProgramObject_speaker) {
+        if (tvn_fragmentShaderObject_speaker) {
+            gl.detachShader(tvn_shaderProgramObject_speaker, tvn_fragmentShaderObject_speaker);
+            gl.deleteShader(tvn_fragmentShaderObject_speaker);
+            tvn_fragmentShaderObject_speaker = null;
         }
 
-        if (tvn_vertexShaderObject) {
-            gl.detachShader(tvn_shaderProgramObject, tvn_vertexShaderObject);
-            gl.deleteShader(tvn_vertexShaderObject);
-            tvn_vertexShaderObject = null;
+        if (tvn_vertexShaderObject_speaker) {
+            gl.detachShader(tvn_shaderProgramObject_speaker, tvn_vertexShaderObject_speaker);
+            gl.deleteShader(tvn_vertexShaderObject_speaker);
+            tvn_vertexShaderObject_speaker = null;
         }
 
-        gl.deleteProgram(tvn_shaderProgramObject);
-        tvn_shaderProgramObject = null;
+        gl.deleteProgram(tvn_shaderProgramObject_speaker);
+        tvn_shaderProgramObject_speaker = null;
     }
 }
