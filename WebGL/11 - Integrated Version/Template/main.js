@@ -29,7 +29,7 @@ const scenes = {
 	SCENE_4:4
 }
 
-var currentScene = scenes.SCENE_2
+var currentScene = scenes.SCENE_1
 
 function main() {
 	//Get Canvas from DOM
@@ -98,32 +98,32 @@ function keyDown(event) {
 			break
 
 			case 38: //up arrow
-			stove_Transz -= 0.01
+			TeapotTransZ -= 0.05
 			break
 			case 40: //down arrow
-			stove_Transz += 0.01
+			TeapotTransZ += 0.05
 			break
 			case 37: //left arrow
-			stove_Transx -= 0.01
+			TeapotTransX -= 0.05
 			break
 			case 39: //right arrow
-			stove_Transx += 0.01
+			TeapotTransX += 0.05
 			break
 
-			case 89: //Y
-			stove_Transy += 0.01
+			case 84: //Y
+			TeapotTransY += 0.05
 			break
 
 			case 85: //U
-			stove_Transy -= 0.01
+			TeapotTransY -= 0.05
 			break
 
 			case 100: //4
-			stove_Scale -= 0.01
+			TeapotScale -= 0.02
 			break
 
 			case 102: //6
-			stove_Scale += 0.01
+			TeapotScale += 0.02
 			break
 
 		case 27:
@@ -170,30 +170,39 @@ function init() {
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
 	//  initFire();
-	// GRInit()
-	// GRInitRoadside();
-	// initNormalMapRoad()
-	// initCubeMap()
-
-	// tejswini_hut_init()
-	// tvn_init_lamp_arch();
+	GRInit()
+	GRInitRoadside();
+	initNormalMapRoad()
+	initCubeMap()
+	tejswini_hut_init()
+	tvn_init_lamp_arch();
 
 	// initShadow();
-	GRInitMic();
-	tvn_script_init();
-	tvn_speaker_init();
-	tvn_init_tripod();
+//	GRInitMic();
+//	tvn_script_init();
+//	tvn_speaker_init();
+//	tvn_init_tripod();
 	
-	GRInitScene2();
+//	GRInitScene2();
 	// DL_initChair()
-	GRInitStageLights();
-	GRInitCamera();
-	//ASJ_init_stove();
+	//GRInitStageLights();
+	//GRInitCamera();
+	ASJ_init_stove();
 	//utensil_init();
 
 
-	loadModel('Models/Car.obj',vao_mercedes_modelLoading,vbo_mercedes_modelLoading);
-	MercedesProgramObject = initializeModel();
+	
+	
+	loadModel('Models/teapot.obj',vao_teapot,vbo_teapot,function(parts_teapot,numElem){
+		console.log("succeeded");
+		numElements_Teapot = numElem;
+		console.log(numElements_Teapot);
+		 gParts_Teapot = parts_teapot;
+		console.log(gParts_Teapot.length);
+		//numElem = null;
+	});
+
+	modelLoadingProgramObject = initializeModel();
 
 
 	gViewMatrix = mat4.create()
@@ -226,22 +235,22 @@ function render() {
 	if(currentScene == scenes.SCENE_1) {
 		// animateFire();
 		// Display_CubeMap()
-		// GRDisplay()
-		// tejswini_hut_draw()
-		// renderNormalMapRoad()
-		// GRDisplayRoadside();
-		// tvn_draw_lamp_arch();
-		// drawModel();
-		// ASJ_draw_stove(perspectiveMatrix);
+		GRDisplay()
+		tejswini_hut_draw()
+		renderNormalMapRoad()
+		 GRDisplayRoadside();
+		 tvn_draw_lamp_arch();
+		  drawModel();
+		ASJ_draw_stove();
 		// utensil_display();
 	} else if(currentScene == scenes.SCENE_2) {
-		GRDisplayScene2();
-		// tvn_tripod_draw();
-		// tvn_speaker_draw();
-		// tvn_script_draw();
-		GRDisplayMic();
-		GRDisplayCamera();
-		GRDisplayStageLights();
+		// GRDisplayScene2();
+		// // tvn_tripod_draw();
+		// // tvn_speaker_draw();
+		// // tvn_script_draw();
+		// GRDisplayMic();
+		// GRDisplayCamera();
+		// GRDisplayStageLights();
 	}
 	
 	// DL_renderChair()
