@@ -1,16 +1,10 @@
-var gl = null;  // webgl context
-var bFullscreen = false;
-var canvas_orignal_width;
-var canvas_orignal_height;
+var tvn_vertexShaderObject_tripod;
+var tvn_fragmentShaderObject_tripod;
+var tvn_shaderProgramObject_tripod;
+var textureSamplerUniform_tripod;
 
-
-var tvn_vertexShaderObject;
-var tvn_fragmentShaderObject;
-var tvn_shaderProgramObject;
-var textureSamplerUniform;
-
-var tvn_vao;
-var tvn_vbo;
+var tvn_vao_tripod;
+var tvn_vbo_tripod;
 var tvn_vbo_color;
 var tvn_mvpUniform;
 var angle1;
@@ -19,11 +13,11 @@ var radius = 0.04;
 var i = 0;
 var stack = [];
 var index = -1;
-var tvn_modelMatrix;
-var tvn_viewMatrix;
-var tvn_projectionMatrix;
+var tvn_modelMatrix_tripod;
+var tvn_viewMatrix_tripod;
+var tvn_projectionMatrix_tripod;
 
-
+var tvn_tripod_texture
 
 
 function tvn_init_tripod() {
@@ -57,11 +51,11 @@ function tvn_init_tripod() {
         "out_tex_coord = vtexcoord;" +
         "}";
 
-    tvn_vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(tvn_vertexShaderObject, vertexShaderSourcedCode);
-    gl.compileShader(tvn_vertexShaderObject);
-    if (gl.getShaderParameter(tvn_vertexShaderObject, gl.COMPILE_STATUS) == false) {
-        var error = gl.getShaderInfoLog(tvn_vertexShaderObject);
+    tvn_vertexShaderObject_tripod = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(tvn_vertexShaderObject_tripod, vertexShaderSourcedCode);
+    gl.compileShader(tvn_vertexShaderObject_tripod);
+    if (gl.getShaderParameter(tvn_vertexShaderObject_tripod, gl.COMPILE_STATUS) == false) {
+        var error = gl.getShaderInfoLog(tvn_vertexShaderObject_tripod);
         if (error.length > 0) {
             alert(error);
             uninitialize();
@@ -81,11 +75,11 @@ function tvn_init_tripod() {
         "FragColor = texture(u_texture_sampler, out_tex_coord);" +
         "}";
 
-    tvn_fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(tvn_fragmentShaderObject, fragmentShaderSourceCode);
-    gl.compileShader(tvn_fragmentShaderObject);
-    if (gl.getShaderParameter(tvn_fragmentShaderObject, gl.COMPILE_STATUS) == false) {
-        var error = gl.getShaderInfoLog(tvn_fragmentShaderObject);
+    tvn_fragmentShaderObject_tripod = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(tvn_fragmentShaderObject_tripod, fragmentShaderSourceCode);
+    gl.compileShader(tvn_fragmentShaderObject_tripod);
+    if (gl.getShaderParameter(tvn_fragmentShaderObject_tripod, gl.COMPILE_STATUS) == false) {
+        var error = gl.getShaderInfoLog(tvn_fragmentShaderObject_tripod);
         if (error.length > 0) {
             alert(error);
             uninitialize();
@@ -93,18 +87,18 @@ function tvn_init_tripod() {
     }
 
     //shader program 
-    tvn_shaderProgramObject = gl.createProgram();
-    gl.attachShader(tvn_shaderProgramObject, tvn_vertexShaderObject);
-    gl.attachShader(tvn_shaderProgramObject, tvn_fragmentShaderObject);
+    tvn_shaderProgramObject_tripod = gl.createProgram();
+    gl.attachShader(tvn_shaderProgramObject_tripod, tvn_vertexShaderObject_tripod);
+    gl.attachShader(tvn_shaderProgramObject_tripod, tvn_fragmentShaderObject_tripod);
 
     //pre-link binding of shader program object with vertex shader attributes
-    gl.bindAttribLocation(tvn_shaderProgramObject, macros.AMC_ATTRIB_POSITION, "vPosition");
+    gl.bindAttribLocation(tvn_shaderProgramObject_tripod, macros.AMC_ATTRIB_POSITION, "vPosition");
 
 
     //linking 
-    gl.linkProgram(tvn_shaderProgramObject);
-    if (!gl.getProgramParameter(tvn_shaderProgramObject, gl.LINK_STATUS)) {
-        var error = gl.getProgramInfoLog(tvn_shaderProgramObject);
+    gl.linkProgram(tvn_shaderProgramObject_tripod);
+    if (!gl.getProgramParameter(tvn_shaderProgramObject_tripod, gl.LINK_STATUS)) {
+        var error = gl.getProgramInfoLog(tvn_shaderProgramObject_tripod);
         if (error.length > 0) {
             alert(error);
             uninitialize();
@@ -113,17 +107,17 @@ function tvn_init_tripod() {
 
     //get MVP uniform location
 
-    textureSamplerUniform = gl.getUniformLocation(tvn_shaderProgramObject, "u_texture_sampler");
-    tvn_modelMatrix = gl.getUniformLocation(tvn_shaderProgramObject, "model_matrix");
-    tvn_viewMatrix = gl.getUniformLocation(tvn_shaderProgramObject, "view_matrix");
-    tvn_projectionMatrix = gl.getUniformLocation(tvn_shaderProgramObject, "projection_matrix");
+    textureSamplerUniform_tripod = gl.getUniformLocation(tvn_shaderProgramObject_tripod, "u_texture_sampler");
+    tvn_modelMatrix_tripod = gl.getUniformLocation(tvn_shaderProgramObject_tripod, "model_matrix");
+    tvn_viewMatrix_tripod = gl.getUniformLocation(tvn_shaderProgramObject_tripod, "view_matrix");
+    tvn_projectionMatrix_tripod = gl.getUniformLocation(tvn_shaderProgramObject_tripod, "projection_matrix");
 
-    tvn_vao = gl.createVertexArray();
-    gl.bindVertexArray(tvn_vao);
+    tvn_vao_tripod = gl.createVertexArray();
+    gl.bindVertexArray(tvn_vao_tripod);
 
     /*************position*****************************/
-    tvn_vbo = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo);
+    tvn_vbo_tripod = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo_tripod);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
     gl.vertexAttribPointer(macros.AMC_ATTRIB_POSITION,
         3, // 3 is for x,y,z co-cordinates is our triangle Verteices array
@@ -137,18 +131,18 @@ function tvn_init_tripod() {
     gl.bindVertexArray(null);
 
 
-    pyramid_texture = gl.createTexture();
-    pyramid_texture.image = new Image();
-    pyramid_texture.image.src = "Tejswini_Resources/tripod.png";
+    tvn_tripod_texture = gl.createTexture();
+    tvn_tripod_texture.image = new Image();
+    tvn_tripod_texture.image.src = "Tejswini_Resources/tripod.png";
 
-    pyramid_texture.image.onload = function () {
-        gl.bindTexture(gl.TEXTURE_2D, pyramid_texture);
+    tvn_tripod_texture.image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, tvn_tripod_texture);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, pyramid_texture.image);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tvn_tripod_texture.image);
         gl.bindTexture(gl.TEXTURE_2D, null);
 
     }
@@ -194,11 +188,11 @@ function tvn_tripod_draw() {
     var rCylindery = 1.0;
 
 
-    gl.useProgram(tvn_shaderProgramObject);
+    gl.useProgram(tvn_shaderProgramObject_tripod);
 
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, pyramid_texture);
-    gl.uniform1i(textureSamplerUniform, 0);
+    gl.bindTexture(gl.TEXTURE_2D, tvn_tripod_texture);
+    gl.uniform1i(textureSamplerUniform_tripod, 0);
 
 
     var modelMatrix = mat4.create();
@@ -219,12 +213,12 @@ function tvn_tripod_draw() {
     modelMatrix = stackpush(modelMatrix); // -4
     mat4.multiply
         (projectionMatrix, projectionMatrix, perspectiveMatrix);
-    gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
-    gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
+    gl.uniformMatrix4fv(tvn_modelMatrix_tripod, false, modelMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_projectionMatrix_tripod, false, projectionMatrix);
 
 
-    gl.bindVertexArray(tvn_vao);
+    gl.bindVertexArray(tvn_vao_tripod);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12560);
 
 
@@ -251,9 +245,9 @@ function tvn_tripod_draw() {
     mat4.multiply
         (projectionMatrix, projectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
-    gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
+    gl.uniformMatrix4fv(tvn_modelMatrix_tripod, false, modelMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_projectionMatrix_tripod, false, projectionMatrix);
 
 
 
@@ -280,9 +274,9 @@ function tvn_tripod_draw() {
     modelMatrix = stackpush(modelMatrix);
     stackpop();
 
-    gl.uniformMatrix4fv(tvn_modelMatrix, false, modelMatrix);
-    gl.uniformMatrix4fv(tvn_viewMatrix, false, viewMatrix);
-    gl.uniformMatrix4fv(tvn_projectionMatrix, false, projectionMatrix);
+    gl.uniformMatrix4fv(tvn_modelMatrix_tripod, false, modelMatrix);
+    gl.uniformMatrix4fv(tvn_viewMatrix_tripod, false, viewMatrix);
+    gl.uniformMatrix4fv(tvn_projectionMatrix_tripod, false, projectionMatrix);
 
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12560);
@@ -305,30 +299,30 @@ function tvn_tripod_draw() {
 
 
 function tvn_tripod_uninit() {
-    if (tvn_vao) {
-        gl.deleteVertexArary(tvn_vao);
-        tvn_vao = null;
+    if (tvn_vao_tripod) {
+        gl.deleteVertexArary(tvn_vao_tripod);
+        tvn_vao_tripod = null;
     }
 
-    if (tvn_vbo) {
-        gl.deleteBuffer(tvn_vbo);
-        tvn_vbo = null;
+    if (tvn_vbo_tripod) {
+        gl.deleteBuffer(tvn_vbo_tripod);
+        tvn_vbo_tripod = null;
     }
 
-    if (tvn_shaderProgramObject) {
-        if (tvn_fragmentShaderObject) {
-            gl.detachShader(tvn_shaderProgramObject, tvn_fragmentShaderObject);
-            gl.deleteShader(tvn_fragmentShaderObject);
-            tvn_fragmentShaderObject = null;
+    if (tvn_shaderProgramObject_tripod) {
+        if (tvn_fragmentShaderObject_tripod) {
+            gl.detachShader(tvn_shaderProgramObject_tripod, tvn_fragmentShaderObject_tripod);
+            gl.deleteShader(tvn_fragmentShaderObject_tripod);
+            tvn_fragmentShaderObject_tripod = null;
         }
 
-        if (tvn_vertexShaderObject) {
-            gl.detachShader(tvn_shaderProgramObject, tvn_vertexShaderObject);
-            gl.deleteShader(tvn_vertexShaderObject);
-            tvn_vertexShaderObject = null;
+        if (tvn_vertexShaderObject_tripod) {
+            gl.detachShader(tvn_shaderProgramObject_tripod, tvn_vertexShaderObject_tripod);
+            gl.deleteShader(tvn_vertexShaderObject_tripod);
+            tvn_vertexShaderObject_tripod = null;
         }
 
-        gl.deleteProgram(tvn_shaderProgramObject);
-        tvn_shaderProgramObject = null;
+        gl.deleteProgram(tvn_shaderProgramObject_tripod);
+        tvn_shaderProgramObject_tripod = null;
     }
 }

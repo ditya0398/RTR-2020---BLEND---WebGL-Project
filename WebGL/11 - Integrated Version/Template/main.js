@@ -29,7 +29,7 @@ const scenes = {
 	SCENE_4:4
 }
 
-var currentScene = scenes.SCENE_1
+var currentScene = scenes.SCENE_2
 
 function main() {
 	//Get Canvas from DOM
@@ -173,26 +173,26 @@ function init() {
 	// GRInit()
 	// GRInitRoadside();
 	// initNormalMapRoad()
-	// //initCubeMap()
+	// initCubeMap()
 
 	// tejswini_hut_init()
 	// tvn_init_lamp_arch();
 
 	// initShadow();
 	GRInitMic();
-	//tvn_script_init();
-	//tvn_speaker_init();
-	//tvn_init_tripod();
+	tvn_script_init();
+	tvn_speaker_init();
+	tvn_init_tripod();
 	
-	// GRInitScene2();
+	GRInitScene2();
 	// DL_initChair()
-	// GRInitStageLights();
+	GRInitStageLights();
 
-//	ASJ_init_stove();
+	//ASJ_init_stove();
 	//utensil_init();
 
 
-	loadModel('Models/car.obj',vao_mercedes_modelLoading,vbo_mercedes_modelLoading);
+	loadModel('Models/Car.obj',vao_mercedes_modelLoading,vbo_mercedes_modelLoading);
 	MercedesProgramObject = initializeModel();
 
 
@@ -231,19 +231,20 @@ function render() {
 		// renderNormalMapRoad()
 		// GRDisplayRoadside();
 		// tvn_draw_lamp_arch();
-		drawModel();
+		// drawModel();
 		// ASJ_draw_stove(perspectiveMatrix);
-	//	utensil_display();
+		// utensil_display();
+	} else if(currentScene == scenes.SCENE_2) {
+		GRDisplayScene2();
+		// tvn_tripod_draw();
+		// tvn_speaker_draw();
+		// tvn_script_draw();
+		GRDisplayMic();
+		GRDisplayStageLights();
 	}
-	// GRDisplayMic();
-	//tvn_script_draw();
-	//tvn_speaker_draw();
-	//tvn_tripod_draw();
-
-	// GRDisplayScene2();
+	
 	// DL_renderChair()
-	// GRDisplayStageLights();
-
+	
 
 //	Draw_Shadow();
 

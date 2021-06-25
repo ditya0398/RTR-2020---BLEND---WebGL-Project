@@ -109,7 +109,6 @@ function GRInitMic()
        
 
     }
-    alert("in init");
     // shader program
     grshaderProgramObject = gl.createProgram();
     //attach shader object
