@@ -169,14 +169,14 @@ function init() {
 
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
-	// initFire();
-	GRInit()
-	GRInitRoadside();
-	initNormalMapRoad()
-	//initCubeMap()
+	//  initFire();
+	// GRInit()
+	// GRInitRoadside();
+	// initNormalMapRoad()
+	// //initCubeMap()
 
-	tejswini_hut_init()
-	tvn_init_lamp_arch();
+	// tejswini_hut_init()
+	// tvn_init_lamp_arch();
 
 	// initShadow();
 
@@ -188,12 +188,12 @@ function init() {
 	// DL_initChair()
 	// GRInitStageLights();
 
-	ASJ_init_stove();
+//	ASJ_init_stove();
+	//utensil_init();
 
 
-
-	loadModel('Models/car.obj',vao_mercedes_modelLoading,vbo_mercedes_modelLoading);
-	MercedesProgramObject = initializeModel();
+	// loadModel('Models/car.obj',vao_mercedes_modelLoading,vbo_mercedes_modelLoading);
+	// MercedesProgramObject = initializeModel();
 
 
 	gViewMatrix = mat4.create()
@@ -226,13 +226,14 @@ function render() {
 	if(currentScene == scenes.SCENE_1) {
 		// animateFire();
 		// Display_CubeMap()
-		GRDisplay()
-		tejswini_hut_draw()
-		renderNormalMapRoad()
-		GRDisplayRoadside();
-		tvn_draw_lamp_arch();
-		//drawModel();
-		ASJ_draw_stove(perspectiveMatrix);
+		// GRDisplay()
+		// tejswini_hut_draw()
+		// renderNormalMapRoad()
+		// GRDisplayRoadside();
+		// tvn_draw_lamp_arch();
+		// //drawModel();
+		// ASJ_draw_stove(perspectiveMatrix);
+	//	utensil_display();
 	}
 	
 	//tvn_script_draw();

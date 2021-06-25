@@ -1,10 +1,3 @@
-//global variable
-var gl = null;  // webgl context
-var bFullscreen = false;
-var canvas_orignal_width;
-var canvas_orignal_height;
-
-
 var tvn_vertexShaderObject;
 var tvn_fragmentShaderObject;
 var tvn_shaderProgramObject;
@@ -19,7 +12,7 @@ var tvn_mvpUniform;
 var angle1;
 var vertices = new Float32Array(37680);
 var radius = 0.05;
-var i = 0;
+var i_lampArch = 0;
 var textureSamplerUniform;
 
 var stack = [];
@@ -36,13 +29,13 @@ var pyramid_texture;
 function tvn_init_lamp_arch() {
     /*************Cylinder **********************/
     for (angle1 = 0.0; angle1 < 2 * 3.14; angle1 = angle1 + 0.001) {
-        vertices[i++] = (Math.cos(angle1) * radius);
-        vertices[i++] = (1.0);
-        vertices[i++] = (Math.sin(angle1) * radius);
+        vertices[i_lampArch++] = (Math.cos(angle1) * radius);
+        vertices[i_lampArch++] = (1.0);
+        vertices[i_lampArch++] = (Math.sin(angle1) * radius);
 
-        vertices[i++] = (Math.cos(angle1) * radius);
-        vertices[i++] = -3.0;
-        vertices[i++] = (Math.sin(angle1) * radius);
+        vertices[i_lampArch++] = (Math.cos(angle1) * radius);
+        vertices[i_lampArch++] = -3.0;
+        vertices[i_lampArch++] = (Math.sin(angle1) * radius);
 
     }
 
@@ -54,7 +47,7 @@ function tvn_init_lamp_arch() {
 
 
     console.log("vertices " + vertices.length);
-    console.log("vertices[i] " + i);
+    console.log("vertices[i] " + i_lampArch);
     //vertex shade
     var vertexShaderSourcedCode =
         "#version 300 es" +
