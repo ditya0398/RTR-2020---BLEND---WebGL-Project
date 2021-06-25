@@ -29,7 +29,7 @@ const scenes = {
 	SCENE_4:4
 }
 
-var currentScene = scenes.SCENE_2
+var currentScene = scenes.SCENE_3
 
 function main() {
 	//Get Canvas from DOM
@@ -190,7 +190,7 @@ function init() {
 	//ASJ_init_stove();
 	//utensil_init();
 
-
+	initStarbucksOuter();
 	
 	
 	loadModel('Models/teapot.obj',vao_teapot,vbo_teapot,function(parts_teapot,numElem){
@@ -263,7 +263,9 @@ function render() {
 		GRDisplayCamera();
 		tvn_script_draw();
 	}
-	
+	else if(currentScene == scenes.SCENE_3){
+		displayStarBucksOuter();
+	}
 	
 
 //	Draw_Shadow();
