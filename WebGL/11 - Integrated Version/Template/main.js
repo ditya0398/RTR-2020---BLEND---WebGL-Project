@@ -187,7 +187,7 @@ function init() {
 	GRInitScene2();
 	// DL_initChair()
 	GRInitStageLights();
-
+	GRInitCamera();
 	//ASJ_init_stove();
 	//utensil_init();
 
@@ -240,6 +240,7 @@ function render() {
 		// tvn_speaker_draw();
 		// tvn_script_draw();
 		GRDisplayMic();
+		GRDisplayCamera();
 		GRDisplayStageLights();
 	}
 	
@@ -265,7 +266,7 @@ function uninit() {
 	GRUninitializeScene2()
 	GRUninitializeStageLights()
 	GRUninitializeRoadside()
-
+	GRUninitializeCamera();
 	gl.deleteVertexArray(vao_footpath)
 	gl.deleteBuffer(vbo_footpath)
 	gl.deleteProgram(program)
