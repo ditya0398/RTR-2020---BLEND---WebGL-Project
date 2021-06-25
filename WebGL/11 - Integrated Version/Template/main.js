@@ -179,7 +179,7 @@ function init() {
 	// tvn_init_lamp_arch();
 
 	// initShadow();
-
+	GRInitMic();
 	//tvn_script_init();
 	//tvn_speaker_init();
 	//tvn_init_tripod();
@@ -235,7 +235,7 @@ function render() {
 		// ASJ_draw_stove(perspectiveMatrix);
 	//	utensil_display();
 	}
-	
+	GRDisplayMic();
 	//tvn_script_draw();
 	//tvn_speaker_draw();
 	//tvn_tripod_draw();
