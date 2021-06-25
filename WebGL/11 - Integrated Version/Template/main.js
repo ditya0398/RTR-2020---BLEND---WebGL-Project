@@ -192,8 +192,8 @@ function init() {
 	//utensil_init();
 
 
-	// loadModel('Models/car.obj',vao_mercedes_modelLoading,vbo_mercedes_modelLoading);
-	// MercedesProgramObject = initializeModel();
+	loadModel('Models/car.obj',vao_mercedes_modelLoading,vbo_mercedes_modelLoading);
+	MercedesProgramObject = initializeModel();
 
 
 	gViewMatrix = mat4.create()
@@ -231,11 +231,11 @@ function render() {
 		// renderNormalMapRoad()
 		// GRDisplayRoadside();
 		// tvn_draw_lamp_arch();
-		// //drawModel();
+		drawModel();
 		// ASJ_draw_stove(perspectiveMatrix);
 	//	utensil_display();
 	}
-	GRDisplayMic();
+	// GRDisplayMic();
 	//tvn_script_draw();
 	//tvn_speaker_draw();
 	//tvn_tripod_draw();
