@@ -53,7 +53,7 @@ async function main()
 
 
 	
-	loadModel('car.obj',vao_mercedes_modelLoading,vbo_mercedes_modelLoading);
+	loadModel('Coffee Cup_final.obj',vao_mercedes_modelLoading,vbo_mercedes_modelLoading);
 	MercedesProgramObject = initializeModel();
 
 

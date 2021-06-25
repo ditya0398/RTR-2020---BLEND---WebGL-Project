@@ -98,32 +98,32 @@ function keyDown(event) {
 			break
 
 			case 38: //up arrow
-			TeapotTransZ -= 0.05
+			TeacupTransZ -= 0.05
 			break
 			case 40: //down arrow
-			TeapotTransZ += 0.05
+			TeacupTransZ += 0.05
 			break
 			case 37: //left arrow
-			TeapotTransX -= 0.05
+			TeacupTransX -= 0.05
 			break
 			case 39: //right arrow
-			TeapotTransX += 0.05
+			TeacupTransX += 0.05
 			break
 
 			case 84: //Y
-			TeapotTransY += 0.05
+			TeacupTransY += 0.05
 			break
 
 			case 85: //U
-			TeapotTransY -= 0.05
+			TeacupTransY -= 0.05
 			break
 
 			case 100: //4
-			TeapotScale -= 0.02
+			TeacupScale -= 0.02
 			break
 
 			case 102: //6
-			TeapotScale += 0.02
+			TeacupScale += 0.02
 			break
 
 		case 27:
@@ -199,6 +199,16 @@ function init() {
 		console.log(numElements_Teapot);
 		 gParts_Teapot = parts_teapot;
 		console.log(gParts_Teapot.length);
+		//numElem = null;
+	});
+
+
+	loadModel('Models/Coffee Cup_final.obj',vao_teacup,vbo_teacup,function(parts_teacup,numElem1){
+		console.log("succeeded");
+		numElements_Teacup = numElem1;
+		console.log(numElements_Teacup);
+		 gParts_TeaCup = parts_teacup;
+		console.log(gParts_TeaCup.length);
 		//numElem = null;
 	});
 

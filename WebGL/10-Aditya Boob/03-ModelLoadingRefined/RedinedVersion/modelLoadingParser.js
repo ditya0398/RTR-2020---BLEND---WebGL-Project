@@ -685,7 +685,7 @@ function drawModel()
 	var viewMatrix = mat4.create();
 	
 	//var angleInRadian = degreeToRadian(gAngle);
-	mat4.translate(modelMatrix, modelMatrix, [0.0,0.0,-6.0]);
+	mat4.translate(modelMatrix, modelMatrix, [0.0,-6.5,-15.0]);
 	mat4.rotateY(modelMatrix,modelMatrix,degreeToRadian(gAngleTriangle_modelLoading));
 	
 	gAngleTriangle_modelLoading += 0.02;

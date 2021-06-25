@@ -7,6 +7,9 @@ var gParts_Table;
 
 var gParts_Teapot;
 
+var gParts_TeaCup;
+
+
 
 var vertexShaderObject_modelLoading;
 var fragmentShaderObject_modelLoading;
@@ -41,6 +44,7 @@ var sphere_modelLoading=null;
 
 var numElements_Teapot = [];
 var numElements_table = [];
+var numElements_Teacup = [];
 
 var vao_cube_modelLoading = [];
 var vao_mercedes_modelLoading = [];
@@ -51,6 +55,9 @@ var vao_teapot = [];
 var vbo_teapot = [];
 
 
+var vao_teacup = [];
+var vbo_teacup = [];
+
 
 var vbo_cube_tp_modelLoading ;
     
@@ -60,9 +67,14 @@ var modelLoadingProgramObject;
 var TeapotTransX = 2.0500000000000007;
 var TeapotTransY = 0.9000000000000002;
 var TeapotTransZ = -16.100000000000016;
-
 var TeapotScale = 0.1199999999999994;
 
+
+
+var TeacupTransX = 2.2;
+var TeacupTransY = -1.1000000000000003;
+var TeacupTransZ = -15.0;
+var TeacupScale = 0.03999999999999938;
 
 function initializeModel(){
 	//Get OpenGL context
@@ -698,9 +710,6 @@ async function loadModel(modelName,vao_cube,vbo_cube,callback)
 
 function drawModel()
 {
-
-
-
 	gl.useProgram(modelLoadingProgramObject);
 	//lighting details
 	
@@ -716,7 +725,7 @@ function drawModel()
   mat4.scale(modelMatrix,modelMatrix,[TeapotScale,TeapotScale,TeapotScale]);
 	//mat4.rotateY(modelMatrix,modelMatrix,deg2rad(gAngleTriangle_modelLoading));
 	
-	gAngleTriangle_modelLoading += 0.02;
+//	gAngleTriangle_modelLoading += 0.02;
 	//mat4.rotateY(modelMatrix,modelMatrix,degreeToRadian(gAngleTriangle));
 	//mat4.multiply(modelViewMatrix, modelViewMatrix, modelMatrix);
 	gl.uniformMatrix4fv(modelUniform_modelLoading,false,modelMatrix);
@@ -766,7 +775,7 @@ function drawModel()
 /*****************************************    -------------------------        ************************** */
 
 
-
+drawTeacup();
 
 
 
@@ -827,4 +836,61 @@ function drawModel()
 	// 		gAngleSquare_modelLoading = 0.0;
 	// 	else
 	// 		gAngleSquare_modelLoading = gAngleSquare_modelLoading + 1.0;
+}
+
+function drawTeacup()
+{
+	var modelMatrix = mat4.create();
+	var viewMatrix = mat4.create();
+	
+	//var angleInRadian = degreeToRadian(gAngle);
+	mat4.translate(modelMatrix, modelMatrix, [TeacupTransX, TeacupTransY,TeacupTransZ]);
+  mat4.scale(modelMatrix,modelMatrix,[TeacupScale,TeacupScale,TeacupScale]);
+	//mat4.rotateY(modelMatrix,modelMatrix,deg2rad(gAngleTriangle_modelLoading));
+	
+//	gAngleTriangle_modelLoading += 0.02;
+	//mat4.rotateY(modelMatrix,modelMatrix,degreeToRadian(gAngleTriangle));
+	//mat4.multiply(modelViewMatrix, modelViewMatrix, modelMatrix);
+	gl.uniformMatrix4fv(modelUniform_modelLoading,false,modelMatrix);
+	gl.uniformMatrix4fv(viewUniform_modelLoading,false,gViewMatrix);
+	gl.uniformMatrix4fv(projectionUniform_modelLoading,false,perspectiveMatrix);
+	
+/************ TEAPOT ************************ */
+
+
+  if(gParts_TeaCup)
+	{
+		
+
+		for(var i = 0; i < gParts_TeaCup.length;i++)
+		{
+
+			if(gbLighting_modelLoading){
+				gl.uniform1i(LKeyPressed_modelLoading, 1);
+				gl.uniform3fv(LAUniform_modelLoading, light_ambient_modelLoading);
+				gl.uniform3fv(LDUniform_modelLoading, light_diffuse_modelLoading);
+				gl.uniform3fv(LSUniform_modelLoading, light_specular_modelLoading);
+				
+				gl.uniform4fv(LightPositionUniform_modelLoading, light_position_modelLoading);
+				
+				//set material properties
+				gl.uniform3fv(KAUniform_modelLoading, gParts_TeaCup[i].material.ambient);
+				gl.uniform3fv(KDUniform_modelLoading, gParts_TeaCup[i].material.diffuse);
+				gl.uniform3fv(KSUniform_modelLoading, gParts_TeaCup[i].material.specular);
+				gl.uniform1f(MaterialShininessUniform_modelLoading,gParts_TeaCup[i].material.shininess);
+				
+				}
+				else
+				{
+						gl.uniform1i(LKeyPressed_modelLoading, 0);
+				}
+			gl.bindTexture(gl.TEXTURE_2D, gParts_TeaCup[i].material.diffuseMap);
+
+				gl.bindVertexArray(vao_teacup[i]);
+		
+				gl.drawArrays(gl.TRIANGLES,0,numElements_Teacup[i]);
+		}
+        
+	}
+
 }
