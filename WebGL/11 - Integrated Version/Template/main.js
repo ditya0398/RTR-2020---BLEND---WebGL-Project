@@ -13,6 +13,8 @@ var rotX = 0.0, rotY = 0.0
 
 var view = [0.0, 0.0, 5.0]
 
+var val_AJ = 0;
+
 const macros = {
 	AMC_ATTRIB_POSITION:0,
 	AMC_ATTRIB_NORMAL:1,
@@ -29,7 +31,7 @@ const scenes = {
 	SCENE_4:4
 }
 
-var currentScene = scenes.SCENE_3
+var currentScene = scenes.SCENE_1
 
 function main() {
 	//Get Canvas from DOM
@@ -125,6 +127,13 @@ function keyDown(event) {
 			case 102: //6
 			TeacupScale += 0.02
 			break
+		case 104:
+			val_AJ = val_AJ + 0.5;
+			break;
+
+		case 98:
+			val_AJ = val_AJ -0.5;
+			break;
 
 		case 27:
 			uninit()
@@ -171,22 +180,22 @@ function init() {
 	gl.viewportHeight = canvas.height
 	//  initFire();
 	GRInit()
-	GRInitRoadside();
+	//GRInitRoadside();
 	initNormalMapRoad()
-	initCubeMap()
-	tejswini_hut_init()
-	tvn_init_lamp_arch();
+	//initCubeMap()
+//	tejswini_hut_init()
+//	tvn_init_lamp_arch();
 
 	// initShadow();
 
-	GRInitMic();
-	tvn_script_init();
-	tvn_speaker_init();
-	tvn_init_tripod();
-	GRInitScene2();
-	DL_initChair()
-	GRInitStageLights();
-	GRInitCamera();
+	//GRInitMic();
+	//tvn_script_init();
+	//tvn_speaker_init();
+	//tvn_init_tripod();
+	//GRInitScene2();
+	//DL_initChair()
+	//GRInitStageLights();
+	//GRInitCamera();
 	//ASJ_init_stove();
 	//utensil_init();
 
@@ -256,12 +265,12 @@ function render() {
 		// animateFire();
 		// Display_CubeMap()
 		GRDisplay()
-		tejswini_hut_draw()
+		//tejswini_hut_draw()
 		renderNormalMapRoad()
-		 GRDisplayRoadside();
-		 tvn_draw_lamp_arch();
-		  drawModel();
-		ASJ_draw_stove();
+		 //GRDisplayRoadside();
+		 //tvn_draw_lamp_arch();
+		 // drawModel();
+		//ASJ_draw_stove();
 		// utensil_display();
 	} else if(currentScene == scenes.SCENE_2) {
 		GRDisplayScene2();
