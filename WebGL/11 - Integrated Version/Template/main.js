@@ -19,6 +19,8 @@ var view = [0.0, 15.133, -47.1]
 
 //Scene 2 z = -47.1 -> 1.3
 
+var val_AJ = 0;
+
 const macros = {
 	AMC_ATTRIB_POSITION:0,
 	AMC_ATTRIB_NORMAL:1,
@@ -35,7 +37,9 @@ const scenes = {
 	SCENE_4:4
 }
 
-var currentScene = scenes.SCENE_2
+
+var currentScene = scenes.SCENE_1
+
 
 var blackWhiteDistortion = 1.0
 
@@ -132,6 +136,13 @@ function keyDown(event) {
 		case 102: //6
 			TeacupScale += 0.02
 			break
+		case 104:
+			val_AJ = val_AJ + 0.5;
+			break;
+
+		case 98:
+			val_AJ = val_AJ -0.5;
+			break;
 
 		case 27:
 			uninit()
@@ -176,27 +187,34 @@ function init() {
 
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
-	//  initFire();
+
+	initFire();
 	GRInit()
-	GRInitRoadside();
+	//GRInitRoadside();
 	initNormalMapRoad()
+
 	initCubeMap()
 	tejswini_hut_init()
 	tvn_init_lamp_arch();
+	GRInitChaiCup();
 
-	// initShadow();
+	//initShadow();
 
-	GRInitMic();
-	tvn_script_init();
-	tvn_speaker_init();
-	tvn_init_tripod();
-	tvn_drama_init();
+	//GRInitMic();
+	//tvn_script_init();
+	//tvn_speaker_init();
+	//tvn_init_tripod();
+	//tvn_drama_init();
 	
 
-	GRInitScene2();
-	DL_initChair()
-	GRInitStageLights();
-	GRInitCamera();
+	//GRInitScene2();
+	//DL_initChair()
+	//GRInitStageLights();
+	//GRInitCamera();
+
+
+
+
 
 	//ASJ_init_stove();
 	//utensil_init();
@@ -265,14 +283,17 @@ function render() {
 
 	if(currentScene == scenes.SCENE_1) {
 		// animateFire();
-		// Display_CubeMap()
+		Display_CubeMap()
 		GRDisplay()
-		tejswini_hut_draw()
+		//tejswini_hut_draw()
 		renderNormalMapRoad()
+
 		 GRDisplayRoadside();
-		 tvn_draw_lamp_arch();
-		  drawModel();
-		ASJ_draw_stove();
+		 //tvn_draw_lamp_arch();
+		  //drawModel();
+		//ASJ_draw_stove();
+		GRDisplayChaiCup();
+
 		// utensil_display();
 	} else if(currentScene == scenes.SCENE_2) {
 		GRDisplayScene2();
@@ -286,8 +307,9 @@ function render() {
 		tvn_drama_draw();
 	}
 	else if(currentScene == scenes.SCENE_3){
-		displayStarBucksOuter();
-		drawCar();
+		// displayStarBucksOuter();
+		// drawCar();
+		ASJ_draw_laptop();
 	}
 	if(gbAnim) {
 		update()
@@ -357,6 +379,8 @@ function uninit() {
 	GRUninitializeScene2()
 	GRUninitializeStageLights()
 	GRUninitializeRoadside()
+	GRUninitializeChaiCup();
+	GRUninitializeMic();
 	GRUninitializeCamera();
 	gl.deleteVertexArray(vao_footpath)
 	gl.deleteBuffer(vbo_footpath)
