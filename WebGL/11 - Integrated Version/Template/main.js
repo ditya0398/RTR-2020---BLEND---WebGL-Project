@@ -29,7 +29,7 @@ const scenes = {
 	SCENE_4:4
 }
 
-var currentScene = scenes.SCENE_3
+var currentScene = scenes.SCENE_2
 
 function main() {
 	//Get Canvas from DOM
@@ -183,10 +183,14 @@ function init() {
 	tvn_script_init();
 	tvn_speaker_init();
 	tvn_init_tripod();
+	tvn_drama_init();
+	
+
 	GRInitScene2();
 	DL_initChair()
 	GRInitStageLights();
 	GRInitCamera();
+
 	//ASJ_init_stove();
 	//utensil_init();
 
@@ -272,6 +276,7 @@ function render() {
 		DL_renderChair()
 		GRDisplayCamera();
 		tvn_script_draw();
+		tvn_drama_draw();
 	}
 	else if(currentScene == scenes.SCENE_3){
 		displayStarBucksOuter();
@@ -292,7 +297,7 @@ function uninit() {
 	//tvn_speaker_uninit();
 	//tvn_tripod_uninit();
 
-
+	tvn_uninit_drama();
 
 	GRUninitialize()
 	GRUninitializeScene2()
