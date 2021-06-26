@@ -29,7 +29,9 @@ const scenes = {
 	SCENE_4:4
 }
 
+
 var currentScene = scenes.SCENE_1
+
 
 function main() {
 	//Get Canvas from DOM
@@ -169,6 +171,7 @@ function init() {
 
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
+
 	initFire();
 	GRInit()
 	GRInitRoadside();
@@ -191,6 +194,7 @@ function init() {
 	//DL_initChair()
 	//GRInitStageLights();
 	//GRInitCamera();
+
 
 	//ASJ_init_stove();
 	//utensil_init();
@@ -281,8 +285,9 @@ function render() {
 		tvn_drama_draw();
 	}
 	else if(currentScene == scenes.SCENE_3){
-		displayStarBucksOuter();
-		drawCar();
+		// displayStarBucksOuter();
+		// drawCar();
+		ASJ_draw_laptop();
 	}
 	
 
