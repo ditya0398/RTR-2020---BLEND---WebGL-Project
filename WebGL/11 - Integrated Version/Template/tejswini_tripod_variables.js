@@ -6,7 +6,7 @@ var textureSamplerUniform_tripod;
 var tvn_vao_tripod;
 var tvn_vbo_tripod;
 var tvn_vbo_color;
-var tvn_mvpUniform;
+var tvn_distortion_uniform_tripod;
 var angle1;
 var vertices = new Float32Array(37680);
 var radius = 0.04;
@@ -76,10 +76,13 @@ function tvn_init_tripod() {
         "precision highp float;" +
         "in vec2 out_tex_coord;" +
         "uniform sampler2D u_texture_sampler;" +
+        "uniform float distortion;" +
         "out vec4 FragColor;" +
         "void main(void)" +
         "{" +
         "FragColor = texture(u_texture_sampler, out_tex_coord);" +
+        "vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
+		"FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
         "}";
 
     tvn_fragmentShaderObject_tripod = gl.createShader(gl.FRAGMENT_SHADER);
@@ -118,6 +121,7 @@ function tvn_init_tripod() {
     tvn_modelMatrix_tripod = gl.getUniformLocation(tvn_shaderProgramObject_tripod, "model_matrix");
     tvn_viewMatrix_tripod = gl.getUniformLocation(tvn_shaderProgramObject_tripod, "view_matrix");
     tvn_projectionMatrix_tripod = gl.getUniformLocation(tvn_shaderProgramObject_tripod, "projection_matrix");
+    tvn_distortion_uniform_tripod = gl.getUniformLocation(tvn_shaderProgramObject_tripod, "distortion");
 
     tvn_vao_tripod = gl.createVertexArray();
     gl.bindVertexArray(tvn_vao_tripod);
@@ -143,8 +147,7 @@ function tvn_init_tripod() {
         [10, 10, 10, 255]
     )
     gl.bindTexture(gl.TEXTURE_2D, tvn_tripod_texture);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-
+    
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 
@@ -193,6 +196,8 @@ function tvn_tripod_draw() {
 
 
     gl.useProgram(tvn_shaderProgramObject_tripod);
+
+    gl.uniform1f(tvn_distortion_uniform_tripod, blackWhiteDistortion)
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, tvn_tripod_texture);

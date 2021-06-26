@@ -1,7 +1,7 @@
 
-var grvertexShaderObject;
-var grfragmentShadeerObject;
-var grshaderProgramObject;
+var grvertexShaderObject_light;
+var grfragmentShaderObject_light;
+var grshaderProgramObject_light;
 
 var grgPerspectiveProjectionMatrix;
 
@@ -21,15 +21,17 @@ var grtransStageLightY = 13.7;
 var grtransStageLightZ = -44.2;
 var grscaleStageLigth = 2.0
 
+var numOfTriLights
 
 // texture
 var grgtextureLightGlass;
 var grgtextureLightMaterial;
-var grgtextureSamplerUniform;
+var grgtextureSamplerUniformLights;
 
-var grgModelMatrixUniform;
-var grgViewMatrixUniform;
-var grgProjectionMatrixUniform;
+var grgModelMatrixUniformLights;
+var grgViewMatrixUniformLights;
+var grgProjectionMatrixUniformLights;
+var grgDistortionUniformLights;
 
 var grstackMatrix = [];
 var grmatrixPosition = -1;
@@ -57,15 +59,15 @@ function GRInitStageLights()
         "void main(void)" +
         "{" +
         "gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * vPosition;" +
-        "out_texcoord = vTexCoord;" +
+        "out_texcoord = vec2(vPosition.x * 2.0, vPosition.z);" +
         "}";
 
-    grvertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(grvertexShaderObject, grvertexShaderSourceCode);
-    gl.compileShader(grvertexShaderObject);
-    if (gl.getShaderParameter(grvertexShaderObject, gl.COMPILE_STATUS) == false) 
+    grvertexShaderObject_light = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(grvertexShaderObject_light, grvertexShaderSourceCode);
+    gl.compileShader(grvertexShaderObject_light);
+    if (gl.getShaderParameter(grvertexShaderObject_light, gl.COMPILE_STATUS) == false) 
     {
-        var error = gl.getShaderInfoLog(grvertexShaderObject);
+        var error = gl.getShaderInfoLog(grvertexShaderObject_light);
         if (error.length > 0) 
         {
             alert(error);
@@ -81,18 +83,21 @@ function GRInitStageLights()
         "precision highp float;" +
         "in vec2 out_texcoord;" +
         "uniform highp sampler2D u_texture_sampler;" +
+        "uniform float distortion;" +
         "out vec4 FragColor;" +
         "void main(void)" +
         "{" +
         "FragColor = texture(u_texture_sampler, out_texcoord);" +
+        "vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
+        "FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
         "}";
 
-    grfragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(grfragmentShaderObject, grfragmentShaderSourceCode);
-    gl.compileShader(grfragmentShaderObject);
-    if (gl.getShaderParameter(grfragmentShaderObject, gl.COMPILE_STATUS) == false) 
+    grfragmentShaderObject_light = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(grfragmentShaderObject_light, grfragmentShaderSourceCode);
+    gl.compileShader(grfragmentShaderObject_light);
+    if (gl.getShaderParameter(grfragmentShaderObject_light, gl.COMPILE_STATUS) == false) 
     {
-        var error = gl.getShaderInfoLog(grfragmentShaderObject);
+        var error = gl.getShaderInfoLog(grfragmentShaderObject_light);
         if (error.length > 0) 
         {
             alert(error);
@@ -103,19 +108,19 @@ function GRInitStageLights()
     }
 
     // shader program
-    grshaderProgramObject = gl.createProgram();
+    grshaderProgramObject_light = gl.createProgram();
     //attach shader object
-    gl.attachShader(grshaderProgramObject, grvertexShaderObject);
-    gl.attachShader(grshaderProgramObject, grfragmentShaderObject);
+    gl.attachShader(grshaderProgramObject_light, grvertexShaderObject_light);
+    gl.attachShader(grshaderProgramObject_light, grfragmentShaderObject_light);
     // pre-linking
-    gl.bindAttribLocation(grshaderProgramObject, macros.AMC_ATTRIB_POSITION, "vPosition");
-    gl.bindAttribLocation(grshaderProgramObject, macros.AMC_ATTRIB_TEXCOORD, "vTexCoord");
+    gl.bindAttribLocation(grshaderProgramObject_light, macros.AMC_ATTRIB_POSITION, "vPosition");
+    gl.bindAttribLocation(grshaderProgramObject_light, macros.AMC_ATTRIB_TEXCOORD, "vTexCoord");
 
     // linking
-    gl.linkProgram(grshaderProgramObject);
-    if (!gl.getProgramParameter(grshaderProgramObject, gl.LINK_STATUS)) 
+    gl.linkProgram(grshaderProgramObject_light);
+    if (!gl.getProgramParameter(grshaderProgramObject_light, gl.LINK_STATUS)) 
     {
-        var err = gl.getProgramInfoLog(grshaderProgramObject);
+        var err = gl.getProgramInfoLog(grshaderProgramObject_light);
         if (err.length > 0) 
         {
             alert(err);
@@ -128,11 +133,11 @@ function GRInitStageLights()
     }
 
     // mvp uniform binding
-    grgModelMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_model_matrix");
-    grgViewMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_view_matrix");
-    grgProjectionMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_projection_matrix");
-    grtextureSamplerUniform = gl.getUniformLocation(grshaderProgramObject, "u_texture_sampler");
-
+    grgModelMatrixUniformLights = gl.getUniformLocation(grshaderProgramObject_light, "u_model_matrix");
+    grgViewMatrixUniformLights = gl.getUniformLocation(grshaderProgramObject_light, "u_view_matrix");
+    grgProjectionMatrixUniformLights = gl.getUniformLocation(grshaderProgramObject_light, "u_projection_matrix");
+    grgtextureSamplerUniformLights = gl.getUniformLocation(grshaderProgramObject_light, "u_texture_sampler");
+    grgDistortionUniformLights = gl.getUniformLocation(grshaderProgramObject_light, "distortion");
 
 
     var grcubeTexcoords = new Float32Array(
@@ -203,21 +208,20 @@ function GRInitStageLights()
         ]
     );
     
-    var circleVerts = new Float32Array(37704);
-
+    var circleVertsArr = [];
     var index = 0;
-    for(i = 0.0; i < 2 * 3.142; i = i + 0.001)
+    for(i = 0.0; i < 2 * 3.142; i = i + 0.01)
     {
-        circleVerts[index] = Math.cos(i);
-        circleVerts[index + 1] = Math.sin(i);
-        circleVerts[index + 2] = 0.0;
+        circleVertsArr.push(Math.cos(i));
+        circleVertsArr.push(Math.sin(i));
+        circleVertsArr.push(0.0);
 
-        circleVerts[index + 3] = Math.cos(i);
-        circleVerts[index + 4] = Math.sin(i);
-        circleVerts[index + 5] = 1.0;
-        index = index + 6;
-
+        circleVertsArr.push(Math.cos(i));
+        circleVertsArr.push(Math.sin(i));
+        circleVertsArr.push(1.0);
     }
+    numOfTriLights = circleVertsArr.length / 3
+    var circleVerts = Float32Array.from(circleVertsArr)
     console.log("index : " + index);
 
     // cube
@@ -251,12 +255,12 @@ function GRInitStageLights()
     gl.enableVertexAttribArray(macros.AMC_ATTRIB_POSITION);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-    grgVboCylinderTexture = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, grgVboCylinderTexture);
-    gl.bufferData(gl.ARRAY_BUFFER, circleVerts, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(macros.AMC_ATTRIB_TEXCOORD, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(macros.AMC_ATTRIB_TEXCOORD);
-    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    // grgVboCylinderTexture = gl.createBuffer();
+    // gl.bindBuffer(gl.ARRAY_BUFFER, grgVboCylinderTexture);
+    // gl.bufferData(gl.ARRAY_BUFFER, circleVerts, gl.STATIC_DRAW);
+    // gl.vertexAttribPointer(macros.AMC_ATTRIB_TEXCOORD, 2, gl.FLOAT, false, 0, 0);
+    // gl.enableVertexAttribArray(macros.AMC_ATTRIB_TEXCOORD);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     gl.bindVertexArray(null);
 
@@ -272,6 +276,7 @@ function GRInitStageLights()
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, grgtextureLightMaterial.image);
         gl.bindTexture(gl.TEXTURE_2D, null);
     };
@@ -294,7 +299,7 @@ function GRInitStageLights()
 }
 
 
-function GRDisplayStageLights() 
+function GRDisplayStageLights()
 {
     // vars
     var grmodel = mat4.create();
@@ -304,7 +309,9 @@ function GRDisplayStageLights()
     var scale = mat4.create(); 
 
 
-    gl.useProgram(grshaderProgramObject);
+    gl.useProgram(grshaderProgramObject_light);
+
+    gl.uniform1f(grgDistortionUniformLights, blackWhiteDistortion)
 
     // stage and stage-wing
     mat4.translate(grtranslate, grtranslate, [grtransStageLightX - 12.0, grtransStageLightY, grtransStageLightZ]);
@@ -419,13 +426,13 @@ function GRLightHolderPipe()
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformLights, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformLights, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformLights, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureLightMaterial);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformLights, 0);
     
     gl.bindVertexArray(grgVaoCube);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -472,13 +479,13 @@ function GRLightHolderScrew()
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformLights, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformLights, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformLights, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureLightMaterial);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformLights, 0);
     
     gl.bindVertexArray(grgVaoCube);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -531,16 +538,16 @@ function GRStageLights()
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformLights, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformLights, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformLights, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureLightMaterial);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformLights, 0);
     
     gl.bindVertexArray(grgVaoCylinder);
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, 12568);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, numOfTriLights);
     gl.bindVertexArray(null);
 
     gl.bindTexture(gl.TEXTURE_2D, null);
@@ -565,13 +572,13 @@ function GRStageLights()
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformLights, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformLights, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformLights, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureLightMaterial);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformLights, 0);
     
     gl.bindVertexArray(grgVaoCube);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -596,13 +603,13 @@ function GRStageLights()
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformLights, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformLights, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformLights, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureLightMaterial);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformLights, 0);
     
     gl.bindVertexArray(grgVaoCube);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -632,13 +639,13 @@ function GRStageLights()
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformLights, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformLights, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformLights, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureLightMaterial);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformLights, 0);
     
     gl.bindVertexArray(grgVaoCube);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -690,13 +697,13 @@ function GRStageLights()
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformLights, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformLights, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformLights, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureLightMaterial);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformLights, 0);
     
     gl.bindVertexArray(grgVaoCube);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -726,13 +733,13 @@ function GRStageLights()
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformLights, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformLights, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformLights, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureLightMaterial);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformLights, 0);
     
     gl.bindVertexArray(grgVaoCube);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -763,13 +770,13 @@ function GRStageLights()
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformLights, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformLights, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformLights, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureLightMaterial);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformLights, 0);
     
     gl.bindVertexArray(grgVaoCube);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -803,13 +810,13 @@ function GRStageLights()
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformLights, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformLights, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformLights, false, grprojectionMatrix);
     
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureLightGlass);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformLights, 0);
     
     grglightSphere.draw();
 
@@ -909,24 +916,24 @@ function GRUninitializeStageLights()
     
    
 
-    if (grshaderProgramObject) 
+    if (grshaderProgramObject_light) 
     {
         if (grfragmentShaderObject) 
         {
-            gl.detachShader(grshaderProgramObject, grfragmentShaderObject);
+            gl.detachShader(grshaderProgramObject_light, grfragmentShaderObject);
             gl.deleteShader(grfragmentShaderObject);
             grfragmentShaderObject = null;
         }
 
         if (grfragmentShaderObject) 
         {
-            gl.detachShader(grshaderProgramObject, grvertexShaderObject);
-            gl.deleteShader(grvertexShaderObject);
-            grvertexShaderObject = null;
+            gl.detachShader(grshaderProgramObject_light, grvertexShaderObject_light);
+            gl.deleteShader(grvertexShaderObject_light);
+            grvertexShaderObject_light = null;
         }
 
-        gl.deleteProgram(grshaderProgramObject);
-        grshaderProgramObject = null;
+        gl.deleteProgram(grshaderProgramObject_light);
+        grshaderProgramObject_light = null;
     }
 }
 

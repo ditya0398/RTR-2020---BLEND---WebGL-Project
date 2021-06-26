@@ -1,25 +1,26 @@
-var dl_vao
-var dl_vbo
-var dl_program
-var dl_numOfTri
+var dl_vao_chair
+var dl_vbo_chair
+var dl_program_chair
+var dl_numOfTri_chair
 
-var dl_mUniform
-var dl_vUniform
-var dl_projUniform
-var dl_lightPositionUniform
-var dl_lightAmbientUniform
-var dl_lightDiffuseUniform
-var dl_lightSpecularUniform
-var dl_matAmbientUniform
-var dl_matDiffuseUniform
-var dl_matSpecularUniform
-var dl_matShininessUnifom
+var dl_mUniform_chair
+var dl_vUniform_chair
+var dl_projUniform_chair
+var dl_lightPositionUniform_chair
+var dl_lightAmbientUniform_chair
+var dl_lightDiffuseUniform_chair
+var dl_lightSpecularUniform_chair
+var dl_matAmbientUniform_chair
+var dl_matDiffuseUniform_chair
+var dl_matSpecularUniform_chair
+var dl_matShininessUnifom_chair
+var dl_distortionUniform_chair
 
-var dl_trans_x = 0.0
-var dl_trans_y = -3.6
-var dl_trans_z = -11.5
+var dl_trans_x_chair = 0.0
+var dl_trans_y_chair = -3.6
+var dl_trans_z_chair = -11.5
 
-var dl_scale = 2.21
+var dl_scale_chair = 2.21
 
 function DL_getRotatedVertices(angle, axis, povars) {
 	if(axis == 0) {
@@ -898,7 +899,8 @@ function DL_initChair() {
 	"uniform vec4 matDiffuse;\n"+
 	"uniform vec4 matSpecular;\n"+
 	"uniform float matShininess;\n"+
-	"out vec4 FragColor;\n"+
+	"uniform float distortion;" +
+    "out vec4 FragColor;\n"+
 	"void main(void) {\n"+
 	"vec3 N = normalize(vs_N);\n"+
 	"vec3 L = normalize(vs_L);\n"+
@@ -909,8 +911,9 @@ function DL_initChair() {
 	"vec4 specular = pow(max(dot(R, V), 0.0), matShininess) * lightSpecular * matSpecular;\n"+
 	"FragColor = ambient + diffuse + specular;\n"+
 	"FragColor.w = 1.0;\n"+
-	// "FragColor = vec4(1.0);\n"+
-	"}\n"
+	"vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
+	"FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
+    "}\n"
 
 	var vertShader = gl.createShader(gl.VERTEX_SHADER)
 	gl.shaderSource(vertShader, vertexSrc)
@@ -928,43 +931,44 @@ function DL_initChair() {
 		alert("frag" + error)
 	}
 
-	dl_program = gl.createProgram()
-	gl.attachShader(dl_program, vertShader)
-	gl.attachShader(dl_program, fragShader)
-	gl.bindAttribLocation(dl_program, macros.AMC_ATTRIB_POSITION, "vPos")
-	gl.bindAttribLocation(dl_program, macros.AMC_ATTRIB_NORMAL, "vNormal")
-	gl.bindAttribLocation(dl_program, macros.AMC_ATTRIB_TEXCOORD, "vTexCoord")
-	gl.linkProgram(dl_program)
-	if(!gl.getProgramParameter(dl_program, gl.LINK_STATUS)) {
-		var error = gl.getProgramInfoLog(dl_program)
+	dl_program_chair = gl.createProgram()
+	gl.attachShader(dl_program_chair, vertShader)
+	gl.attachShader(dl_program_chair, fragShader)
+	gl.bindAttribLocation(dl_program_chair, macros.AMC_ATTRIB_POSITION, "vPos")
+	gl.bindAttribLocation(dl_program_chair, macros.AMC_ATTRIB_NORMAL, "vNormal")
+	gl.bindAttribLocation(dl_program_chair, macros.AMC_ATTRIB_TEXCOORD, "vTexCoord")
+	gl.linkProgram(dl_program_chair)
+	if(!gl.getProgramParameter(dl_program_chair, gl.LINK_STATUS)) {
+		var error = gl.getProgramInfoLog(dl_program_chair)
 		alert("prog" + error)
 	}
 
-	dl_mUniform = gl.getUniformLocation(dl_program, "u_mMat")
-	dl_vUniform = gl.getUniformLocation(dl_program, "u_vMat")
-	dl_projUniform = gl.getUniformLocation(dl_program, "u_projMat")
-	dl_lightPositionUniform = gl.getUniformLocation(dl_program, "lightPosition")
-	dl_lightAmbientUniform = gl.getUniformLocation(dl_program, "lightAmbient")
-	dl_lightDiffuseUniform = gl.getUniformLocation(dl_program, "lightDiffuse")
-	dl_lightSpecularUniform = gl.getUniformLocation(dl_program, "lightSpecular")
-	dl_matAmbientUniform = gl.getUniformLocation(dl_program, "matAmbient")
-	dl_matDiffuseUniform = gl.getUniformLocation(dl_program, "matDiffuse")
-	dl_matSpecularUniform = gl.getUniformLocation(dl_program, "matSpecular")
-	matShininessUniform = gl.getUniformLocation(dl_program, "matShininess")
-	
-	gl.detachShader(dl_program, vertShader)
+	dl_mUniform_chair = gl.getUniformLocation(dl_program_chair, "u_mMat")
+	dl_vUniform_chair = gl.getUniformLocation(dl_program_chair, "u_vMat")
+	dl_projUniform_chair = gl.getUniformLocation(dl_program_chair, "u_projMat")
+	dl_lightPositionUniform_chair = gl.getUniformLocation(dl_program_chair, "lightPosition")
+	dl_lightAmbientUniform_chair = gl.getUniformLocation(dl_program_chair, "lightAmbient")
+	dl_lightDiffuseUniform_chair = gl.getUniformLocation(dl_program_chair, "lightDiffuse")
+	dl_lightSpecularUniform_chair = gl.getUniformLocation(dl_program_chair, "lightSpecular")
+	dl_matAmbientUniform_chair = gl.getUniformLocation(dl_program_chair, "matAmbient")
+	dl_matDiffuseUniform_chair = gl.getUniformLocation(dl_program_chair, "matDiffuse")
+	dl_matSpecularUniform_chair = gl.getUniformLocation(dl_program_chair, "matSpecular")
+	dl_matShininessUniform_chair = gl.getUniformLocation(dl_program_chair, "matShininess")
+	dl_distortionUniform_chair = gl.getUniformLocation(dl_program_chair, "distortion")
+
+	gl.detachShader(dl_program_chair, vertShader)
 	gl.deleteShader(vertShader)
-	gl.detachShader(dl_program, fragShader)
+	gl.detachShader(dl_program_chair, fragShader)
 	gl.deleteShader(fragShader)
 
-	dl_vao = gl.createVertexArray()
-	gl.bindVertexArray(dl_vao)
+	dl_vao_chair = gl.createVertexArray()
+	gl.bindVertexArray(dl_vao_chair)
 
 	var vertexData = DL_getChairVertexData()
-	dl_numOfTri = vertexData.length / 8
+	dl_numOfTri_chair = vertexData.length / 8
 
-	dl_vbo = gl.createBuffer()
-	gl.bindBuffer(gl.ARRAY_BUFFER, dl_vbo)
+	dl_vbo_chair = gl.createBuffer()
+	gl.bindBuffer(gl.ARRAY_BUFFER, dl_vbo_chair)
 	gl.bufferData(gl.ARRAY_BUFFER, vertexData, gl.STATIC_DRAW)
 	
 	gl.vertexAttribPointer(macros.AMC_ATTRIB_POSITION, 3, gl.FLOAT, false, 8 * 4, 0)
@@ -976,27 +980,28 @@ function DL_initChair() {
 }
 
 function DL_renderChair() {
-	gl.useProgram(dl_program)
+	gl.useProgram(dl_program_chair)
 	
 	var mMat = mat4.create()
-	mat4.translate(mMat, mMat, [dl_trans_x, dl_trans_y, dl_trans_z])
-	mat4.scale(mMat, mMat, [dl_scale, dl_scale, dl_scale])
+	mat4.translate(mMat, mMat, [dl_trans_x_chair, dl_trans_y_chair, dl_trans_z_chair])
+	mat4.scale(mMat, mMat, [dl_scale_chair, dl_scale_chair, dl_scale_chair])
 
-	gl.uniformMatrix4fv(dl_projUniform, false, perspectiveMatrix)
-	gl.uniformMatrix4fv(dl_vUniform, false, gViewMatrix)
-	gl.uniformMatrix4fv(dl_mUniform, false, mMat)
+	gl.uniformMatrix4fv(dl_projUniform_chair, false, perspectiveMatrix)
+	gl.uniformMatrix4fv(dl_vUniform_chair, false, gViewMatrix)
+	gl.uniformMatrix4fv(dl_mUniform_chair, false, mMat)
 
-	gl.uniform4f(dl_lightPositionUniform, 10.0, 10.0, 10.0, 1.0)
-	gl.uniform4f(dl_lightAmbientUniform, 0.1, 0.1, 0.1, 1.0)
-	gl.uniform4f(dl_lightDiffuseUniform, 1.0, 1.0, 1.0, 1.0)
-	gl.uniform4f(dl_lightSpecularUniform, 1.0, 1.0, 1.0, 1.0)
-	gl.uniform4f(dl_matAmbientUniform, 0.1, 0.1, 0.1, 1.0)
-	gl.uniform4f(dl_matDiffuseUniform, 0.2, 0.3, 0.15, 1.0)
-	gl.uniform4f(dl_matSpecularUniform, 0.7, 0.7, 0.7, 1.0)
-	gl.uniform1f(matShininessUniform, 50.0)
+	gl.uniform4f(dl_lightPositionUniform_chair, 10.0, 10.0, 10.0, 1.0)
+	gl.uniform4f(dl_lightAmbientUniform_chair, 0.1, 0.1, 0.1, 1.0)
+	gl.uniform4f(dl_lightDiffuseUniform_chair, 1.0, 1.0, 1.0, 1.0)
+	gl.uniform4f(dl_lightSpecularUniform_chair, 1.0, 1.0, 1.0, 1.0)
+	gl.uniform4f(dl_matAmbientUniform_chair, 0.1, 0.1, 0.1, 1.0)
+	gl.uniform4f(dl_matDiffuseUniform_chair, 0.2, 0.3, 0.15, 1.0)
+	gl.uniform4f(dl_matSpecularUniform_chair, 0.7, 0.7, 0.7, 1.0)
+	gl.uniform1f(dl_matShininessUniform_chair, 50.0)
+	gl.uniform1f(dl_distortionUniform_chair, blackWhiteDistortion)
 
-	gl.bindVertexArray(dl_vao)
-	gl.drawArrays(gl.TRIANGLES, 0, dl_numOfTri)
+	gl.bindVertexArray(dl_vao_chair)
+	gl.drawArrays(gl.TRIANGLES, 0, dl_numOfTri_chair)
 	gl.bindVertexArray(null)
 	gl.useProgram(null)
 }

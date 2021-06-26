@@ -9,9 +9,15 @@ var gViewMatrix
 var perspectiveMatrix
 var gbLight = false
 
+var gbInitializeScene2Camera = true
+
+var gbAnim = false
+
 var rotX = 0.0, rotY = 0.0
 
-var view = [0.0, 0.0, 5.0]
+var view = [0.0, 15.133, -47.1]
+
+//Scene 2 z = -47.1 -> 1.3
 
 const macros = {
 	AMC_ATTRIB_POSITION:0,
@@ -30,6 +36,8 @@ const scenes = {
 }
 
 var currentScene = scenes.SCENE_2
+
+var blackWhiteDistortion = 1.0
 
 function main() {
 	//Get Canvas from DOM
@@ -55,34 +63,36 @@ function keyDown(event) {
 		case 70:
 			toggleFullscreen()
 			break
-		case 76:
-			gbLight = !gbLight
+		case 76://L
+			blackWhiteDistortion += 0.1
+			if(blackWhiteDistortion > 1.0) {
+				blackWhiteDistortion = 1.0
+			}
+			break
+		case 79: //O
+			blackWhiteDistortion -= 0.1
+			if(blackWhiteDistortion < 0.0) {
+				blackWhiteDistortion = 0.0
+			}
 			break
 		case 88 :                   // x key
-            grfangleX = grfangleX + 1.0;
-            if(grfangleX >= 360.0)
-            {
-                grfangleX = 0.0;
-            }
-            break;
-        case 89 :                   // y key
-            grfangleY_radio = grfangleY_radio + 1.0;
-            if(grfangleY_radio >= 360.0)
-            {
-                grfangleY_radio = 0.0;
-            }
-            break;
+			gbAnim = true
+			break
+		case 89 :                   // y key
+			break
 		case 65: //A
 			view[0] -= 0.1
 			break
 		case 83: //S
 			view[2] += 0.1
+			view[1] -= 0.033
 			break
 		case 68: //D
 			view[0] += 0.1
 			break
 		case 87: //W
 			view[2] -= 0.1
+			view[1] += 0.033
 			break
 		case 81: //Q
 			view[1] -= 0.1
@@ -91,38 +101,35 @@ function keyDown(event) {
 			view[1] += 0.1
 			break
 		case 77: //M
-			grscaleStageLigth += 0.1
 			break
 		case 78: //N
-			grscaleStageLigth -= 0.1
 			break
-
-			case 38: //up arrow
+		case 38: //up arrow
 			TeacupTransZ -= 0.05
 			break
-			case 40: //down arrow
+		case 40: //down arrow
 			TeacupTransZ += 0.05
 			break
-			case 37: //left arrow
+		case 37: //left arrow
 			TeacupTransX -= 0.05
 			break
-			case 39: //right arrow
+		case 39: //right arrow
 			TeacupTransX += 0.05
 			break
 
-			case 84: //Y
+		case 84: //Y
 			TeacupTransY += 0.05
 			break
 
-			case 85: //U
+		case 85: //U
 			TeacupTransY -= 0.05
 			break
 
-			case 100: //4
+		case 100: //4
 			TeacupScale -= 0.02
 			break
 
-			case 102: //6
+		case 102: //6
 			TeacupScale += 0.02
 			break
 
@@ -254,7 +261,7 @@ function reshape() {
 function render() {
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-	mat4.lookAt(gViewMatrix, view, [0.0, 3.0, view[2] - 20.0], [0.0, 1.0, 0.0])
+	mat4.lookAt(gViewMatrix, view, [0.0, view[1], view[2] - 20.0], [0.0, 1.0, 0.0])
 
 	if(currentScene == scenes.SCENE_1) {
 		// animateFire();
@@ -282,11 +289,58 @@ function render() {
 		displayStarBucksOuter();
 		drawCar();
 	}
-	
-
+	if(gbAnim) {
+		update()
+	}
 //	Draw_Shadow();
 
 	animFrame(render, canvas)
+}
+
+function update() {
+	if(scenes.SCENE_2) {
+		if(gbInitializeScene2Camera) {
+			// view = [0.0, 15.133, -47.1]
+			view = [0.0, 0.0, 1.6]
+			gbInitializeScene2Camera = false
+		} else {
+			// if(view[2] < 1.6) {
+			// 	view[2] += 0.1
+			// 	view[1] -= 0.03333
+			// } else
+			if(tvn_trans_z_drama_main_1 > -53.9) {
+				tvn_trans_z_drama_main_1 -= 0.1
+				tvn_trans_y_drama_main_1 += 0.011
+				tvn_trans_x_drama_main_1 += 0.03
+				tvn_scale_drama_Main_1 += 0.007
+			} else if(tvn_trans_z_drama_main_2 > -53.9) {
+				tvn_trans_z_drama_main_2 -= 0.1
+				tvn_trans_y_drama_main_2 += 0.011
+				tvn_trans_x_drama_main_2 -= 0.03
+				tvn_scale_drama_Main_2 += 0.007
+			} else if(tvn_trans_z_drama_main_3 > -53.9) {
+				tvn_trans_z_drama_main_3 -= 0.1
+				tvn_trans_y_drama_main_3 += 0.011
+				tvn_trans_x_drama_main_3 += 0.03
+				tvn_scale_drama_Main_3 += 0.007
+			} else if(tvn_trans_z_drama_main_4 > -53.9) {
+				tvn_trans_z_drama_main_4 -= 0.1
+				tvn_trans_y_drama_main_4 += 0.011
+				tvn_trans_x_drama_main_4 -= 0.03
+				tvn_scale_drama_Main_4 += 0.007
+			} else if(tvn_trans_z_drama_main_5 > -53.9) {
+				tvn_trans_z_drama_main_5 -= 0.1
+				tvn_trans_y_drama_main_5 += 0.011
+				tvn_trans_x_drama_main_5 += 0.03
+				tvn_scale_drama_Main_5 += 0.007
+			} else if(tvn_trans_z_drama_main_6 > -53.9) {
+				tvn_trans_z_drama_main_6 -= 0.1
+				tvn_trans_y_drama_main_6 += 0.011
+				tvn_trans_x_drama_main_6 -= 0.03
+				tvn_scale_drama_Main_6 += 0.007
+			}
+		}
+	}
 }
 
 function uninit() {
