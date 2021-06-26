@@ -29,7 +29,9 @@ const scenes = {
 	SCENE_4:4
 }
 
-var currentScene = scenes.SCENE_3
+
+var currentScene = scenes.SCENE_1
+
 
 function main() {
 	//Get Canvas from DOM
@@ -169,29 +171,30 @@ function init() {
 
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
-	//  initFire();
-	// GRInit()
-	// GRInitRoadside();
-	// initNormalMapRoad()
-	// initCubeMap()
-	// tejswini_hut_init()
-	// tvn_init_lamp_arch();
 
-	// // initShadow();
+	initFire();
+	GRInit()
+	GRInitRoadside();
+	initNormalMapRoad()
+	initCubeMap()
+	tejswini_hut_init()
+	tvn_init_lamp_arch();
+	GRInitChaiCup();
 
-	// GRInitMic();
-	// tvn_script_init();
-	// tvn_speaker_init();
-	// tvn_init_tripod();
-	// tvn_drama_init();
+	//initShadow();
+
+	//GRInitMic();
+	//tvn_script_init();
+	//tvn_speaker_init();
+	//tvn_init_tripod();
+	//tvn_drama_init();
 	
 
-	// GRInitScene2();
-	// DL_initChair()
-	// GRInitStageLights();
-	// GRInitCamera();
+	//GRInitScene2();
+	//DL_initChair()
+	//GRInitStageLights();
+	//GRInitCamera();
 
-	ASJ_init_laptop();
 
 	//ASJ_init_stove();
 	//utensil_init();
@@ -260,14 +263,15 @@ function render() {
 
 	if(currentScene == scenes.SCENE_1) {
 		// animateFire();
-		// Display_CubeMap()
+		Display_CubeMap()
 		GRDisplay()
 		tejswini_hut_draw()
 		renderNormalMapRoad()
 		 GRDisplayRoadside();
-		 tvn_draw_lamp_arch();
-		  drawModel();
-		ASJ_draw_stove();
+		 //tvn_draw_lamp_arch();
+		  //drawModel();
+		//ASJ_draw_stove();
+		GRDisplayChaiCup();
 		// utensil_display();
 	} else if(currentScene == scenes.SCENE_2) {
 		GRDisplayScene2();
@@ -306,6 +310,8 @@ function uninit() {
 	GRUninitializeScene2()
 	GRUninitializeStageLights()
 	GRUninitializeRoadside()
+	GRUninitializeChaiCup();
+	GRUninitializeMic();
 	GRUninitializeCamera();
 	gl.deleteVertexArray(vao_footpath)
 	gl.deleteBuffer(vbo_footpath)
