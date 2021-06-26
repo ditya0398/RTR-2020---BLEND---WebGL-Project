@@ -29,6 +29,16 @@ var matShininessUniform
 var texSamUniform
 var texNorUniform
 
+var akhi = 2;
+//AKHI
+var ASJ_ambientUniform_pointLight;
+var ASJ_lightColorUniform_pointLight;
+var ASJ_lightPositionUniform_pointLight;
+var ASJ_shininessUniform_pointLight;
+var ASJ_strengthUniform_pointLight;
+var ASJ_eyeDirectionUniform_pointLight;
+var ASJ_attenuationUniform_pointLight;
+
 function initNormalMapRoad() {
 	var vertexSrc = 
 	"#version 300 es\n"+
@@ -39,6 +49,8 @@ function initNormalMapRoad() {
 	"in vec3 vTangent;\n"+
 	"in vec3 vBitangent;\n"+
 	//Out Block
+		//akhi out
+		"out vec4 Position;" +
 	"out vec3 L_out;\n"+
 	"out vec3 V_out;\n"+
 	"out vec3 normal_out;\n"+
@@ -66,7 +78,8 @@ function initNormalMapRoad() {
 	"V_out = -P;\n"+
 	//Passing Normals and TexCoords
 	"normal_out = vNormal;\n"+
-	"texCoord_out = vTexCoord;\n"+
+		"texCoord_out = vTexCoord;\n" +
+		"Position= modelMatrix * vPosition;" +
 	"}\n"
 
 	var fragSrc = 
@@ -94,7 +107,52 @@ function initNormalMapRoad() {
 	"in vec3 normal_out;\n"+
 	"in vec2 texCoord_out;\n"+
 	//Out Variable
-	"out vec4 FragColor;\n"+
+		"out vec4 FragColor;\n" +
+		//Akhi Uniform
+		"uniform vec4 Ambient_AJ;" +
+		"uniform vec3 LightColor_AJ;" +
+		"uniform vec3 LightPosition_AJ;" +
+		"uniform float Shininess_AJ;" +
+		"uniform float Strength_AJ;" +
+		"uniform vec3 EyeDirection_AJ;" +
+		"uniform float Attenuation_AJ;" +
+		//Akhi in
+		"in vec4 Position;" +
+
+		//akhi func
+		"vec4 pointLight(vec3 Normal,vec4 Color)" +
+		"{" +
+
+		"vec3 lightDirection=vec3(Position)-LightPosition_AJ;" +
+		"\n" +
+		"float lightDistance=length(lightDirection);" +
+		"lightDirection= lightDirection / lightDistance;" +
+		"\n" +
+		"vec3 HalfVector=normalize(EyeDirection_AJ - lightDirection);" +
+		"\n" +
+		"float AttenuaFactor = 1.0 / (Attenuation_AJ * lightDistance * lightDistance  );" +
+
+		"float diffuse=max(0.0f,-1.0*dot(Normal,lightDirection)) * 0.5;" +
+		"\n" +
+		"float specular=max(0.0f,1.0*dot(Normal,HalfVector));" +
+
+		"if(diffuse<=0.00001)" +
+		"{" +
+		"specular=0.0f;" +
+		"}" +
+		"else" +
+		"{" +
+		"specular=pow(specular,Shininess_AJ);" +
+		"}" +
+		"\n" +
+		"vec4 scatteredLight=Ambient_AJ + vec4(LightColor_AJ * diffuse * AttenuaFactor,1.0);" +
+		"vec4 ReflectedLight=vec4(LightColor_AJ * specular * Strength_AJ * AttenuaFactor,1.0);" +
+
+		"vec4 res=min(Color * scatteredLight + ReflectedLight,vec4(1.0));" +
+		"return res;" +
+		"}" +
+
+
 	//Main Function
 	"void main(void) {\n"+
 	//Scaling TexCoord
@@ -110,7 +168,13 @@ function initNormalMapRoad() {
 	"vec4 ambient = light_ambient * material_ambient * color;\n"+
 	"vec4 diffuse = max(dot(N, L), 0.0) * light_diffuse * material_diffuse * color;\n"+
 	"vec4 specular = pow(max(dot(R, V), 0.0), material_shininess) * light_specular * material_specular;\n"+
-	"FragColor = ambient + diffuse + specular;\n"+
+		//Akhi Lighting Calculation
+		"vec3 Normal_AJ=N;" +
+		"vec4 result;" +
+
+		"result=pointLight(Normal_AJ,color);" +
+
+		"FragColor = (ambient + diffuse +specular)*result;\n" +
 	"}\n";
 	
 	var vertShader = gl.createShader(gl.VERTEX_SHADER)
@@ -156,6 +220,17 @@ function initNormalMapRoad() {
 	matShininessUniform = gl.getUniformLocation(program, "material_shininess")
 	texSamUniform = gl.getUniformLocation(program, "texSam")
 	texNorUniform = gl.getUniformLocation(program, "norSam")
+
+
+	//AKHI UNIFORM
+	ASJ_ambientUniform_pointLight = gl.getUniformLocation(program, "Ambient_AJ");
+	ASJ_lightColorUniform_pointLight = gl.getUniformLocation(program, "LightColor_AJ");
+	ASJ_lightPositionUniform_pointLight = gl.getUniformLocation(program, "LightPosition_AJ");
+	ASJ_shininessUniform_pointLight = gl.getUniformLocation(program, "Shininess_AJ");
+	ASJ_strengthUniform_pointLight = gl.getUniformLocation(program, "Strength_AJ");
+	ASJ_eyeDirectionUniform_pointLight = gl.getUniformLocation(program, "EyeDirection_AJ");
+	ASJ_attenuationUniform_pointLight = gl.getUniformLocation(program, "Attenuation_AJ");
+
 
 	gl.detachShader(program, vertShader)
 	gl.deleteShader(vertShader)
@@ -580,4 +655,23 @@ function renderNormalMapRoad() {
 	mat4.translate(modelMatLeft, modelMatLeft, [0.0, -2.25, -10.0])
 	gl.uniformMatrix4fv(modelUniform, false, modelMatLeft)
 	gl.drawArrays(gl.TRIANGLES, 0, 6)
+
+	//akhilesh
+	var Eye_AJ =  new Float32Array([0.0, 0.0, 2.0]);
+	var shininess_AJ = 2.50;
+	var strength_AJ = parseFloat(5);
+	var attenuation_AJ = parseFloat(0.50);
+	var Ambient_AJ = new Float32Array([0.0, 0.0, 0.0, 1.0]);
+	var LightColor_AJ = new Float32Array([1.0, 1.0, 1.0]);
+	var lightPosition_AJ = view;//new Float32Array([0.0, 1.0, -15 + val_AJ]);
+
+	//lightPosition_AJ[2]=
+	gl.uniform4fv(ASJ_ambientUniform_pointLight, Ambient_AJ);
+	gl.uniform3fv(ASJ_lightColorUniform_pointLight, LightColor_AJ);
+	gl.uniform3fv(ASJ_lightPositionUniform_pointLight, lightPosition_AJ);
+	gl.uniform1f(ASJ_shininessUniform_pointLight, shininess_AJ);
+	gl.uniform1f(ASJ_strengthUniform_pointLight, strength_AJ);
+	gl.uniform3fv(ASJ_eyeDirectionUniform_pointLight, Eye_AJ);
+	gl.uniform1f(ASJ_attenuationUniform_pointLight, attenuation_AJ);
+
 }
