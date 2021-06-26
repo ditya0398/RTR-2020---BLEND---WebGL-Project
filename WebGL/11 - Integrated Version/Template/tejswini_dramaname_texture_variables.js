@@ -10,13 +10,34 @@ var tvn_vbo_rectangle_tex_drama;
 var tvn_pUniform_drama;
 var tvn_vUniform_drama;
 var tvn_mUniform_drama;
+var tvn_distortion_uniform_drama;
 
 var textureSamplerUniform_drama;
 
-var tvn_trans_x_drama_main = 0.0
-var tvn_trans_y_drama_main = 0.0
-var tvn_trans_z_drama_main = -3
-var tvn_scale_drama_main = 1.0
+var tvn_trans_x_drama_main_1 = -5.0
+var tvn_trans_x_drama_main_2 = 5.0
+var tvn_trans_x_drama_main_3 = -5.0
+var tvn_trans_x_drama_main_4 = 5.0
+var tvn_trans_x_drama_main_5 = -5.0
+var tvn_trans_x_drama_main_6 = 5.0
+var tvn_trans_y_drama_main_1 = 0.0
+var tvn_trans_y_drama_main_2 = 0.0
+var tvn_trans_y_drama_main_3 = 0.0
+var tvn_trans_y_drama_main_4 = 0.0
+var tvn_trans_y_drama_main_5 = 0.0
+var tvn_trans_y_drama_main_6 = 0.0
+var tvn_trans_z_drama_main_1 = 1.4
+var tvn_trans_z_drama_main_2 = 1.4
+var tvn_trans_z_drama_main_3 = 1.4
+var tvn_trans_z_drama_main_4 = 1.4
+var tvn_trans_z_drama_main_5 = 1.4
+var tvn_trans_z_drama_main_6 = 1.4
+var tvn_scale_drama_Main_1 = 1.0
+var tvn_scale_drama_Main_2 = 1.0
+var tvn_scale_drama_Main_3 = 1.0
+var tvn_scale_drama_Main_4 = 1.0
+var tvn_scale_drama_Main_5 = 1.0
+var tvn_scale_drama_Main_6 = 1.0
 var drama_texture_1;
 var drama_texture_2;
 var drama_texture_3;
@@ -60,11 +81,14 @@ function tvn_drama_init() {
         "\n" +
         "precision highp float;" +
         "uniform sampler2D u_texture_sampler;" +
+        "uniform float distortion;" +
         "in vec2 tex_coord;" +
         "out vec4 FragColor;" +
         "void main(void)" +
         "{" +
         "FragColor = texture(u_texture_sampler,tex_coord);" +
+        "vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
+		"FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
         "}";
 
     tvn_fragmentShaderObject_drama = gl.createShader(gl.FRAGMENT_SHADER);
@@ -103,6 +127,7 @@ function tvn_drama_init() {
     tvn_vUniform_drama = gl.getUniformLocation(tvn_shaderProgramObject_drama, "u_v_matrix");
     tvn_mUniform_drama = gl.getUniformLocation(tvn_shaderProgramObject_drama, "u_m_matrix");
     textureSamplerUniform_drama = gl.getUniformLocation(tvn_shaderProgramObject_drama, "u_texture_sampler");
+    tvn_distortion_uniform_drama = gl.getUniformLocation(tvn_shaderProgramObject_drama, "distortion");
 
     // ** vertices , color , shader attribs, vbo initialization***
 
@@ -239,7 +264,7 @@ function tvn_drama_init() {
 
     drama_texture_5 = gl.createTexture();
     drama_texture_5.image = new Image();
-    drama_texture_5.image.src = "Tejswini_Resources/natak_4.jpg";
+    drama_texture_5.image.src = "Tejswini_Resources/natak_5.jpg";
 
     drama_texture_5.image.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, drama_texture_5);
@@ -253,6 +278,20 @@ function tvn_drama_init() {
     }
 
 
+    drama_texture_6 = gl.createTexture();
+    drama_texture_6.image = new Image();
+    drama_texture_6.image.src = "Tejswini_Resources/natak_6.jpg";
+
+    drama_texture_6.image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, drama_texture_6);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, drama_texture_6.image);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    }
 }
 
 function tvn_drama_draw() {
@@ -261,12 +300,14 @@ function tvn_drama_draw() {
 
     var modelMatrix = mat4.create();
 
-    mat4.translate(modelMatrix, modelMatrix, [tvn_trans_x_drama_main, tvn_trans_y_drama_main, tvn_trans_z_drama_main]);//resulting matrix, act on the matrix, open square bracket
-    mat4.scale(modelMatrix, modelMatrix, [tvn_scale_drama_main, tvn_scale_drama_main, tvn_scale_drama_main])
+    mat4.translate(modelMatrix, modelMatrix, [tvn_trans_x_drama_main_1, tvn_trans_y_drama_main_1, tvn_trans_z_drama_main_1]);//resulting matrix, act on the matrix, open square bracket
+    mat4.scale(modelMatrix, modelMatrix, [tvn_scale_drama_Main_1, tvn_scale_drama_Main_1, tvn_scale_drama_Main_1])
 
     gl.uniformMatrix4fv(tvn_mUniform_drama, false, modelMatrix);
     gl.uniformMatrix4fv(tvn_vUniform_drama, false, gViewMatrix);
     gl.uniformMatrix4fv(tvn_pUniform_drama, false, perspectiveMatrix);
+
+    gl.uniform1f(tvn_distortion_uniform_drama, blackWhiteDistortion)
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, drama_texture_1);
@@ -277,6 +318,12 @@ function tvn_drama_draw() {
     
 
     /********natak_2***********/
+    modelMatrix = mat4.create();
+
+    mat4.translate(modelMatrix, modelMatrix, [tvn_trans_x_drama_main_2, tvn_trans_y_drama_main_2, tvn_trans_z_drama_main_2]);//resulting matrix, act on the matrix, open square bracket
+    mat4.scale(modelMatrix, modelMatrix, [tvn_scale_drama_Main_2, tvn_scale_drama_Main_2, tvn_scale_drama_Main_2])
+
+    gl.uniformMatrix4fv(tvn_mUniform_drama, false, modelMatrix);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, drama_texture_2);
     gl.uniform1i(textureSamplerUniform_drama, 0);
@@ -288,6 +335,12 @@ function tvn_drama_draw() {
 
 
     /********natak_3***********/
+    modelMatrix = mat4.create();
+
+    mat4.translate(modelMatrix, modelMatrix, [tvn_trans_x_drama_main_3, tvn_trans_y_drama_main_3, tvn_trans_z_drama_main_3]);//resulting matrix, act on the matrix, open square bracket
+    mat4.scale(modelMatrix, modelMatrix, [tvn_scale_drama_Main_3, tvn_scale_drama_Main_3, tvn_scale_drama_Main_3])
+
+    gl.uniformMatrix4fv(tvn_mUniform_drama, false, modelMatrix);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, drama_texture_3);
     gl.uniform1i(textureSamplerUniform_drama, 0);
@@ -298,6 +351,12 @@ function tvn_drama_draw() {
 /*********************************/
 
     /********natak_4***********/
+    modelMatrix = mat4.create();
+
+    mat4.translate(modelMatrix, modelMatrix, [tvn_trans_x_drama_main_4, tvn_trans_y_drama_main_4, tvn_trans_z_drama_main_4]);//resulting matrix, act on the matrix, open square bracket
+    mat4.scale(modelMatrix, modelMatrix, [tvn_scale_drama_Main_4, tvn_scale_drama_Main_4, tvn_scale_drama_Main_4])
+
+    gl.uniformMatrix4fv(tvn_mUniform_drama, false, modelMatrix);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, drama_texture_4);
     gl.uniform1i(textureSamplerUniform_drama, 0);
@@ -308,6 +367,12 @@ function tvn_drama_draw() {
 /*********************************/
 
     /********natak_5***********/
+    modelMatrix = mat4.create();
+
+    mat4.translate(modelMatrix, modelMatrix, [tvn_trans_x_drama_main_5, tvn_trans_y_drama_main_5, tvn_trans_z_drama_main_5]);//resulting matrix, act on the matrix, open square bracket
+    mat4.scale(modelMatrix, modelMatrix, [tvn_scale_drama_Main_5, tvn_scale_drama_Main_5, tvn_scale_drama_Main_5])
+
+    gl.uniformMatrix4fv(tvn_mUniform_drama, false, modelMatrix);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, drama_texture_5);
     gl.uniform1i(textureSamplerUniform_drama, 0);
@@ -317,6 +382,21 @@ function tvn_drama_draw() {
 
 /*********************************/
 
+    /********natak_6***********/
+    modelMatrix = mat4.create();
+
+    mat4.translate(modelMatrix, modelMatrix, [tvn_trans_x_drama_main_6, tvn_trans_y_drama_main_6, tvn_trans_z_drama_main_6]);//resulting matrix, act on the matrix, open square bracket
+    mat4.scale(modelMatrix, modelMatrix, [tvn_scale_drama_Main_6, tvn_scale_drama_Main_6, tvn_scale_drama_Main_6])
+
+    gl.uniformMatrix4fv(tvn_mUniform_drama, false, modelMatrix);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, drama_texture_6);
+    gl.uniform1i(textureSamplerUniform_drama, 0);
+
+    gl.bindVertexArray(tvn_vao_rectangle_drama);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
+/*********************************/
 
     gl.bindVertexArray(null);
 

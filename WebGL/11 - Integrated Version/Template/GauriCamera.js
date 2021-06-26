@@ -24,6 +24,7 @@ var grgtextureSamplerUniform;
 var grgModelMatrixUniform;
 var grgViewMatrixUniform;
 var grgProjectionMatrixUniform;
+var grgDistortionUniformCamera;
 
 var grstackMatrix = [];
 var grmatrixPosition = -1;
@@ -67,10 +68,13 @@ function GRInitCamera()
      "precision highp float;" +
      "in vec2 out_texcoord;" +
      "uniform highp sampler2D u_texture_sampler;" +
+     "uniform float distortion;" +
      "out vec4 FragColor;" +
      "void main(void)" +
      "{" +
      "FragColor = texture(u_texture_sampler, out_texcoord);" +
+     "vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
+     "FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
      "}";
  
      grfragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
@@ -118,6 +122,7 @@ function GRInitCamera()
      grgViewMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_view_matrix");
      grgProjectionMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_projection_matrix");
      grtextureSamplerUniform = gl.getUniformLocation(grshaderProgramObject, "u_texture_sampler");
+     grgDistortionUniformCamera = gl.getUniformLocation(grshaderProgramObject, "distortion");
  
    
  
@@ -252,6 +257,7 @@ function GRDisplayCamera()
 
     gl.useProgram(grshaderProgramObject);
 
+    gl.uniform1f(grgDistortionUniformCamera, blackWhiteDistortion)
     //************************************************************************************************ roadside ********************************************************
     //***************************************************************************************************************************************************************
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [grtransCameraX, grtransCameraY, grtransCameraZ]);

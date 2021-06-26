@@ -28,6 +28,7 @@ var grgtextureFloor;
 var grgModelMatrixUniformStage;
 var grgViewMatrixUniformStage;
 var grgProjectionMatrixUniformStage;
+var grgDistortionUniformStage;
 
 var grColorUniform;
 var grTexCoordPowerUnifrom;
@@ -76,10 +77,13 @@ function GRInitScene2()
      "in vec2 out_texcoord;" +
      "uniform highp sampler2D u_texture_sampler;" +
      "uniform vec4 u_color;" +
+     "uniform float distortion;" +
      "out vec4 FragColor;" +
      "void main(void)" +
      "{" +
      "FragColor = texture(u_texture_sampler, out_texcoord) * u_color;" +
+     "vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
+     "FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
      "}";
  
      grfragmentShaderObjectStage = gl.createShader(gl.FRAGMENT_SHADER);
@@ -125,9 +129,10 @@ function GRInitScene2()
      grgModelMatrixUniformStage = gl.getUniformLocation(grshaderProgramObjectStage, "u_model_matrix");
      grgViewMatrixUniformStage = gl.getUniformLocation(grshaderProgramObjectStage, "u_view_matrix");
      grgProjectionMatrixUniformStage = gl.getUniformLocation(grshaderProgramObjectStage, "u_projection_matrix");
-     grtextureSamplerUniform = gl.getUniformLocation(grshaderProgramObjectStage, "u_texture_sampler");
+     grgtextureSamplerUniformStage = gl.getUniformLocation(grshaderProgramObjectStage, "u_texture_sampler");
      grColorUniform = gl.getUniformLocation(grshaderProgramObjectStage, "u_color");
      grTexCoordPowerUnifrom = gl.getUniformLocation(grshaderProgramObjectStage, "u_texCoordPower");
+     grgDistortionUniformStage = gl.getUniformLocation(grshaderProgramObjectStage, "distortion");
      
  
      var grstageTexcoords = new Float32Array(
@@ -352,6 +357,7 @@ function GRDisplayScene2()
 
 function GRStage()
 {
+    gl.uniform1f(grgDistortionUniformStage, blackWhiteDistortion)
 
     var grmodelMatrix = mat4.create();
     var grviewMatrix = mat4.create();
@@ -410,7 +416,7 @@ function GRStage()
     gl.activeTexture(gl.TEXTURE0);
 
     gl.bindTexture(gl.TEXTURE_2D, grgtextureStageFloor);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformStage, 0);
     gl.uniform4f(grColorUniform, 1.0, 1.0, 1.0, 1.0) 
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
@@ -447,7 +453,7 @@ function GRStage()
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureFloor);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformStage, 0);
 
     gl.bindVertexArray(grgVaoStage);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -488,7 +494,7 @@ function GRStage()
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformStage, 0);
 
     gl.bindVertexArray(grgVaoStage);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -527,7 +533,7 @@ function GRStage()
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureStageWall);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformStage, 0);
 
     gl.bindVertexArray(grgVaoStageWall);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -564,7 +570,7 @@ function GRStage()
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureStageWall);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformStage, 0);
 
     gl.bindVertexArray(grgVaoStageWall);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -635,7 +641,7 @@ function GRStage()
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformStage, 0);
 
     gl.bindVertexArray(grgVaoStageWall);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -665,7 +671,7 @@ function GRStage()
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformStage, 0);
 
     gl.bindVertexArray(grgVaoStageWall);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -695,7 +701,7 @@ function GRStage()
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformStage, 0);
 
     gl.bindVertexArray(grgVaoStageWall);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -725,7 +731,7 @@ function GRStage()
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformStage, 0);
 
     gl.bindVertexArray(grgVaoStageWall);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -757,7 +763,7 @@ function GRStage()
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformStage, 0);
 
     gl.bindVertexArray(grgVaoStageWall);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -787,7 +793,7 @@ function GRStage()
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformStage, 0);
 
     gl.bindVertexArray(grgVaoStageWall);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -817,7 +823,7 @@ function GRStage()
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformStage, 0);
 
     gl.bindVertexArray(grgVaoStageWall);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -847,7 +853,7 @@ function GRStage()
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformStage, 0);
 
     gl.bindVertexArray(grgVaoStageWall);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
