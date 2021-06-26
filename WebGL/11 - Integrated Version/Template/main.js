@@ -29,7 +29,7 @@ const scenes = {
 	SCENE_4:4
 }
 
-var currentScene = scenes.SCENE_2
+var currentScene = scenes.SCENE_3
 
 function main() {
 	//Get Canvas from DOM
@@ -170,26 +170,28 @@ function init() {
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
 	//  initFire();
-	GRInit()
-	GRInitRoadside();
-	initNormalMapRoad()
-	initCubeMap()
-	tejswini_hut_init()
-	tvn_init_lamp_arch();
+	// GRInit()
+	// GRInitRoadside();
+	// initNormalMapRoad()
+	// initCubeMap()
+	// tejswini_hut_init()
+	// tvn_init_lamp_arch();
 
-	// initShadow();
+	// // initShadow();
 
-	GRInitMic();
-	tvn_script_init();
-	tvn_speaker_init();
-	tvn_init_tripod();
-	tvn_drama_init();
+	// GRInitMic();
+	// tvn_script_init();
+	// tvn_speaker_init();
+	// tvn_init_tripod();
+	// tvn_drama_init();
 	
 
-	GRInitScene2();
-	DL_initChair()
-	GRInitStageLights();
-	GRInitCamera();
+	// GRInitScene2();
+	// DL_initChair()
+	// GRInitStageLights();
+	// GRInitCamera();
+
+	ASJ_init_laptop();
 
 	//ASJ_init_stove();
 	//utensil_init();
@@ -279,8 +281,9 @@ function render() {
 		tvn_drama_draw();
 	}
 	else if(currentScene == scenes.SCENE_3){
-		displayStarBucksOuter();
-		drawCar();
+		// displayStarBucksOuter();
+		// drawCar();
+		ASJ_draw_laptop();
 	}
 	
 
