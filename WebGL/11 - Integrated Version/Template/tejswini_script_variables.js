@@ -11,6 +11,7 @@ var tvn_pUniform;
 var tvn_vUniform;
 var tvn_mUniform;
 var rangle = 0.0;
+var script_texture;
 
 var tvn_trans_x_script_main = -14.95
 var tvn_trans_y_script_main = -0.9
@@ -168,18 +169,18 @@ function tvn_script_init() {
     gl.bindVertexArray(null);
 
 
-    pyramid_texture = gl.createTexture();
-    pyramid_texture.image = new Image();
-    pyramid_texture.image.src = "Tejswini_Resources/script.png";
+    script_texture = gl.createTexture();
+    script_texture.image = new Image();
+    script_texture.image.src = "Tejswini_Resources/script.png";
 
-    pyramid_texture.image.onload = function () {
-        gl.bindTexture(gl.TEXTURE_2D, pyramid_texture);
+    script_texture.image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, script_texture);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
 
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, pyramid_texture.image);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, script_texture.image);
         gl.bindTexture(gl.TEXTURE_2D, null);
     }
 
@@ -200,7 +201,7 @@ function tvn_script_draw() {
     gl.uniformMatrix4fv(tvn_pUniform, false, perspectiveMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, pyramid_texture);
+    gl.bindTexture(gl.TEXTURE_2D, script_texture);
     gl.uniform1i(textureSamplerUniform, 0);
 
     gl.bindVertexArray(tvn_vao_rectangle_script);
