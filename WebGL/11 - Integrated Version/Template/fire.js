@@ -5,7 +5,10 @@ var squareTexCoordsBuffer;
 var vertBuff;
 var ColorBuff;
 var texSamplerFire;
-
+var fire_TransX = 127.0;
+var fire_tranY = 127.0 ;
+var fire_transZ = -200.0;
+var fireScale = 1.0;
 
 var options = {
  

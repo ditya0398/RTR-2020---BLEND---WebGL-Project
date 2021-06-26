@@ -183,13 +183,13 @@ function init() {
 
 	initFire();
 	GRInit()
-	//GRInitRoadside();
+	GRInitRoadside();
 	initNormalMapRoad()
 
-	initCubeMap()
-	tejswini_hut_init()
-	tvn_init_lamp_arch();
-	GRInitChaiCup();
+	// initCubeMap()
+	 tejswini_hut_init()
+	// tvn_init_lamp_arch();
+	 GRInitChaiCup();
 
 	//initShadow();
 
@@ -209,7 +209,7 @@ function init() {
 
 
 
-	//ASJ_init_stove();
+	ASJ_init_stove();
 	//utensil_init();
 
 	initStarbucksOuter();
@@ -275,16 +275,16 @@ function render() {
 	mat4.lookAt(gViewMatrix, view, [0.0, 3.0, view[2] - 20.0], [0.0, 1.0, 0.0])
 
 	if(currentScene == scenes.SCENE_1) {
-		// animateFire();
-		Display_CubeMap()
+		animateFire();
+	//	Display_CubeMap()
 		GRDisplay()
-		//tejswini_hut_draw()
+		tejswini_hut_draw()
 		renderNormalMapRoad()
 
 		 GRDisplayRoadside();
 		 //tvn_draw_lamp_arch();
-		  //drawModel();
-		//ASJ_draw_stove();
+		  drawModel();
+		ASJ_draw_stove();
 		GRDisplayChaiCup();
 
 		// utensil_display();
