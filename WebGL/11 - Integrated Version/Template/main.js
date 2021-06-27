@@ -40,7 +40,7 @@ const scenes = {
 }
 
 
-var currentScene = scenes.SCENE_4
+var currentScene = scenes.SCENE_1
 
 
 var blackWhiteDistortion = 1.0
@@ -193,7 +193,7 @@ function init() {
 	// initFire();
 	// GRInit()
 	// GRInitRoadside();
-	// initNormalMapRoad()
+	 initNormalMapRoad()
 
 	// initCubeMap()
 //	 tejswini_hut_init()
@@ -287,17 +287,17 @@ function render() {
 	mat4.lookAt(gViewMatrix, view, [0.0, view[1], view[2] - 20.0], [0.0, 1.0, 0.0])
 
 	if(currentScene == scenes.SCENE_1) {
-		drawFire();
+		//drawFire();
 	//	Display_CubeMap()
-		 GRDisplay()
-		tejswini_hut_draw()
+	//	 GRDisplay()
+	//	tejswini_hut_draw()
 		 renderNormalMapRoad()
 
-		 GRDisplayRoadside();
+	//	 GRDisplayRoadside();
 		//  //tvn_draw_lamp_arch();
-		   drawModel();
-		ASJ_draw_stove();
-	 GRDisplayChaiCup();
+	//	   drawModel();
+	//	ASJ_draw_stove();
+	// GRDisplayChaiCup();
 
 		// utensil_display();
 	} else if(currentScene == scenes.SCENE_2) {

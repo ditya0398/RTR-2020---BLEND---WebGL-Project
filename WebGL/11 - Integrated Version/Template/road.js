@@ -174,7 +174,7 @@ function initNormalMapRoad() {
 
 		"result=pointLight(Normal_AJ,color);" +
 
-		"FragColor = (ambient + diffuse +specular);\n" +
+		"FragColor = (ambient + diffuse +specular) * result;\n" +
 	"}\n";
 	
 	var vertShader = gl.createShader(gl.VERTEX_SHADER)
