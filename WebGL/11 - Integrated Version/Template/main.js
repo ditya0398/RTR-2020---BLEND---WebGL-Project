@@ -15,7 +15,12 @@ var gbAnim = false
 
 var rotX = 0.0, rotY = 0.0
 
-var view = [0.0, 0.0, 5.0]
+//first scene view 
+var view = [-2.31, -1.19, -1.799]
+
+
+
+
 
 
 
@@ -92,14 +97,14 @@ function keyDown(event) {
 			break
 		case 83: //S
 			view[2] += 0.1
-			view[1] -= 0.033
+			//view[1] -= 0.033
 			break
 		case 68: //D
 			view[0] += 0.1
 			break
 		case 87: //W
 			view[2] -= 0.1
-			view[1] += 0.033
+			//view[1] += 0.033
 			break
 		case 81: //Q
 			view[1] -= 0.1
@@ -378,7 +383,9 @@ function render() {
 }
 
 function update() {
-	if(scenes.SCENE_2) {
+
+
+	if(currentScene == scenes.SCENE_2) {
 		if(gbInitializeScene2Camera) {
 			 view = [0.0, 15.133, -47.1]
 			//view = [0.0, 0.0, 1.6]
@@ -420,6 +427,12 @@ function update() {
 				tvn_scale_drama_Main_6 += 0.007
 			}
 		}
+	}
+	else if(currentScene == scenes.SCENE_1)
+	{
+		view[0] += 0.0008;
+		view[2] -= 0.002;
+		view[1] += 0.0001;
 	}
 }
 
