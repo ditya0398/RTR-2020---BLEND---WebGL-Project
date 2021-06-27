@@ -20,6 +20,7 @@ var gAngleTriangle_modelLoading = 0.0;
 var gAngleSquare_modelLoading = 0.0;
 var perspectiveProjectionMatrix_modelLoading;
 
+var lightFlagUniform;
 
 var modelUniform_modelLoading, viewUniform_modelLoading, projectionUniform_modelLoading;
 var LightPositionUniform_modelLoading, LKeyPressed_modelLoading;
@@ -168,7 +169,7 @@ function initializeModel() {
         "out vec4 FragColor;" +
         "uniform mediump int u_LKeyPressed;" +
         "uniform highp sampler2D diffuseMap; " +
-
+        "uniform mediump int lightFlag;" +
         //Akhi Uniform
         "uniform vec4 Ambient_AJ;" +
         "uniform vec3 LightColor_AJ;" +
@@ -241,9 +242,15 @@ function initializeModel() {
         "{" +
         "phongADSLight = vec3(1.0,1.0,1.0);" +
         "}" +
-
-        // "FragColor =  vec4((vec3(color) * phongADSLight) , 1.0);" +
-        "FragColor =  vec4((vec3 (result) *phongADSLight),1.0);" +
+            "if(lightFlag == 1)" +
+            "{" +
+                "FragColor =  vec4((vec3 (result) *phongADSLight),1.0);" +
+            "}" +
+            "else" +
+            "{" +
+                "FragColor =  vec4((vec3(color) * phongADSLight) , 1.0);" +
+            "}" +
+        
       //  "FragColor =vec4(1.0,1.0,1.0,1.0);"+
         "}";
     fragmentShaderObject_modelLoading = gl.createShader(gl.FRAGMENT_SHADER);
@@ -300,7 +307,7 @@ function initializeModel() {
     ASJ_eyeDirectionUniform_pointLight_model = gl.getUniformLocation(modelLoadingProgramObject, "EyeDirection_AJ");
     ASJ_attenuationUniform_pointLight_model = gl.getUniformLocation(modelLoadingProgramObject, "Attenuation_AJ");
 
-
+    lightFlagUniform = gl.getUniformLocation(modelLoadingProgramObject, "lightFlag");
     // sphere = new Mesh();
     // makeSphere(sphere,2.0,30,30);
 
@@ -819,6 +826,7 @@ function drawModel() {
     gl.uniform1f(ASJ_strengthUniform_pointLight_model, strength_AJ);
     gl.uniform3fv(ASJ_eyeDirectionUniform_pointLight_model, Eye_AJ);
     gl.uniform1f(ASJ_attenuationUniform_pointLight_model, attenuation_AJ);
+    gl.uniform1i(lightFlagUniform, 1);
 
     //akhilesh
 
@@ -942,7 +950,7 @@ function drawTeacup() {
     gl.uniformMatrix4fv(modelUniform_modelLoading, false, modelMatrix);
     gl.uniformMatrix4fv(viewUniform_modelLoading, false, gViewMatrix);
     gl.uniformMatrix4fv(projectionUniform_modelLoading, false, perspectiveMatrix);
-
+    gl.uniform1i(lightFlagUniform, 1);
     /************ TEAPOT ************************ */
 
 
@@ -996,7 +1004,7 @@ function drawCar() {
     gl.uniformMatrix4fv(modelUniform_modelLoading, false, modelMatrix);
     gl.uniformMatrix4fv(viewUniform_modelLoading, false, gViewMatrix);
     gl.uniformMatrix4fv(projectionUniform_modelLoading, false, perspectiveMatrix);
-
+    gl.uniform1i(lightFlagUniform, 0);
     /************ TEAPOT ************************ */
 
 

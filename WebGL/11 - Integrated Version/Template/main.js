@@ -15,7 +15,7 @@ var gbAnim = false
 
 var rotX = 0.0, rotY = 0.0
 
-var view = [2.8, -0.75, -12.09]
+var view = [0.0, 0.0, 5.0]
 
 
 
@@ -112,10 +112,10 @@ function keyDown(event) {
 		case 78: //N
 			break
 		case 38: //up arrow
-			fireTransZ -= 0.05
+		TeacupTransZ -= 0.05
 			break
 		case 40: //down arrow
-		fireTransZ += 0.05
+		TeacupTransZ += 0.05
 			break
 		case 37: //left arrow
 		fireTransX -= 0.05
@@ -227,7 +227,7 @@ function init() {
 
 	//utensil_init();
 
-//	initStarbucksOuter();
+	initStarbucksOuter();
 	
 	
 	loadModel('Models/teapot.obj',vao_teapot,vbo_teapot,function(parts_teapot,numElem){
@@ -325,8 +325,8 @@ function render() {
 			tvn_drama_draw();
 		break;
 		case scenes.SCENE_3:
-			// displayStarBucksOuter();
-			// drawCar();
+			//displayStarBucksOuter();
+			 drawCar();
 		
 		break;
 		case scenes.SCENE_4:

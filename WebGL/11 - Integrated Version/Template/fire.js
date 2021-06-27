@@ -46,11 +46,11 @@ var sampleruniformAlpha_FboFire;
 var pyramid_texture_FboFire = 0;
 var cube_texture_FboFire = 0;
 
-var fireTransX = 0.0;
-var fireTransY = 0.0;
-var fireTransZ = -15.0;
+var fireTransX = 2.6999999999999984;
+var fireTransY = -0.39;
+var fireTransZ =-15.300000000000004;
 
-var fireScale = 1.0;
+var fireScale = 0.3399999999999994;
 
 var options = {
     // this option is not actually in the UI
@@ -74,7 +74,7 @@ var options = {
     fireSpeedVariance: 80.0,
     fireSpeedVarianceSlider: {min:0.0,max:100.0},
   
-    fireDeathSpeed: 0.001,
+    fireDeathSpeed: 0.009,
     fireDeathSpeedSlider: {min: 0.001, max: 0.05},
   
     fireTriangleness: 0.00015,
