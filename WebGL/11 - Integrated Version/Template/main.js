@@ -21,6 +21,7 @@ var view = [2.49, -1.19, -1.899]
 
 
 
+var secondSceneCamera = false;
 
 
 
@@ -46,7 +47,7 @@ const scenes = {
 }
 
 
-var currentScene = scenes.SCENE_1
+var currentScene = scenes.SCENE_2
 
 
 var blackWhiteDistortion = 1.0
@@ -75,6 +76,12 @@ function keyDown(event) {
 		case 70:
 			toggleFullscreen()
 			break
+			case 71:
+                SBR_DM_angle += 0.1;
+            break;
+            case 72:
+                SBR_DM_angle -= 0.1;
+            break;
 		case 76://L
 			blackWhiteDistortion += 0.1
 			if(blackWhiteDistortion > 1.0) {
@@ -91,6 +98,7 @@ function keyDown(event) {
 			gbAnim = true
 			break
 		case 89 :                   // y key
+			secondSceneCamera = true;
 			break
 		case 65: //A
 			view[0] -= 0.1
@@ -204,26 +212,27 @@ function init() {
 	 GRInitRoadside();
 	 initNormalMapRoad()
 	 ASJ_init_stove();
-	// initCubeMap()
 	 tejswini_hut_init()
-	// tvn_init_lamp_arch();
 	 GRInitChaiCup();
-
+	
+	
+	 // tvn_init_lamp_arch();
+	// initCubeMap()
 	//initShadow();
 
 
 	//Scene 2
-	  //GRInitMic();
-	//  tvn_script_init();
-	//  tvn_speaker_init();
-	//  tvn_init_tripod();
-	//  tvn_drama_init();
+	  GRInitMic();
+	  tvn_script_init();
+	  tvn_speaker_init();
+	  tvn_init_tripod();
+	  tvn_drama_init();
 	
 
-	//  GRInitScene2();
-	//  DL_initChair()
-	//  GRInitStageLights();
-	// GRInitCamera();
+	  GRInitScene2();
+	  DL_initChair()
+	  GRInitStageLights();
+	  GRInitCamera();
 
 
 	init_InteriorStarbucks();
@@ -340,6 +349,17 @@ function render() {
 		break;
 
 	}
+
+	if(secondSceneCamera)
+	{	
+		view[0] = 0.0;
+		view[1] = 15.133;
+		view[2] =  -47.1;
+		secondSceneCamera = false;
+	}
+
+
+	
 	// if(currentScene == scenes.SCENE_1) {
 	// 	//drawFire();
 	// //	Display_CubeMap()

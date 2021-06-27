@@ -1,7 +1,7 @@
 
 
-var grgVertexShaderObject;
-var grgFragmentShadeerObject;
+var grgVertexShaderObjectCamera;
+var grgFragmentShadeerObjectCamera;
 var grgShaderProgramObjectCamera;
 
 var grgVaoCamera;
@@ -19,18 +19,23 @@ var grfangleCameraZ = 0.0;
 // texture
 var grtextureCameraFront;
 var grtextureCameraBack;
-var grgtextureSamplerUniform;
+var grgtextureSamplerUniformCamera;
 
 var grgModelMatrixUniform;
 var grgViewMatrixUniform;
-var grgProjectionMatrixUniform;
+var grgProjectionMatrixUniformCamera;
 var grgDistortionUniformCamera;
 
-var grstackMatrix = [];
-var grmatrixPosition = -1;
+var grstackMatrixCamera = [];
+var grmatrixPositionCamera = -1;
 
 function GRInitCamera()
 {
+
+
+
+
+
      // vertex shader
      var grvertexShaderSourceCode = 
      "#version 300 es" +
@@ -47,12 +52,12 @@ function GRInitCamera()
      "out_texcoord = vTexCoord;" +
      "}";
  
-     grvertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
-     gl.shaderSource(grvertexShaderObject, grvertexShaderSourceCode);
-     gl.compileShader(grvertexShaderObject);
-     if(gl.getShaderParameter(grvertexShaderObject, gl.COMPILE_STATUS) == false)
+     grgVertexShaderObjectCamera = gl.createShader(gl.VERTEX_SHADER);
+     gl.shaderSource(grgVertexShaderObjectCamera, grvertexShaderSourceCode);
+     gl.compileShader(grgVertexShaderObjectCamera);
+     if(gl.getShaderParameter(grgVertexShaderObjectCamera, gl.COMPILE_STATUS) == false)
      {
-         var error = gl.getShaderInfoLog(grvertexShaderObject);
+         var error = gl.getShaderInfoLog(grgVertexShaderObjectCamera);
          if(error.length > 0)
          {
              alert(error);
@@ -77,12 +82,12 @@ function GRInitCamera()
      "FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
      "}";
  
-     grfragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
-     gl.shaderSource(grfragmentShaderObject, grfragmentShaderSourceCode);
-     gl.compileShader(grfragmentShaderObject);
-     if(gl.getShaderParameter(grfragmentShaderObject, gl.COMPILE_STATUS) == false)
+     grgFragmentShaderObjectCamera = gl.createShader(gl.FRAGMENT_SHADER);
+     gl.shaderSource(grgFragmentShaderObjectCamera, grfragmentShaderSourceCode);
+     gl.compileShader(grgFragmentShaderObjectCamera);
+     if(gl.getShaderParameter(grgFragmentShaderObjectCamera, gl.COMPILE_STATUS) == false)
      {
-         var error = gl.getShaderInfoLog(grfragmentShaderObject);
+         var error = gl.getShaderInfoLog(grgFragmentShaderObjectCamera);
          if(error.length > 0)
          {
              alert(error);
@@ -95,8 +100,8 @@ function GRInitCamera()
      // shader program
      grgShaderProgramObjectCamera = gl.createProgram();
      //attach shader object
-     gl.attachShader(grgShaderProgramObjectCamera, grvertexShaderObject);
-     gl.attachShader(grgShaderProgramObjectCamera, grfragmentShaderObject);
+     gl.attachShader(grgShaderProgramObjectCamera, grgVertexShaderObjectCamera);
+     gl.attachShader(grgShaderProgramObjectCamera, grgFragmentShaderObjectCamera);
      // pre-linking
      gl.bindAttribLocation(grgShaderProgramObjectCamera, macros.AMC_ATTRIB_POSITION, "vPosition");
      gl.bindAttribLocation(grgShaderProgramObjectCamera, macros.AMC_ATTRIB_TEXCOORD, "vTexCoord");
@@ -120,8 +125,8 @@ function GRInitCamera()
      // mvp uniform binding
      grgModelMatrixUniform = gl.getUniformLocation(grgShaderProgramObjectCamera, "u_model_matrix");
      grgViewMatrixUniform = gl.getUniformLocation(grgShaderProgramObjectCamera, "u_view_matrix");
-     grgProjectionMatrixUniform = gl.getUniformLocation(grgShaderProgramObjectCamera, "u_projection_matrix");
-     grtextureSamplerUniform = gl.getUniformLocation(grgShaderProgramObjectCamera, "u_texture_sampler");
+     grgProjectionMatrixUniformCamera = gl.getUniformLocation(grgShaderProgramObjectCamera, "u_projection_matrix");
+     grgtextureSamplerUniformCamera = gl.getUniformLocation(grgShaderProgramObjectCamera, "u_texture_sampler");
      grgDistortionUniformCamera = gl.getUniformLocation(grgShaderProgramObjectCamera, "distortion");
  
    
@@ -273,11 +278,11 @@ function GRDisplayCamera()
     
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
     gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformCamera, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureCameraFront);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformCamera, 0);
 
     gl.bindVertexArray(grgVaoCamera);
 
@@ -286,7 +291,7 @@ function GRDisplayCamera()
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureCameraBack);
-    gl.uniform1i(grtextureSamplerUniform, 0);
+    gl.uniform1i(grgtextureSamplerUniformCamera, 0);
 
     gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
@@ -303,35 +308,35 @@ function GRDisplayCamera()
 
 function GRPushToStack(matrix)
 {
-    if(grmatrixPosition == -1)
+    if(grmatrixPositionCamera == -1)
     {
-        grstackMatrix.push(matrix);
-        grmatrixPosition++;
+        grstackMatrixCamera.push(matrix);
+        grmatrixPositionCamera++;
         return matrix;
     }
     else
     {
-        var topMatrix = grstackMatrix[grmatrixPosition];
+        var topMatrix = grstackMatrixCamera[grmatrixPositionCamera];
         mat4.multiply(matrix, topMatrix, matrix);
-        grstackMatrix.push(matrix);
-        grmatrixPosition++;
-        return grstackMatrix[grmatrixPosition];
+        grstackMatrixCamera.push(matrix);
+        grmatrixPositionCamera++;
+        return grstackMatrixCamera[grmatrixPositionCamera];
     }
   
 }
 
 function GRPopFromStack()
 {
-    if(!grstackMatrix[0])
+    if(!grstackMatrixCamera[0])
     {
-        grstackMatrix[0] = mat4.create();
-        return grstackMatrix[0];
+        grstackMatrixCamera[0] = mat4.create();
+        return grstackMatrixCamera[0];
     }
     else
     {
-        grstackMatrix.pop();
-        grmatrixPosition--;
-        return grstackMatrix[grmatrixPosition];
+        grstackMatrixCamera.pop();
+        grmatrixPositionCamera--;
+        return grstackMatrixCamera[grmatrixPositionCamera];
     }
     
 }
@@ -362,18 +367,18 @@ function GRUninitializeCamera()
 
     if(grgShaderProgramObjectCamera)
     {
-        if(grfragmentShaderObject)
+        if(grgFragmentShaderObjectCamera)
         {
-            gl.detachShader(grgShaderProgramObjectCamera, grfragmentShaderObject);
-            gl.deleteShader(grfragmentShaderObject);
-            grfragmentShaderObject = null;
+            gl.detachShader(grgShaderProgramObjectCamera, grgFragmentShaderObjectCamera);
+            gl.deleteShader(grgFragmentShaderObjectCamera);
+            grgFragmentShaderObjectCamera = null;
         }
 
-        if(grfragmentShaderObject)
+        if(grgFragmentShaderObjectCamera)
         {
-            gl.detachShader(grgShaderProgramObjectCamera, grvertexShaderObject);
-            gl.deleteShader(grvertexShaderObject);
-            grvertexShaderObject = null;
+            gl.detachShader(grgShaderProgramObjectCamera, grgVertexShaderObjectCamera);
+            gl.deleteShader(grgVertexShaderObjectCamera);
+            grgVertexShaderObjectCamera = null;
         }
 
         gl.deleteProgram(grgShaderProgramObjectCamera);

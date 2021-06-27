@@ -545,9 +545,9 @@ var triangleTexcoords = new Float32Array([0.5, 1.0,
 	gl.bindVertexArray(null);
 
 	//gl.enable(gl.TEXTURE_2D);
-	gl.clearColor(0.0,0.0,0.0,1.0);
-	gl.enable(gl.DEPTH_TEST);
-	gl.depthFunc(gl.LEQUAL);
+	// gl.clearColor(0.0,0.0,0.0,1.0);
+	// gl.enable(gl.DEPTH_TEST);
+	// gl.depthFunc(gl.LEQUAL);
 
 
 
