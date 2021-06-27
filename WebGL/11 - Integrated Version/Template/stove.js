@@ -18,31 +18,47 @@ var vbo_normal_stove;
 
 var textureSamplerUnifrom;
 
-var stove_Transx =  2.4199999999999924;
+var stove_Transx = 2.4199999999999924;
 var stove_Transy = -0.3900000000000002;
-var stove_Transz =  -15.919999999999789;  
+var stove_Transz = -15.919999999999789;
 
 var stove_Scale = 0.27999999999999936;
 
-
+//AKHI
+var ASJ_ambientUniform_pointLight_stove;
+var ASJ_lightColorUniform_pointLight_stove;
+var ASJ_lightPositionUniform_pointLight_stove;
+var ASJ_shininessUniform_pointLight_stove;
+var ASJ_strengthUniform_pointLight_stove;
+var ASJ_eyeDirectionUniform_pointLight_stove;
+var ASJ_attenuationUniform_pointLight_stove;
 
 
 function ASJ_init_stove() {
-	
+
 
 	var vertexShaderSource =
 		"#version 300 es" +
 		"\n" +
 		"layout(location = 0)in vec4 vPosition;" +
 		"layout(location = 1)in vec2 vTexCord;" +
+		"layout(location=2)in vec3 vNormal;" +
 		"out vec2 out_TexCord;" +
+		//akhi out
+		"out vec4 Position;" +
+
 		"uniform mat4 u_model_matrix;" +
 		"uniform mat4 u_view_matrix;" +
 		"uniform mat4 u_projection_matrix;" +
+
+		"out vec3 tNormal;" +
 		"void main(void)" +
 		"{" +
 		"gl_Position=u_projection_matrix*u_view_matrix*u_model_matrix * vPosition;" +
 		"out_TexCord=vTexCord;" +
+		//akhi
+		"Position= u_model_matrix * vPosition;" +
+		"tNormal=normalize(mat3(u_model_matrix) *vNormal );" +
 		"}";
 	ASJ_vertexShaderObject_stove = gl.createShader(gl.VERTEX_SHADER);
 	gl.shaderSource(ASJ_vertexShaderObject_stove, vertexShaderSource);
@@ -51,8 +67,8 @@ function ASJ_init_stove() {
 	if (gl.getShaderParameter(ASJ_vertexShaderObject_stove, gl.COMPILE_STATUS) == false) {
 		var error = gl.getShaderInfoLog(ASJ_vertexShaderObject_stove);
 		if (error.length > 0) {
-			alert(error);
-			uninitialize();
+			alert("stove vertex\n" + error);
+			ASJ_uninitialize_stove();
 		}
 	}
 
@@ -65,16 +81,72 @@ function ASJ_init_stove() {
 		"uniform int flag;" +
 		"out vec4 FragColor;" +
 		"in vec2 out_TexCord;" +
-		"void main(void)" +
+
+		//Akhi Uniform
+		"uniform vec4 Ambient_AJ;" +
+		"uniform vec3 LightColor_AJ;" +
+		"uniform vec3 LightPosition_AJ;" +
+		"uniform float Shininess_AJ;" +
+		"uniform float Strength_AJ;" +
+		"uniform vec3 EyeDirection_AJ;" +
+		"uniform float Attenuation_AJ;" +
+		//Akhi in
+		"in vec4 Position;" +
+		"in vec3 tNormal;" +
+
+		//akhi func
+		"vec4 pointLight(vec3 Normal,vec4 Color)" +
 		"{" +
-		"if(flag==1)" +
+
+		"vec3 lightDirection=vec3(Position)-LightPosition_AJ;" +
+		"\n" +
+		"float lightDistance=length(lightDirection);" +
+		"lightDirection= lightDirection / lightDistance;" +
+		"\n" +
+		"vec3 HalfVector=normalize(EyeDirection_AJ - lightDirection);" +
+		"\n" +
+		"float AttenuaFactor = 1.0 / (Attenuation_AJ * lightDistance * lightDistance);" +
+
+		"float diffuse=max(0.0f,-1.0*dot(Normal,lightDirection)) ;" +
+		"\n" +
+		"float specular=max(0.0f,1.0*dot(Normal,HalfVector));" +
+
+		"if(diffuse<=0.00001)" +
 		"{" +
-		"FragColor=vec4(0, 0, 0,0.9);" +
+		"specular=0.0f;" +
 		"}" +
 		"else" +
 		"{" +
-		"FragColor=texture(u_texture_sampler,out_TexCord);" +
+		"specular=pow(specular,Shininess_AJ);" +
 		"}" +
+		"\n" +
+		"vec4 scatteredLight=Ambient_AJ + vec4(LightColor_AJ * diffuse * AttenuaFactor,1.0);" +
+		"vec4 ReflectedLight=vec4(LightColor_AJ * specular * Strength_AJ * AttenuaFactor,1.0);" +
+
+		"vec4 res=min(Color * scatteredLight + ReflectedLight,vec4(1.0));" +
+		"return res;" +
+		"}" +
+
+		"void main(void)" +
+		"{" +
+		"vec4 color;" +
+		"if(flag==1)" +
+		"{" +
+		"color=vec4(0, 0, 0,0.9);" +
+		"}" +
+		"else" +
+		"{" +
+		"color=texture(u_texture_sampler,out_TexCord);" +
+		"}" +
+
+		//Akhi Lighting Calculation
+		"vec3 Normal_AJ=tNormal;" +
+		"vec4 result;" +
+
+		"result=pointLight(Normal_AJ,color);" +
+		"FragColor=color*result;" +
+		//"FragColor=color;" +
+
 		"}";
 
 	ASJ_fragmentShaderObject_stove = gl.createShader(gl.FRAGMENT_SHADER);
@@ -84,7 +156,7 @@ function ASJ_init_stove() {
 	if (gl.getShaderParameter(ASJ_fragmentShaderObject_stove, gl.COMPILE_STATUS) == false) {
 		var error = gl.getShaderInfoLog(ASJ_fragmentShaderObject_stove);
 		if (error.length > 0) {
-			alert(error);
+			alert("stove frag" + error);
 			ASJ_uninitialize_stove();
 		}
 	}
@@ -95,12 +167,13 @@ function ASJ_init_stove() {
 	gl.attachShader(ASJ_shaderProgramObject_stove, ASJ_fragmentShaderObject_stove);
 
 	//pre-Link binding with vertex shader attribute
-	
+
+
 	gl.linkProgram(ASJ_shaderProgramObject_stove);
 	if (!gl.getProgramParameter(ASJ_shaderProgramObject_stove, gl.LINK_STATUS)) {
 		var error = gl.getProgramInfoLog(ASJ_shaderProgramObject_stove);
 		if (error.length > 0) {
-			alert(error);
+			alert("stove \n" + error);
 			ASJ_uninitialize_stove();
 		}
 	}
@@ -110,6 +183,16 @@ function ASJ_init_stove() {
 	projectionMatrixUnifrom_stove = gl.getUniformLocation(ASJ_shaderProgramObject_stove, "u_projection_matrix");
 	textureSamplerUnifrom = gl.getUniformLocation(ASJ_shaderProgramObject_stove, "u_texture_sampler");
 	flagUniform_stove = gl.getUniformLocation(ASJ_shaderProgramObject_stove, "flag");
+
+	//AKHI UNIFORM
+	ASJ_ambientUniform_pointLight_stove = gl.getUniformLocation(ASJ_shaderProgramObject_stove, "Ambient_AJ");
+	ASJ_lightColorUniform_pointLight_stove = gl.getUniformLocation(ASJ_shaderProgramObject_stove, "LightColor_AJ");
+	ASJ_lightPositionUniform_pointLight_stove = gl.getUniformLocation(ASJ_shaderProgramObject_stove, "LightPosition_AJ");
+	ASJ_shininessUniform_pointLight_stove = gl.getUniformLocation(ASJ_shaderProgramObject_stove, "Shininess_AJ");
+	ASJ_strengthUniform_pointLight_stove = gl.getUniformLocation(ASJ_shaderProgramObject_stove, "Strength_AJ");
+	ASJ_eyeDirectionUniform_pointLight_stove = gl.getUniformLocation(ASJ_shaderProgramObject_stove, "EyeDirection_AJ");
+	ASJ_attenuationUniform_pointLight_stove = gl.getUniformLocation(ASJ_shaderProgramObject_stove, "Attenuation_AJ");
+
 
 	var squareVertices = new Float32Array([1.0, 1.0, 1.0,
 		-1.0, 1.0, 1.0,
@@ -184,33 +267,33 @@ function ASJ_init_stove() {
 		0.0, 0.0, 1.0,
 		0.0, 0.0, 1.0,
 		//RIGHT FACE
-		1.0, 0.0, 0.0,
-		1.0, 0.0, 0.0,
-		1.0, 0.0, 0.0,
-		1.0, 0.0, 0.0,
+		-1.0, 0.0, 0.0,
+		-1.0, 0.0, 0.0,
+		-1.0, 0.0, 0.0,
+		-1.0, 0.0, 0.0,
 		//BACK FACE
-		0.0, 0.0, -1.0,
-		0.0, 0.0, -1.0,
-		0.0, 0.0, -1.0,
-		0.0, 0.0, -1.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
 
 		//LEFT FACE
-		-1.0, 0.0, 0.0,
-		-1.0, 0.0, 0.0,
-		-1.0, 0.0, 0.0,
-		-1.0, 0.0, 0.0,
+		1.0, 0.0, 0.0,
+		1.0, 0.0, 0.0,
+		1.0, 0.0, 0.0,
+		1.0, 0.0, 0.0,
 		//TOP FACE
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
 
 
 		//BOTTOM FACE
-		0.0, -1.0, 0.0,
-		0.0, -1.0, 0.0,
-		0.0, -1.0, 0.0,
-		0.0, -1.0, 0.0]);
+		0.0, 1.0, 0.0,
+		0.0, 1.0, 0.0,
+		0.0, 1.0, 0.0,
+		0.0, 1.0, 0.0]);
 
 	vao_square_stove = gl.createVertexArray();
 	gl.bindVertexArray(vao_square_stove);
@@ -232,13 +315,13 @@ function ASJ_init_stove() {
 	gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
 	//normal
-	// vbo_normal_stove = gl.createBuffer();
-	// gl.bindBuffer(gl.ARRAY_BUFFER, vbo_normal_stove);
-	// gl.bufferData(gl.ARRAY_BUFFER, cubeNormal, gl.STATIC_DRAW);
-	// gl.vertexAttribPointer(WebGLMacros.ASJ_ATTRIBUTE_NORMAL, 3, gl.FLOAT,
-	// 	false, 0, 0);
-	// gl.enableVertexAttribArray(WebGLMacros.ASJ_ATTRIBUTE_NORMAL);
-	// gl.bindBuffer(gl.ARRAY_BUFFER, null);
+	vbo_normal_stove = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, vbo_normal_stove);
+	gl.bufferData(gl.ARRAY_BUFFER, cubeNormal, gl.STATIC_DRAW);
+	gl.vertexAttribPointer(2, 3, gl.FLOAT,
+		false, 0, 0);
+	gl.enableVertexAttribArray(2);
+	gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
 
 
@@ -258,23 +341,43 @@ function ASJ_init_stove() {
 		gl.bindTexture(gl.TEXTURE_2D, null);
 	}
 
-	
+
 }
 
 
 function ASJ_draw_stove() {
-//	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	//	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 	gl.useProgram(ASJ_shaderProgramObject_stove);
 	var modelViewMatrix = mat4.create();
 	var modelViewProjectionMatrix = mat4.create();
 
 	var viewMatrix = mat4.create();
-	
+
 	var temp = mat4.create();
 	var cover = mat4.create();
 	var scaleMatrix = mat4.create();
 	var burner = mat4.create();
+
+
+	//akhilesh
+	var Eye_AJ = new Float32Array([0.0, 0.0, 2.0]);
+	var shininess_AJ = 2.50;
+	var strength_AJ = parseFloat(5);
+	var attenuation_AJ = parseFloat(0.50);
+	var Ambient_AJ = new Float32Array([0.0, 0.0, 0.0, 1.0]);
+	var LightColor_AJ = new Float32Array([1.0, 1.0, 1.0]);
+	var lightPosition_AJ = view;//new Float32Array([0.0, 1.0, -15 + val_AJ]);
+
+	//lightPosition_AJ[2]=
+	gl.uniform4fv(ASJ_ambientUniform_pointLight_stove, Ambient_AJ);
+	gl.uniform3fv(ASJ_lightColorUniform_pointLight_stove, LightColor_AJ);
+	gl.uniform3fv(ASJ_lightPositionUniform_pointLight_stove, lightPosition_AJ);
+	gl.uniform1f(ASJ_shininessUniform_pointLight_stove, shininess_AJ);
+	gl.uniform1f(ASJ_strengthUniform_pointLight_stove, strength_AJ);
+	gl.uniform3fv(ASJ_eyeDirectionUniform_pointLight_stove, Eye_AJ);
+	gl.uniform1f(ASJ_attenuationUniform_pointLight_stove, attenuation_AJ);
+
 
 	gl.uniformMatrix4fv(viewMatrixUniform_stove, false, gViewMatrix);
 	gl.uniformMatrix4fv(projectionMatrixUnifrom_stove, false, perspectiveMatrix);
@@ -290,7 +393,7 @@ function ASJ_draw_stove() {
 	gl.uniform1i(flagUniform_stove, 0);
 
 	temp = modelViewMatrix;
-mat4.rotateX(temp, temp, degTwoRadians(spin_stove));//change
+	mat4.rotateX(temp, temp, degTwoRadians(spin_stove));//change
 
 	//3side cube
 	mat4.translate(cover, temp, [0.8, -0.3, -0.8]);

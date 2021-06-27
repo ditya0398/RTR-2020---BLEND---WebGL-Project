@@ -194,7 +194,7 @@ function init() {
 	 GRInit()
 	 GRInitRoadside();
 	 initNormalMapRoad()
-
+	ASJ_init_stove();
 	// initCubeMap()
 	 tejswini_hut_init()
 	// tvn_init_lamp_arch();
@@ -218,7 +218,7 @@ function init() {
 init_InteriorStarbucks();
 
 
-	//ASJ_init_stove();
+
 	//utensil_init();
 
 //	initStarbucksOuter();
@@ -296,7 +296,7 @@ function render() {
 		 GRDisplayRoadside();
 		//  //tvn_draw_lamp_arch();
 	//	   drawModel();
-	//	ASJ_draw_stove();
+		ASJ_draw_stove();
 	 GRDisplayChaiCup();
 
 		// utensil_display();
