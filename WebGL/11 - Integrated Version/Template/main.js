@@ -199,7 +199,7 @@ function init() {
 
 // Scene 1
 
-	 initFire();
+	//  initFire();
 	 GRInit()
 	 GRInitRoadside();
 	 initNormalMapRoad()
@@ -208,7 +208,7 @@ function init() {
 	 tejswini_hut_init()
 	// tvn_init_lamp_arch();
 	 GRInitChaiCup();
-
+	dl_init_sir_shadow()
 	//initShadow();
 
 
@@ -272,7 +272,7 @@ function init() {
 
 	gl.enable(gl.DEPTH_TEST)
 	gl.depthFunc(gl.LEQUAL)
-	gl.clearColor(0.0, 0.0, 0.0, 1.0)
+	gl.clearColor(1.0, 0.0, 0.0, 1.0)
 }
 
 function reshape() {
@@ -305,8 +305,8 @@ function render() {
 		break;
 
 		case scenes.SCENE_1:
-			drawFire();
-			//	Display_CubeMap()
+			// drawFire();
+			// //	Display_CubeMap()
 			GRDisplay()
 			tejswini_hut_draw()
 			renderNormalMapRoad()
@@ -316,6 +316,7 @@ function render() {
 			drawModel();
 			ASJ_draw_stove();
 			GRDisplayChaiCup();
+			dl_render_sir_shadow()
 		break;
 
 		case scenes.SCENE_2:
