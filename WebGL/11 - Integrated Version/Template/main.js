@@ -117,16 +117,16 @@ function keyDown(event) {
 		case 78: //N
 			break
 		case 38: //up arrow
-		TeacupTransZ -= 0.05
+		fireTransZ -= 0.05
 			break
 		case 40: //down arrow
-		TeacupTransZ += 0.05
+		fireTransZ += 0.05
 			break
 		case 37: //left arrow
 		fireTransX -= 0.05
 			break
 		case 39: //right arrow
-		fireTransX += 0.05
+		fireTransX += 0.025
 			break
 
 		case 84: //Y

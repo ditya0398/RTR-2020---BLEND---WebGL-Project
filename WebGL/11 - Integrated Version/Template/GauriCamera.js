@@ -2,7 +2,7 @@
 
 var grgVertexShaderObject;
 var grgFragmentShadeerObject;
-var grgShaderProgramObject;
+var grgShaderProgramObjectCamera;
 
 var grgVaoCamera;
 var grgVboCamera;
@@ -93,19 +93,19 @@ function GRInitCamera()
      }
  
      // shader program
-     grshaderProgramObject = gl.createProgram();
+     grgShaderProgramObjectCamera = gl.createProgram();
      //attach shader object
-     gl.attachShader(grshaderProgramObject, grvertexShaderObject);
-     gl.attachShader(grshaderProgramObject, grfragmentShaderObject);
+     gl.attachShader(grgShaderProgramObjectCamera, grvertexShaderObject);
+     gl.attachShader(grgShaderProgramObjectCamera, grfragmentShaderObject);
      // pre-linking
-     gl.bindAttribLocation(grshaderProgramObject, macros.AMC_ATTRIB_POSITION, "vPosition");
-     gl.bindAttribLocation(grshaderProgramObject, macros.AMC_ATTRIB_TEXCOORD, "vTexCoord");
+     gl.bindAttribLocation(grgShaderProgramObjectCamera, macros.AMC_ATTRIB_POSITION, "vPosition");
+     gl.bindAttribLocation(grgShaderProgramObjectCamera, macros.AMC_ATTRIB_TEXCOORD, "vTexCoord");
  
      // linking
-     gl.linkProgram(grshaderProgramObject);
-     if(!gl.getProgramParameter(grshaderProgramObject, gl.LINK_STATUS))
+     gl.linkProgram(grgShaderProgramObjectCamera);
+     if(!gl.getProgramParameter(grgShaderProgramObjectCamera, gl.LINK_STATUS))
      {
-         var err = gl.getProgramInfoLog(grshaderProgramObject);
+         var err = gl.getProgramInfoLog(grgShaderProgramObjectCamera);
          if(err.length > 0)
          {
              alert(err);
@@ -118,11 +118,11 @@ function GRInitCamera()
      }
  
      // mvp uniform binding
-     grgModelMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_model_matrix");
-     grgViewMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_view_matrix");
-     grgProjectionMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_projection_matrix");
-     grtextureSamplerUniform = gl.getUniformLocation(grshaderProgramObject, "u_texture_sampler");
-     grgDistortionUniformCamera = gl.getUniformLocation(grshaderProgramObject, "distortion");
+     grgModelMatrixUniform = gl.getUniformLocation(grgShaderProgramObjectCamera, "u_model_matrix");
+     grgViewMatrixUniform = gl.getUniformLocation(grgShaderProgramObjectCamera, "u_view_matrix");
+     grgProjectionMatrixUniform = gl.getUniformLocation(grgShaderProgramObjectCamera, "u_projection_matrix");
+     grtextureSamplerUniform = gl.getUniformLocation(grgShaderProgramObjectCamera, "u_texture_sampler");
+     grgDistortionUniformCamera = gl.getUniformLocation(grgShaderProgramObjectCamera, "distortion");
  
    
  
@@ -255,7 +255,7 @@ function GRDisplayCamera()
 
    
 
-    gl.useProgram(grshaderProgramObject);
+    gl.useProgram(grgShaderProgramObjectCamera);
 
     gl.uniform1f(grgDistortionUniformCamera, blackWhiteDistortion)
     //************************************************************************************************ roadside ********************************************************
@@ -360,23 +360,23 @@ function GRUninitializeCamera()
         grtextureCameraBack = null;
     }
 
-    if(grshaderProgramObject)
+    if(grgShaderProgramObjectCamera)
     {
         if(grfragmentShaderObject)
         {
-            gl.detachShader(grshaderProgramObject, grfragmentShaderObject);
+            gl.detachShader(grgShaderProgramObjectCamera, grfragmentShaderObject);
             gl.deleteShader(grfragmentShaderObject);
             grfragmentShaderObject = null;
         }
 
         if(grfragmentShaderObject)
         {
-            gl.detachShader(grshaderProgramObject, grvertexShaderObject);
+            gl.detachShader(grgShaderProgramObjectCamera, grvertexShaderObject);
             gl.deleteShader(grvertexShaderObject);
             grvertexShaderObject = null;
         }
 
-        gl.deleteProgram(grshaderProgramObject);
+        gl.deleteProgram(grgShaderProgramObjectCamera);
         grshaderProgramObject = null;
     }
 }

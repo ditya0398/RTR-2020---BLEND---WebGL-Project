@@ -46,8 +46,8 @@ var sampleruniformAlpha_FboFire;
 var pyramid_texture_FboFire = 0;
 var cube_texture_FboFire = 0;
 
-var fireTransX = 2.6999999999999984;
-var fireTransY = -0.39;
+var fireTransX = 2.6749999999999985;
+var fireTransY = -0.54;
 var fireTransZ =-15.300000000000004;
 
 var fireScale = 0.3399999999999994;
@@ -272,7 +272,7 @@ var fragmentShaderSource1 =
 	"{"+
 	"vec4 texColor = texture(u_texture_sampler, outTexture);"+
 	"float sum = texColor.r + texColor.g  + texColor.b;" +
-	"if(sum == 0.0 || sum <= 0.5)" +
+	"if(sum == 0.0 || sum <= 0.6)" +
 		"discard;" +	
 	"FragColor = texColor;" +
 	
