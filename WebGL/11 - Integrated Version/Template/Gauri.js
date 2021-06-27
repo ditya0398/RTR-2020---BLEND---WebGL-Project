@@ -1,14 +1,14 @@
-const WebGLMacros = 
+const WebGLMacros =
 {
-    GR_ATTRIBUTE_POSITION:0,
-    GR_ATTRIBUTE_COLOR:1,
-    GR_ATTRIBUTE_TEXTURE:2,
-    GR_ATTRIBUTE_NORMAL:3
+    GR_ATTRIBUTE_POSITION: 0,
+    GR_ATTRIBUTE_COLOR: 1,
+    GR_ATTRIBUTE_TEXTURE: 2,
+    GR_ATTRIBUTE_NORMAL: 3
 };
 
 var grvertexShaderObject;
 var grfragmentShadeerObject;
-var grshaderProgramObject ;
+var grshaderProgramObject;
 
 var grvaoTriangle;
 var grvboTrianglePosition;
@@ -69,357 +69,487 @@ var grperspectiveMatrix;
 var grstackMatrix = [];
 var grmatrixPosition = -1;
 
-function GRInit()
-{
-     // vertex shader
-     var grvertexShaderSourceCode = 
-     "#version 300 es" +
-     "\n" +
-     "in vec4 vPosition;" +
-     "in vec2 vTexCoord;" +
-     "uniform mat4 u_model_matrix;" +
-     "uniform mat4 u_view_matrix;" +
-     "uniform mat4 u_projection_matrix;" +
-     "out vec2 out_texcoord;" +
-     "void main(void)" +
-     "{" +
-     "gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * vPosition;" +
-     "out_texcoord = vTexCoord;" +
-     "}";
- 
-     grvertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
-     gl.shaderSource(grvertexShaderObject, grvertexShaderSourceCode);
-     gl.compileShader(grvertexShaderObject);
-     if(gl.getShaderParameter(grvertexShaderObject, gl.COMPILE_STATUS) == false)
-     {
-         var error = gl.getShaderInfoLog(grvertexShaderObject);
-         if(error.length > 0)
-         {
-             alert(error);
-             uninitialize();
-         }
-         alert("in compile vertex shader error");
- 
-     }
- 
-     var grfragmentShaderSourceCode = 
-     "#version 300 es" +
-     "\n" +
-     "precision highp float;" +
-     "in vec2 out_texcoord;" +
-     "uniform highp sampler2D u_texture_sampler;" +
-     "out vec4 FragColor;" +
-     "void main(void)" +
-     "{" +
-     "FragColor = texture(u_texture_sampler, out_texcoord);" +
-     "}";
- 
-     grfragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
-     gl.shaderSource(grfragmentShaderObject, grfragmentShaderSourceCode);
-     gl.compileShader(grfragmentShaderObject);
-     if(gl.getShaderParameter(grfragmentShaderObject, gl.COMPILE_STATUS) == false)
-     {
-         var error = gl.getShaderInfoLog(grfragmentShaderObject);
-         if(error.length > 0)
-         {
-             alert(error);
-             uninitialize(); 
-         }
-         alert("in compile fragment shader error");
-         
-     }
- 
-     // shader program
-     grshaderProgramObject = gl.createProgram();
-     //attach shader object
-     gl.attachShader(grshaderProgramObject, grvertexShaderObject);
-     gl.attachShader(grshaderProgramObject, grfragmentShaderObject);
-     // pre-linking
-     gl.bindAttribLocation(grshaderProgramObject, WebGLMacros.GR_ATTRIBUTE_POSITION, "vPosition");
-     gl.bindAttribLocation(grshaderProgramObject, WebGLMacros.GR_ATTRIBUTE_TEXTURE, "vTexCoord");
- 
-     // linking
-     gl.linkProgram(grshaderProgramObject);
-     if(!gl.getProgramParameter(grshaderProgramObject, gl.LINK_STATUS))
-     {
-         var err = gl.getProgramInfoLog(grshaderProgramObject);
-         if(err.length > 0)
-         {
-             alert(err);
-             
-         }
-         
-         alert("in shader program object error");
-         alert(err);
+//AKHI
+var ASJ_ambientUniform_pointLight_gauri;
+var ASJ_lightColorUniform_pointLight_gauri;
+var ASJ_lightPositionUniform_pointLight_gauri;
+var ASJ_shininessUniform_pointLight_gauri;
+var ASJ_strengthUniform_pointLight_gauri;
+var ASJ_eyeDirectionUniform_pointLight_gauri;
+var ASJ_attenuationUniform_pointLight_gauri;
+
+var gr_vbo_normal_table;
+var gr_vbo_normal_bench;
+var gr_vbo_normal_radio;
+
+function GRInit() {
+    // vertex shader
+    var grvertexShaderSourceCode =
+        "#version 300 es" +
+        "\n" +
+        "in vec4 vPosition;" +
+        "in vec2 vTexCoord;" +
+        "in vec3 vNormal;" +
+        "uniform mat4 u_model_matrix;" +
+        "uniform mat4 u_view_matrix;" +
+        "uniform mat4 u_projection_matrix;" +
+        "out vec2 out_texcoord;" +
+        //akhi out
+        "out vec4 Position;" +
+        "out vec3 tNormal;" +
+        "void main(void)" +
+        "{" +
+        "gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * vPosition;" +
+        "out_texcoord = vTexCoord;" +
+        //akhi
+        "Position= u_model_matrix * vPosition;" +
+        "tNormal= normalize(mat3(u_model_matrix) * vNormal);" +
+        "}";
+
+    grvertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(grvertexShaderObject, grvertexShaderSourceCode);
+    gl.compileShader(grvertexShaderObject);
+    if (gl.getShaderParameter(grvertexShaderObject, gl.COMPILE_STATUS) == false) {
+        var error = gl.getShaderInfoLog(grvertexShaderObject);
+        if (error.length > 0) {
+            alert(error);
+            uninitialize();
+        }
+        alert("in compile vertex shader error");
+
+    }
+
+    var grfragmentShaderSourceCode =
+        "#version 300 es" +
+        "\n" +
+        "precision highp float;" +
+        "in vec2 out_texcoord;" +
+        "uniform highp sampler2D u_texture_sampler;" +
+        "out vec4 FragColor;" +
+        //Akhi Uniform
+        "uniform vec4 Ambient_AJ;" +
+        "uniform vec3 LightColor_AJ;" +
+        "uniform vec3 LightPosition_AJ;" +
+        "uniform float Shininess_AJ;" +
+        "uniform float Strength_AJ;" +
+        "uniform vec3 EyeDirection_AJ;" +
+        "uniform float Attenuation_AJ;" +
+        //Akhi in
+        "in vec4 Position;" +
+        "in vec3 tNormal;" +
+        //akhi func
+        "vec4 pointLight(vec3 Normal,vec4 Color)" +
+        "{" +
+
+        "vec3 lightDirection=vec3(Position)-LightPosition_AJ;" +
+        "\n" +
+        "float lightDistance=length(lightDirection);" +
+        "lightDirection= lightDirection / lightDistance;" +
+        "\n" +
+        "vec3 HalfVector=normalize(EyeDirection_AJ - lightDirection);" +
+        "\n" +
+        "float AttenuaFactor = 1.0 / (Attenuation_AJ * lightDistance * lightDistance  );" +
+
+        "float diffuse=max(0.0f,-1.0*dot(Normal,lightDirection)) * 0.5;" +
+        "\n" +
+        "float specular=max(0.0f,1.0*dot(Normal,HalfVector));" +
+
+        "if(diffuse<=0.00001)" +
+        "{" +
+        "specular=0.0f;" +
+        "}" +
+        "else" +
+        "{" +
+        "specular=pow(specular,Shininess_AJ);" +
+        "}" +
+        "\n" +
+        "vec4 scatteredLight=Ambient_AJ + vec4(LightColor_AJ * diffuse * AttenuaFactor,1.0);" +
+        "vec4 ReflectedLight=vec4(LightColor_AJ * specular * Strength_AJ * AttenuaFactor,1.0);" +
+
+        "vec4 res=min(Color * scatteredLight + ReflectedLight,vec4(1.0));" +
+        "return res;" +
+        "}" +
+
+        "void main(void)" +
+        "{" +
+        "vec4 color;" +
+        "color= texture(u_texture_sampler, out_texcoord);" +
+        //Akhi Lighting Calculation
+        "vec3 Normal_AJ=tNormal;" +
+        "vec4 result;" +
+
+        "result=pointLight(Normal_AJ,color);" +
+
+        "FragColor =color * result;" +
+        "}";
+
+    grfragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(grfragmentShaderObject, grfragmentShaderSourceCode);
+    gl.compileShader(grfragmentShaderObject);
+    if (gl.getShaderParameter(grfragmentShaderObject, gl.COMPILE_STATUS) == false) {
+        var error = gl.getShaderInfoLog(grfragmentShaderObject);
+        if (error.length > 0) {
+            alert(error);
+            uninitialize();
+        }
+        alert("in compile fragment shader error");
+
+    }
+
+    // shader program
+    grshaderProgramObject = gl.createProgram();
+    //attach shader object
+    gl.attachShader(grshaderProgramObject, grvertexShaderObject);
+    gl.attachShader(grshaderProgramObject, grfragmentShaderObject);
+    // pre-linking
+    gl.bindAttribLocation(grshaderProgramObject, WebGLMacros.GR_ATTRIBUTE_POSITION, "vPosition");
+    gl.bindAttribLocation(grshaderProgramObject, WebGLMacros.GR_ATTRIBUTE_TEXTURE, "vTexCoord");
+
+    // linking
+    gl.linkProgram(grshaderProgramObject);
+    if (!gl.getProgramParameter(grshaderProgramObject, gl.LINK_STATUS)) {
+        var err = gl.getProgramInfoLog(grshaderProgramObject);
+        if (err.length > 0) {
+            alert(err);
+
+        }
+
+        alert("in shader program object error");
+        alert(err);
         // uninitialize(); 
-     }
- 
-     // mvp uniform binding
-     grgModelMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_model_matrix");
-     grgViewMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_view_matrix");
-     grgProjectionMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_projection_matrix");
-     grtextureSamplerUniform = gl.getUniformLocation(grshaderProgramObject, "u_texture_sampler");
- 
-     // radio 
-     var grradioVertices = new Float32Array(
-         [
-             1.0, 0.5, 0.2,
-             -1.0, 0.5, 0.2,
-             -1.0, -0.5, 0.2,
-             1.0, -0.5, 0.2,
-                                                 // right face
-             1.0, 0.5, -0.2,
-             1.0, 0.5, 0.2,
-             1.0, -0.5, 0.2,
-             1.0, -0.5, -0.2,
-                                                 // back face
-             -1.0, 0.5, -0.2,
-             1.0, 0.5, -0.2,
-             1.0, -0.5, -0.2,
-             -1.0, -0.5, -0.2,
-                                                 // left face
-             -1.0, 0.5, 0.2,
-             -1.0, 0.5, -0.2,
-             -1.0, -0.5, -0.2,
-             -1.0, -0.5, 0.2,
-                                                 // top face
-             1.0, 0.5, -0.2,
-             -1.0, 0.5, -0.2,
-             -1.0, 0.5, 0.2,
-             1.0, 0.5, 0.2,
-                                                 // bottom face
-             1.0, -0.5, -0.2,
-             -1.0, -0.5, -0.2,
-             -1.0, -0.5, 0.2,
-             1.0, -0.5, 0.2
-         ]
-     ); 
- 
-     var grradioTexCoords = new Float32Array(
-         [
-             0.98, 0.92,						// left bottom	rt
-             0.015, 0.92,						// left top     lt
-             0.015, 0.08,						// right top	lb
-             0.98, 0.08,						// right bottom	rb
- 
-             0.13, 0.08,							// right
-             0.1, 0.08,
-             0.1, 0.067,
-             0.13, 0.067,
- 
-             0.13, 0.08,							// back rt
-             0.1, 0.08,								// lt
-             0.1, 0.069,							// lb
-             0.13, 0.069,								// rb
- 
-             0.13, 0.08,							// left
-             0.1, 0.08,
-             0.1, 0.07,
-             0.13, 0.07,
- 
-             0.13, 0.08,							// right
-             0.1, 0.08,
-             0.1, 0.067,
-             0.13, 0.067,
- 
-             0.13, 0.08,							// right
-             0.1, 0.08,
-             0.1, 0.067,
-             0.13, 0.067,
-         ]
-     );
- 
-     var grcubeTexcoords = new Float32Array(
-         [
-             0.0, 0.0,				
-             1.0, 0.0,
-             1.0, 1.0,
-             0.0, 1.0,
-     
-             1.0, 0.0,
-             1.0, 1.0,
-             0.0, 1.0,
-             0.0, 0.0,
-     
-             0.0, 1.0,
-             0.0, 0.0,
-             1.0, 0.0,
-             1.0, 1.0,
-     
-             0.0, 0.0,
-             1.0, 0.0,
-             1.0, 1.0,
-             0.0, 1.0,
-     
-             0.0, 1.0,
-             0.0, 0.0,
-             1.0, 0.0,
-             1.0, 1.0,
-     
-             1.0, 0.0,
-             0.0, 0.0,
-             0.0, 1.0,
-             1.0, 1.0
-         ]
-     );
- 
-     var grcubeVertices = new Float32Array(
-         [
-             1.0, 1.0, 1.0,
-             -1.0, 1.0, 1.0,
-             -1.0, -1.0, 1.0,
-             1.0, -1.0, 1.0,
-                                                 // right face
-             1.0, 1.0, -1.0,
-             1.0, 1.0, 1.0,
-             1.0, -1.0, 1.0,
-             1.0, -1.0, -1.0,
-                                                 // back face
-             -1.0, 1.0, -1.0,
-             1.0, 1.0, -1.0,
-             1.0, -1.0, -1.0,
-             -1.0, -1.0, -1.0,
-                                                 // left face
-             -1.0, 1.0, 1.0,
-             -1.0, 1.0, -1.0,
-             -1.0, -1.0, -1.0,
-             -1.0, -1.0, 1.0,
-                                                 // top face
-             1.0, 1.0, -1.0,
-             -1.0, 1.0, -1.0,
-             -1.0, 1.0, 1.0,
-             1.0, 1.0, 1.0,
-                                                 // bottom face
-             1.0, -1.0, -1.0,
-             -1.0, -1.0, -1.0,
-             -1.0, -1.0, 1.0,
-             1.0, -1.0, 1.0
-         ]
-     );
- 
-     // radio
-     grgVaoRadio = gl.createVertexArray();
-     gl.bindVertexArray(grgVaoRadio);
- 
-     grgVboPositionRadio = gl.createBuffer();
-     gl.bindBuffer(gl.ARRAY_BUFFER, grgVboPositionRadio);
-     gl.bufferData(gl.ARRAY_BUFFER, grradioVertices, gl.STATIC_DRAW);
-     gl.vertexAttribPointer(WebGLMacros.GR_ATTRIBUTE_POSITION, 3, gl.FLOAT, false, 0, 0);
-     gl.enableVertexAttribArray(WebGLMacros.GR_ATTRIBUTE_POSITION);
-     gl.bindBuffer(gl.ARRAY_BUFFER, null);
- 
-     grgVboTextureRadio = gl.createBuffer();
-     gl.bindBuffer(gl.ARRAY_BUFFER, grgVboTextureRadio);
-     gl.bufferData(gl.ARRAY_BUFFER, grradioTexCoords, gl.STATIC_DRAW);
-     gl.vertexAttribPointer(WebGLMacros.GR_ATTRIBUTE_TEXTURE, 2, gl.FLOAT, false, 0, 0);
-     gl.enableVertexAttribArray(WebGLMacros.GR_ATTRIBUTE_TEXTURE);
-     gl.bindBuffer(gl.ARRAY_BUFFER, null);
-     
-     gl.bindVertexArray(null);
- 
- 
-     // table
-     grgVaoBenchTable = gl.createVertexArray();
-     gl.bindVertexArray(grgVaoBenchTable);
- 
-     grgVboPositionBenchTable = gl.createBuffer();
-     gl.bindBuffer(gl.ARRAY_BUFFER, grgVboPositionBenchTable);
-     gl.bufferData(gl.ARRAY_BUFFER, grcubeVertices, gl.STATIC_DRAW);
-     gl.vertexAttribPointer(WebGLMacros.GR_ATTRIBUTE_POSITION, 3, gl.FLOAT, false, 0, 0);
-     gl.enableVertexAttribArray(WebGLMacros.GR_ATTRIBUTE_POSITION);
-     gl.bindBuffer(gl.ARRAY_BUFFER, null);
- 
-     grgVboTextureBenchTable = gl.createBuffer();
-     gl.bindBuffer(gl.ARRAY_BUFFER, grgVboTextureBenchTable);
-     gl.bufferData(gl.ARRAY_BUFFER, grcubeTexcoords, gl.STATIC_DRAW);
-     gl.vertexAttribPointer(WebGLMacros.GR_ATTRIBUTE_TEXTURE, 2, gl.FLOAT, false, 0, 0);
-     gl.enableVertexAttribArray(WebGLMacros.GR_ATTRIBUTE_TEXTURE);
-     gl.bindBuffer(gl.ARRAY_BUFFER, null);
-     
-     gl.bindVertexArray(null);
-     
-     // bench legs
-     grgVaoBenchLegs = gl.createVertexArray();
-     gl.bindVertexArray(grgVaoBenchLegs);
- 
-     grgVboPositionBenchLegs = gl.createBuffer();
-     gl.bindBuffer(gl.ARRAY_BUFFER, grgVboPositionBenchLegs);
-     gl.bufferData(gl.ARRAY_BUFFER, grcubeVertices, gl.STATIC_DRAW);
-     gl.vertexAttribPointer(WebGLMacros.GR_ATTRIBUTE_POSITION, 3, gl.FLOAT, false, 0, 0);
-     gl.enableVertexAttribArray(WebGLMacros.GR_ATTRIBUTE_POSITION);
-     gl.bindBuffer(gl.ARRAY_BUFFER, null);
- 
-     grgVboTextureBenchLegs = gl.createBuffer();
-     gl.bindBuffer(gl.ARRAY_BUFFER, grgVboTextureBenchLegs);
-     gl.bufferData(gl.ARRAY_BUFFER, grcubeTexcoords, gl.STATIC_DRAW);
-     gl.vertexAttribPointer(WebGLMacros.GR_ATTRIBUTE_TEXTURE, 2, gl.FLOAT, false, 0, 0);
-     gl.enableVertexAttribArray(WebGLMacros.GR_ATTRIBUTE_TEXTURE);
-     gl.bindBuffer(gl.ARRAY_BUFFER, null);
-     
-     gl.bindVertexArray(null);
- 
-     // texture for bench
-     grtextureBench = gl.createTexture();
-     grtextureBench.image = new Image();
-     grtextureBench.image.src = "GauriResources/bench.jpg";
-     grtextureBench.image.onload = function()
-     {
-         gl.bindTexture(gl.TEXTURE_2D, grtextureBench);
-         //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-         gl.pixelStorei(gl.UNPACK_ALIGNMENT, 2);
-         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-         //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-         //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, grtextureBench.image);
-         gl.bindTexture(gl.TEXTURE_2D, null);
-     };
-     // texture for radio
-     grtextureRadio = gl.createTexture();
-     grtextureRadio.image = new Image();
-     grtextureRadio.image.src = "GauriResources/bush.png";
-     grtextureRadio.image.onload = function()
-     {
-         gl.bindTexture(gl.TEXTURE_2D, grtextureRadio);
-         //gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
-         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, grtextureRadio.image);
-         gl.bindTexture(gl.TEXTURE_2D, null);
-     };
-     // texture for bench legs and table
-     grtextureBenchLegs = gl.createTexture();
-     grtextureBenchLegs.image = new Image();
-     grtextureBenchLegs.image.src = "GauriResources/wood.png";
-     grtextureBenchLegs.image.onload = function()
-     {
-         gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
-         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, grtextureBenchLegs.image);
-         gl.bindTexture(gl.TEXTURE_2D, null);
-     };
-     // texture for antenna
-     grtextureAntenna = gl.createTexture();
-     grtextureAntenna.image = new Image();
-     grtextureAntenna.image.src = "GauriResources/antenna.png";
-     grtextureAntenna.image.onload = function()
-     {
-         gl.bindTexture(gl.TEXTURE_2D, grtextureAntenna);
-         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, grtextureAntenna.image);
-         gl.bindTexture(gl.TEXTURE_2D, null);
-     };
-     
+    }
+
+    // mvp uniform binding
+    grgModelMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_model_matrix");
+    grgViewMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_view_matrix");
+    grgProjectionMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_projection_matrix");
+    grtextureSamplerUniform = gl.getUniformLocation(grshaderProgramObject, "u_texture_sampler");
+
+    //AKHI UNIFORM binding
+    ASJ_ambientUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "Ambient_AJ");
+    ASJ_lightColorUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "LightColor_AJ");
+    ASJ_lightPositionUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "LightPosition_AJ");
+    ASJ_shininessUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "Shininess_AJ");
+    ASJ_strengthUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "Strength_AJ");
+    ASJ_eyeDirectionUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "EyeDirection_AJ");
+    ASJ_attenuationUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "Attenuation_AJ");
+
+    // radio 
+    var grradioVertices = new Float32Array(
+        [
+            1.0, 0.5, 0.2,
+            -1.0, 0.5, 0.2,
+            -1.0, -0.5, 0.2,
+            1.0, -0.5, 0.2,
+            // right face
+            1.0, 0.5, -0.2,
+            1.0, 0.5, 0.2,
+            1.0, -0.5, 0.2,
+            1.0, -0.5, -0.2,
+            // back face
+            -1.0, 0.5, -0.2,
+            1.0, 0.5, -0.2,
+            1.0, -0.5, -0.2,
+            -1.0, -0.5, -0.2,
+            // left face
+            -1.0, 0.5, 0.2,
+            -1.0, 0.5, -0.2,
+            -1.0, -0.5, -0.2,
+            -1.0, -0.5, 0.2,
+            // top face
+            1.0, 0.5, -0.2,
+            -1.0, 0.5, -0.2,
+            -1.0, 0.5, 0.2,
+            1.0, 0.5, 0.2,
+            // bottom face
+            1.0, -0.5, -0.2,
+            -1.0, -0.5, -0.2,
+            -1.0, -0.5, 0.2,
+            1.0, -0.5, 0.2
+        ]
+    );
+
+    var grradioTexCoords = new Float32Array(
+        [
+            0.98, 0.92,						// left bottom	rt
+            0.015, 0.92,						// left top     lt
+            0.015, 0.08,						// right top	lb
+            0.98, 0.08,						// right bottom	rb
+
+            0.13, 0.08,							// right
+            0.1, 0.08,
+            0.1, 0.067,
+            0.13, 0.067,
+
+            0.13, 0.08,							// back rt
+            0.1, 0.08,								// lt
+            0.1, 0.069,							// lb
+            0.13, 0.069,								// rb
+
+            0.13, 0.08,							// left
+            0.1, 0.08,
+            0.1, 0.07,
+            0.13, 0.07,
+
+            0.13, 0.08,							// right
+            0.1, 0.08,
+            0.1, 0.067,
+            0.13, 0.067,
+
+            0.13, 0.08,							// right
+            0.1, 0.08,
+            0.1, 0.067,
+            0.13, 0.067,
+        ]
+    );
+
+    var grcubeTexcoords = new Float32Array(
+        [
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            0.0, 0.0,
+
+            0.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+            0.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+
+            1.0, 0.0,
+            0.0, 0.0,
+            0.0, 1.0,
+            1.0, 1.0
+        ]
+    );
+    var grcubeNormal = new Float32Array([0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+        //RIGHT FACE
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        //BACK FACE
+        0.0, 0.0, -1.0,
+        0.0, 0.0, -1.0,
+        0.0, 0.0, -1.0,
+        0.0, 0.0, -1.0,
+
+        //LEFT FACE
+        -1.0, 0.0, 0.0,
+        -1.0, 0.0, 0.0,
+        -1.0, 0.0, 0.0,
+        -1.0, 0.0, 0.0,
+        //TOP FACE
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+
+
+        //BOTTOM FACE
+        0.0, -1.0, 0.0,
+        0.0, -1.0, 0.0,
+        0.0, -1.0, 0.0,
+        0.0, -1.0, 0.0]);
+    var grcubeVertices = new Float32Array(
+        [
+            1.0, 1.0, 1.0,
+            -1.0, 1.0, 1.0,
+            -1.0, -1.0, 1.0,
+            1.0, -1.0, 1.0,
+            // right face
+            1.0, 1.0, -1.0,
+            1.0, 1.0, 1.0,
+            1.0, -1.0, 1.0,
+            1.0, -1.0, -1.0,
+            // back face
+            -1.0, 1.0, -1.0,
+            1.0, 1.0, -1.0,
+            1.0, -1.0, -1.0,
+            -1.0, -1.0, -1.0,
+            // left face
+            -1.0, 1.0, 1.0,
+            -1.0, 1.0, -1.0,
+            -1.0, -1.0, -1.0,
+            -1.0, -1.0, 1.0,
+            // top face
+            1.0, 1.0, -1.0,
+            -1.0, 1.0, -1.0,
+            -1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0,
+            // bottom face
+            1.0, -1.0, -1.0,
+            -1.0, -1.0, -1.0,
+            -1.0, -1.0, 1.0,
+            1.0, -1.0, 1.0
+        ]
+    );
+
+    // radio
+    grgVaoRadio = gl.createVertexArray();
+    gl.bindVertexArray(grgVaoRadio);
+
+    grgVboPositionRadio = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, grgVboPositionRadio);
+    gl.bufferData(gl.ARRAY_BUFFER, grradioVertices, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(WebGLMacros.GR_ATTRIBUTE_POSITION, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(WebGLMacros.GR_ATTRIBUTE_POSITION);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    grgVboTextureRadio = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, grgVboTextureRadio);
+    gl.bufferData(gl.ARRAY_BUFFER, grradioTexCoords, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(WebGLMacros.GR_ATTRIBUTE_TEXTURE, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(WebGLMacros.GR_ATTRIBUTE_TEXTURE);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+
+    gr_vbo_normal_radio = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, gr_vbo_normal_radio);
+    gl.bufferData(gl.ARRAY_BUFFER, grcubeNormal, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(macros.AMC_ATTRIB_NORMAL, 3, gl.FLOAT,
+        false, 0, 0);
+    gl.enableVertexAttribArray(macros.AMC_ATTRIB_NORMAL);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+
+    gl.bindVertexArray(null);
+
+
+    // table
+    grgVaoBenchTable = gl.createVertexArray();
+    gl.bindVertexArray(grgVaoBenchTable);
+
+    grgVboPositionBenchTable = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, grgVboPositionBenchTable);
+    gl.bufferData(gl.ARRAY_BUFFER, grcubeVertices, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(WebGLMacros.GR_ATTRIBUTE_POSITION, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(WebGLMacros.GR_ATTRIBUTE_POSITION);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    grgVboTextureBenchTable = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, grgVboTextureBenchTable);
+    gl.bufferData(gl.ARRAY_BUFFER, grcubeTexcoords, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(WebGLMacros.GR_ATTRIBUTE_TEXTURE, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(WebGLMacros.GR_ATTRIBUTE_TEXTURE);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    //normal
+    gr_vbo_normal_table = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, gr_vbo_normal_table);
+    gl.bufferData(gl.ARRAY_BUFFER, grcubeNormal, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(macros.AMC_ATTRIB_NORMAL, 3, gl.FLOAT,
+        false, 0, 0);
+    gl.enableVertexAttribArray(macros.AMC_ATTRIB_NORMAL);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+
+
+    gl.bindVertexArray(null);
+
+    // bench legs
+    grgVaoBenchLegs = gl.createVertexArray();
+    gl.bindVertexArray(grgVaoBenchLegs);
+
+    grgVboPositionBenchLegs = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, grgVboPositionBenchLegs);
+    gl.bufferData(gl.ARRAY_BUFFER, grcubeVertices, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(WebGLMacros.GR_ATTRIBUTE_POSITION, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(WebGLMacros.GR_ATTRIBUTE_POSITION);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    grgVboTextureBenchLegs = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, grgVboTextureBenchLegs);
+    gl.bufferData(gl.ARRAY_BUFFER, grcubeTexcoords, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(WebGLMacros.GR_ATTRIBUTE_TEXTURE, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(WebGLMacros.GR_ATTRIBUTE_TEXTURE);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    //normal
+    gr_vbo_normal_bench = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, gr_vbo_normal_bench);
+    gl.bufferData(gl.ARRAY_BUFFER, grcubeNormal, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(macros.AMC_ATTRIB_NORMAL, 3, gl.FLOAT,
+        false, 0, 0);
+    gl.enableVertexAttribArray(macros.AMC_ATTRIB_NORMAL);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    gl.bindVertexArray(null);
+
+    // texture for bench
+    grtextureBench = gl.createTexture();
+    grtextureBench.image = new Image();
+    grtextureBench.image.src = "GauriResources/bench.jpg";
+    grtextureBench.image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, grtextureBench);
+        //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 2);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, grtextureBench.image);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    };
+    // texture for radio
+    grtextureRadio = gl.createTexture();
+    grtextureRadio.image = new Image();
+    grtextureRadio.image.src = "GauriResources/bush.png";
+    grtextureRadio.image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, grtextureRadio);
+        //gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, grtextureRadio.image);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    };
+    // texture for bench legs and table
+    grtextureBenchLegs = gl.createTexture();
+    grtextureBenchLegs.image = new Image();
+    grtextureBenchLegs.image.src = "GauriResources/wood.png";
+    grtextureBenchLegs.image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, grtextureBenchLegs.image);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    };
+    // texture for antenna
+    grtextureAntenna = gl.createTexture();
+    grtextureAntenna.image = new Image();
+    grtextureAntenna.image.src = "GauriResources/antenna.png";
+    grtextureAntenna.image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, grtextureAntenna);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, grtextureAntenna.image);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    };
+
 }
 
 
-function GRDisplay()
-{
+function GRDisplay() {
     // variables
     var grmodelMatrix = mat4.create();
     var grviewMatrix = mat4.create();
@@ -428,9 +558,28 @@ function GRDisplay()
     var grtranslateMatrix = mat4.create();
     var grrotateMatrix = mat4.create();
 
-   
+
 
     gl.useProgram(grshaderProgramObject);
+
+    //akhilesh
+    var Eye_AJ = new Float32Array([0.0, 0.0, 2.0]);
+    var shininess_AJ = 2.50;
+    var strength_AJ = parseFloat(5);
+    var attenuation_AJ = parseFloat(0.50);
+    var Ambient_AJ = new Float32Array([0.0, 0.0, 0.0, 1.0]);
+    var LightColor_AJ = new Float32Array([1.0, 1.0, 1.0]);
+    var lightPosition_AJ = view;//new Float32Array([0.0, 1.0, -15 + val_AJ]);
+
+    //lightPosition_AJ[2]=
+    gl.uniform4fv(ASJ_ambientUniform_pointLight_gauri, Ambient_AJ);
+    gl.uniform3fv(ASJ_lightColorUniform_pointLight_gauri, LightColor_AJ);
+    gl.uniform3fv(ASJ_lightPositionUniform_pointLight_gauri, lightPosition_AJ);
+    gl.uniform1f(ASJ_shininessUniform_pointLight_gauri, shininess_AJ);
+    gl.uniform1f(ASJ_strengthUniform_pointLight_gauri, strength_AJ);
+    gl.uniform3fv(ASJ_eyeDirectionUniform_pointLight_gauri, Eye_AJ);
+    gl.uniform1f(ASJ_attenuationUniform_pointLight_gauri, attenuation_AJ);
+
 
     //************************************************************************************************ radio ********************************************************
     //***************************************************************************************************************************************************************
@@ -444,7 +593,7 @@ function GRDisplay()
     GRPushToStack(grmodelMatrix);
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
-    
+
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
     gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
@@ -600,7 +749,7 @@ function GRDisplay()
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStack(grmodelMatrix);
     GRPopFromStack();
-    
+
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
@@ -638,7 +787,7 @@ function GRDisplay()
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStack(grmodelMatrix);
     GRPopFromStack();
-    
+
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
@@ -675,7 +824,7 @@ function GRDisplay()
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStack(grmodelMatrix);
     GRPopFromStack();
-    
+
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
@@ -694,7 +843,7 @@ function GRDisplay()
     gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
-    
+
     GRPopFromStack();
 
     //************************************************************************ Chai Table **********************************************************************
@@ -728,7 +877,7 @@ function GRDisplay()
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStack(grmodelMatrix);
     GRPopFromStack();
-    
+
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
@@ -763,7 +912,7 @@ function GRDisplay()
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStack(grmodelMatrix);
     GRPopFromStack();
-    
+
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
@@ -792,23 +941,23 @@ function GRDisplay()
     grscaleMatrix = mat4.create();
     grtranslateMatrix = mat4.create();
     grrotateMatrix = mat4.create();
- 
+
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [0.0, -0.25, -1.2]);
     mat4.scale(grscaleMatrix, grscaleMatrix, [3.2, 0.14, 0.1]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStack(grmodelMatrix);
     GRPopFromStack();
-     
+
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
- 
+
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
     gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
- 
+
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
     gl.uniform1i(grtextureSamplerUniform, 0);
- 
+
     gl.bindVertexArray(grgVaoBenchLegs);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
@@ -817,9 +966,9 @@ function GRDisplay()
     gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
- 
+
     gl.bindTexture(gl.TEXTURE_2D, null);
-    
+
     //******************************** table holder - right
     grmodelMatrix = mat4.create();
     grviewMatrix = mat4.create();
@@ -827,23 +976,23 @@ function GRDisplay()
     grscaleMatrix = mat4.create();
     grtranslateMatrix = mat4.create();
     grrotateMatrix = mat4.create();
- 
+
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [3.1, -0.25, 0.0]);
     mat4.scale(grscaleMatrix, grscaleMatrix, [0.1, 0.14, 1.12]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStack(grmodelMatrix);
     GRPopFromStack();
-     
+
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
- 
+
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
     gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
- 
+
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
     gl.uniform1i(grtextureSamplerUniform, 0);
- 
+
     gl.bindVertexArray(grgVaoBenchLegs);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
@@ -852,7 +1001,7 @@ function GRDisplay()
     gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
- 
+
     gl.bindTexture(gl.TEXTURE_2D, null);
 
     //******************************* table holder - left
@@ -862,23 +1011,23 @@ function GRDisplay()
     grscaleMatrix = mat4.create();
     grtranslateMatrix = mat4.create();
     grrotateMatrix = mat4.create();
- 
+
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [-3.1, -0.3, 0.0]);
     mat4.scale(grscaleMatrix, grscaleMatrix, [0.1, 0.2, 1.12]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStack(grmodelMatrix);
     GRPopFromStack();
-     
+
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
- 
+
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
     gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
- 
+
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
     gl.uniform1i(grtextureSamplerUniform, 0);
- 
+
     gl.bindVertexArray(grgVaoBenchLegs);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
@@ -887,9 +1036,9 @@ function GRDisplay()
     gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
- 
+
     gl.bindTexture(gl.TEXTURE_2D, null);
-    
+
     //********************** table legs - front left 
     grmodelMatrix = mat4.create();
     grviewMatrix = mat4.create();
@@ -897,23 +1046,23 @@ function GRDisplay()
     grscaleMatrix = mat4.create();
     grtranslateMatrix = mat4.create();
     grrotateMatrix = mat4.create();
- 
+
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [-3.15, -1.8, 1.2]);
     mat4.scale(grscaleMatrix, grscaleMatrix, [0.15, 1.7, 0.12]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStack(grmodelMatrix);
     GRPopFromStack();
-     
+
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
- 
+
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
     gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
- 
+
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
     gl.uniform1i(grtextureSamplerUniform, 0);
- 
+
     gl.bindVertexArray(grgVaoBenchLegs);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
@@ -922,9 +1071,9 @@ function GRDisplay()
     gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
- 
+
     gl.bindTexture(gl.TEXTURE_2D, null);
-    
+
     //********************** table legs - front right 
     grmodelMatrix = mat4.create();
     grviewMatrix = mat4.create();
@@ -932,23 +1081,23 @@ function GRDisplay()
     grscaleMatrix = mat4.create();
     grtranslateMatrix = mat4.create();
     grrotateMatrix = mat4.create();
- 
+
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [3.15, -1.8, 1.2]);
     mat4.scale(grscaleMatrix, grscaleMatrix, [0.15, 1.7, 0.12]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStack(grmodelMatrix);
     GRPopFromStack();
-     
+
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
- 
+
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
     gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
- 
+
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
     gl.uniform1i(grtextureSamplerUniform, 0);
- 
+
     gl.bindVertexArray(grgVaoBenchLegs);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
@@ -957,7 +1106,7 @@ function GRDisplay()
     gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
- 
+
     gl.bindTexture(gl.TEXTURE_2D, null);
 
     //********************** table legs - back left 
@@ -967,23 +1116,23 @@ function GRDisplay()
     grscaleMatrix = mat4.create();
     grtranslateMatrix = mat4.create();
     grrotateMatrix = mat4.create();
- 
+
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [-3.15, -1.8, -1.2]);
     mat4.scale(grscaleMatrix, grscaleMatrix, [0.15, 1.7, 0.12]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStack(grmodelMatrix);
     GRPopFromStack();
-     
+
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
- 
+
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
     gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
- 
+
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
     gl.uniform1i(grtextureSamplerUniform, 0);
- 
+
     gl.bindVertexArray(grgVaoBenchLegs);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
@@ -992,7 +1141,7 @@ function GRDisplay()
     gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
- 
+
     gl.bindTexture(gl.TEXTURE_2D, null);
 
     //*********************** table legs - back right
@@ -1002,23 +1151,23 @@ function GRDisplay()
     grscaleMatrix = mat4.create();
     grtranslateMatrix = mat4.create();
     grrotateMatrix = mat4.create();
- 
+
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [3.15, -1.8, -1.2]);
     mat4.scale(grscaleMatrix, grscaleMatrix, [0.15, 1.7, 0.12]);
     mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
     grmodelMatrix = GRPushToStack(grmodelMatrix);
     GRPopFromStack();
-     
+
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
- 
+
     gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
     gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
- 
+
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
     gl.uniform1i(grtextureSamplerUniform, 0);
- 
+
     gl.bindVertexArray(grgVaoBenchLegs);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
@@ -1027,7 +1176,7 @@ function GRDisplay()
     gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
- 
+
     gl.bindTexture(gl.TEXTURE_2D, null);
     GRPopFromStack();
 
@@ -1035,17 +1184,14 @@ function GRDisplay()
 
 }
 
-function GRPushToStack(matrix)
-{
-    if(grmatrixPosition == -1)
-    {
+function GRPushToStack(matrix) {
+    if (grmatrixPosition == -1) {
         grstackMatrix.push(matrix);
         //console.log("in push, matrixposition 0 : " +grstackMatrix[0]);
         grmatrixPosition++;
         return matrix;
     }
-    else
-    {
+    else {
         var topMatrix = grstackMatrix[grmatrixPosition];
         //console.log("in GRPushToStack, top matrix : " + topMatrix);
         mat4.multiply(matrix, topMatrix, matrix);
@@ -1054,50 +1200,41 @@ function GRPushToStack(matrix)
         //sconsole.log("return pushed matrix : position : " + grmatrixPosition + " matrix : " + grstackMatrix);
         return grstackMatrix[grmatrixPosition];
     }
-  
+
 }
 
-function GRPopFromStack()
-{
-    if(!grstackMatrix[0])
-    {
+function GRPopFromStack() {
+    if (!grstackMatrix[0]) {
         grstackMatrix[0] = mat4.create();
         return grstackMatrix[0];
     }
-    else
-    {
+    else {
         grstackMatrix.pop();
         grmatrixPosition--;
         return grstackMatrix[grmatrixPosition];
     }
-    
+
 }
 
 
-function GRUninitialize()
-{
-    if(grgVaoRadio)
-    {
+function GRUninitialize() {
+    if (grgVaoRadio) {
         gl.deleteVertexArray(grgVaoRadio);
         grgVaoRadio = null;
     }
-    if(grgVboPositionRadio)
-    {
+    if (grgVboPositionRadio) {
         gl.deleteBuffer(grgVboPositionRadio);
         grgVboPositionRadio = null;
     }
 
-    if(grshaderProgramObject)
-    {
-        if(grfragmentShaderObject)
-        {
+    if (grshaderProgramObject) {
+        if (grfragmentShaderObject) {
             gl.detachShader(grshaderProgramObject, grfragmentShaderObject);
             gl.deleteShader(grfragmentShaderObject);
             grfragmentShaderObject = null;
         }
 
-        if(grfragmentShaderObject)
-        {
+        if (grfragmentShaderObject) {
             gl.detachShader(grshaderProgramObject, grvertexShaderObject);
             gl.deleteShader(grvertexShaderObject);
             grvertexShaderObject = null;

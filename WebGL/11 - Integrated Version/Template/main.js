@@ -191,7 +191,7 @@ function init() {
 	gl.viewportHeight = canvas.height
 
 	// initFire();
-	// GRInit()
+	 GRInit()
 	 GRInitRoadside();
 	 initNormalMapRoad()
 
@@ -289,7 +289,7 @@ function render() {
 	if(currentScene == scenes.SCENE_1) {
 		//drawFire();
 	//	Display_CubeMap()
-	//	 GRDisplay()
+		 GRDisplay()
 		tejswini_hut_draw()
 		 renderNormalMapRoad()
 
