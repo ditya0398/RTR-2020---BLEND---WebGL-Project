@@ -215,7 +215,7 @@ function init() {
 	// GRInitCamera();
 
 
-init_InteriorStarbucks();
+	init_InteriorStarbucks();
 
 
 
@@ -295,7 +295,7 @@ function render() {
 
 		 GRDisplayRoadside();
 		//  //tvn_draw_lamp_arch();
-	//	   drawModel();
+		   drawModel();
 		ASJ_draw_stove();
 	 GRDisplayChaiCup();
 
