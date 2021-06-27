@@ -169,7 +169,7 @@ function GRInitChaiCup() {
 
 
     }
-    alert("in init");
+   
     // shader program
     grshaderProgramObjectChai = gl.createProgram();
     //attach shader object

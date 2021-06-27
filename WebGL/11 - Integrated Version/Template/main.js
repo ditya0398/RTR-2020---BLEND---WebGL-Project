@@ -15,7 +15,8 @@ var gbAnim = false
 
 var rotX = 0.0, rotY = 0.0
 
-var view = [0.0, 0.0, 5.0]
+var view = [2.8, -0.75, -12.09]
+
 
 
 //Scene 2 camera positions [0.0, 15.133, -47.1]
@@ -190,11 +191,14 @@ function init() {
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
 
-	// initFire();
+
+// Scene 1
+
+	 initFire();
 	 GRInit()
 	 GRInitRoadside();
 	 initNormalMapRoad()
-	ASJ_init_stove();
+	 ASJ_init_stove();
 	// initCubeMap()
 	 tejswini_hut_init()
 	// tvn_init_lamp_arch();
@@ -202,16 +206,18 @@ function init() {
 
 	//initShadow();
 
-	// GRInitMic();
-	// tvn_script_init();
-	// tvn_speaker_init();
-	// tvn_init_tripod();
-	// tvn_drama_init();
+
+	//Scene 2
+	  //GRInitMic();
+	//  tvn_script_init();
+	//  tvn_speaker_init();
+	//  tvn_init_tripod();
+	//  tvn_drama_init();
 	
 
-	// GRInitScene2();
-	// DL_initChair()
-	// GRInitStageLights();
+	//  GRInitScene2();
+	//  DL_initChair()
+	//  GRInitStageLights();
 	// GRInitCamera();
 
 
@@ -286,40 +292,83 @@ function render() {
 
 	mat4.lookAt(gViewMatrix, view, [0.0, view[1], view[2] - 20.0], [0.0, 1.0, 0.0])
 
-	if(currentScene == scenes.SCENE_1) {
-		//drawFire();
-	//	Display_CubeMap()
-		 GRDisplay()
-		tejswini_hut_draw()
-		 renderNormalMapRoad()
 
-		 GRDisplayRoadside();
-		//  //tvn_draw_lamp_arch();
-		   drawModel();
-		ASJ_draw_stove();
-	 	GRDisplayChaiCup();
-
-		// utensil_display();
-	} else if(currentScene == scenes.SCENE_2) {
-		GRDisplayScene2();
-		GRDisplayStageLights();
-		tvn_tripod_draw();
-		GRDisplayMic();
-		tvn_speaker_draw();
-		DL_renderChair()
-		GRDisplayCamera();
-		tvn_script_draw();
-		tvn_drama_draw();
-	}
-	else if(currentScene == scenes.SCENE_3){
-		// displayStarBucksOuter();
-		// drawCar();
-		ASJ_draw_laptop();
-	}
-	else if(currentScene == scenes.SCENE_4)
+	switch(currentScene)
 	{
-		display_InteriorStarbucks();
+		case scenes.SCENE_0:
+			//Intro
+		break;
+
+		case scenes.SCENE_1:
+			drawFire();
+			//	Display_CubeMap()
+			GRDisplay()
+			tejswini_hut_draw()
+			renderNormalMapRoad()
+
+			GRDisplayRoadside();
+			//  //tvn_draw_lamp_arch();
+			drawModel();
+			ASJ_draw_stove();
+			GRDisplayChaiCup();
+		break;
+
+		case scenes.SCENE_2:
+			GRDisplayScene2();
+			GRDisplayStageLights();
+			tvn_tripod_draw();
+			GRDisplayMic();
+			tvn_speaker_draw();
+			DL_renderChair()
+			GRDisplayCamera();
+			tvn_script_draw();
+			tvn_drama_draw();
+		break;
+		case scenes.SCENE_3:
+			// displayStarBucksOuter();
+			// drawCar();
+		
+		break;
+		case scenes.SCENE_4:
+			display_InteriorStarbucks();
+			//ASJ_draw_laptop();
+		break;
+
 	}
+	// if(currentScene == scenes.SCENE_1) {
+	// 	//drawFire();
+	// //	Display_CubeMap()
+	// 	 GRDisplay()
+	// 	tejswini_hut_draw()
+	// 	 renderNormalMapRoad()
+
+	// 	 GRDisplayRoadside();
+	// 	//  //tvn_draw_lamp_arch();
+	// 	   drawModel();
+	// 	ASJ_draw_stove();
+	//  	GRDisplayChaiCup();
+
+	// 	// utensil_display();
+	// } else if(currentScene == scenes.SCENE_2) {
+	// 	GRDisplayScene2();
+	// 	GRDisplayStageLights();
+	// 	tvn_tripod_draw();
+	// 	GRDisplayMic();
+	// 	tvn_speaker_draw();
+	// 	DL_renderChair()
+	// 	GRDisplayCamera();
+	// 	tvn_script_draw();
+	// 	tvn_drama_draw();
+	// }
+	// else if(currentScene == scenes.SCENE_3){
+	// 	// displayStarBucksOuter();
+	// 	// drawCar();
+	// 	ASJ_draw_laptop();
+	// }
+	// else if(currentScene == scenes.SCENE_4)
+	// {
+	// 	display_InteriorStarbucks();
+	// }
 	if(gbAnim) {
 		update()
 	}
