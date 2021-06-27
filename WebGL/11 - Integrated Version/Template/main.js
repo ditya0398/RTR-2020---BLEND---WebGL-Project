@@ -19,6 +19,7 @@ var rotX = 0.0, rotY = 0.0
 var view = [2.49, -1.19, -1.899]
 
 
+var SceneTransitionValue = 0.0;
 
 
 var secondSceneCamera = false;
@@ -47,7 +48,7 @@ const scenes = {
 }
 
 
-var currentScene = scenes.SCENE_2
+var currentScene = scenes.SCENE_1
 
 
 var blackWhiteDistortion = 1.0
@@ -219,13 +220,15 @@ function init() {
 
 	//initShadow();
 
+	dl_init_fade();
+
 
 	//Scene 2
 	  GRInitMic();
-	  tvn_script_init();
-	  tvn_speaker_init();
-	  tvn_init_tripod();
-	  tvn_drama_init();
+	   tvn_script_init();
+	   tvn_speaker_init();
+	   tvn_init_tripod();
+	   tvn_drama_init();
 	
 
 	  GRInitScene2();
@@ -280,7 +283,7 @@ function init() {
 
 	gl.enable(gl.DEPTH_TEST)
 	gl.depthFunc(gl.LEQUAL)
-	gl.clearColor(1.0, 0.0, 0.0, 1.0)
+	gl.clearColor(0.0, 0.0, 0.0, 1.0)
 }
 
 function reshape() {
@@ -324,7 +327,7 @@ function render() {
 			drawModel();
 			ASJ_draw_stove();
 			GRDisplayChaiCup();
-			dl_render_sir_shadow()
+			//dl_render_sir_shadow()
 		break;
 
 		case scenes.SCENE_2:
@@ -359,7 +362,7 @@ function render() {
 	}
 
 
-	
+
 	// if(currentScene == scenes.SCENE_1) {
 	// 	//drawFire();
 	// //	Display_CubeMap()

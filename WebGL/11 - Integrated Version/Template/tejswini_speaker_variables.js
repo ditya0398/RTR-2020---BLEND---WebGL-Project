@@ -1,4 +1,3 @@
-var degrees;
 var tvn_vertexShaderObject_speaker;
 var tvn_fragmentShaderObject_speaker;
 var tvn_shaderProgramObject_speaker;
@@ -6,10 +5,9 @@ var textureSamplerUniform_speaker;
 var tvn_distortion_uniform_speaker;
 
 var tvn_vao_speaker;
-var tvn_vbo;
+var tvn_vbo_speaker;
 var tvn_vbo_rectangle_speaker;
 var tvn_vbo_tex_coord_speaker;
-var rangle = 0.0;
 var tvn_projectionMatrix_speaker;
 var tvn_modelMatrix_speaker;
 var tvn_viewMatrix_speaker;
@@ -20,6 +18,8 @@ var tvn_trans_z_speaker = -24.3
 var tvn_scale_speaker = 1.52
 
 var speaker_texture
+
+var tvn_vao_rectangle_Speaker;
 
 function tvn_speaker_init() {
     //vertex shader 
@@ -186,8 +186,8 @@ function tvn_speaker_init() {
 
 
     /***********************rectangle position**********************************/
-    tvn_vao_rectangle = gl.createVertexArray();
-    gl.bindVertexArray(tvn_vao_rectangle);
+    tvn_vao_rectangle_Speaker = gl.createVertexArray();
+    gl.bindVertexArray(tvn_vao_rectangle_Speaker);
 
     tvn_vbo_rectangle_speaker = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo_rectangle_speaker);
@@ -259,7 +259,7 @@ function tvn_speaker_draw() {
     gl.uniform1i(textureSamplerUniform_speaker, 0);
 
 
-    gl.bindVertexArray(tvn_vao_rectangle);
+    gl.bindVertexArray(tvn_vao_rectangle_Speaker);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
@@ -310,7 +310,7 @@ function tvn_speaker_draw() {
     gl.uniform1i(textureSamplerUniform_speaker, 0);
 
 
-    gl.bindVertexArray(tvn_vao_rectangle);
+    gl.bindVertexArray(tvn_vao_rectangle_Speaker);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
@@ -323,7 +323,7 @@ function tvn_speaker_draw() {
     mat4.translate(modelMatrix, modelMatrix, [0.0, 2.0, 0.0])
     gl.bindTexture(gl.TEXTURE_2D, speaker_texture);
     gl.uniformMatrix4fv(tvn_modelMatrix_speaker, false, modelMatrix);
-    gl.bindVertexArray(tvn_vao_rectangle);
+    gl.bindVertexArray(tvn_vao_rectangle_Speaker);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
@@ -344,9 +344,9 @@ function tvn_speaker_uninit() {
         tvn_vao_speaker = null;
     }
 
-    if (tvn_vbo) {
-        gl.deleteBuffer(tvn_vbo);
-        tvn_vbo = null;
+    if (tvn_vbo_speaker) {
+        gl.deleteBuffer(tvn_vbo_speaker);
+        tvn_vbo_speaker = null;
     }
 
     if (tvn_shaderProgramObject_speaker) {

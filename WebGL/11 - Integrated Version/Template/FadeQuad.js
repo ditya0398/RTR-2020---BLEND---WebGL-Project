@@ -55,7 +55,7 @@ function dl_render_fade() {
     gl.enable(gl.BLEND)
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	gl.useProgram(dl_program_fade)
-    gl.uniform1f(dl_alphaUniform_fade, 0.0)
+    gl.uniform1f(dl_alphaUniform_fade, SceneTransitionValue)
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4)
     gl.disable(gl.BLEND)
 }

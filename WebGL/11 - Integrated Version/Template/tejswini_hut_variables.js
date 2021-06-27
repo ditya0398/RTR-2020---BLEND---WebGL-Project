@@ -1,8 +1,3 @@
-//global variable
-var gl = null;  // webgl context
-var bFullscreen = false;
-var canvas_orignal_width;
-var canvas_orignal_height;
 
 var tvn_trans_x = 1.5
 var tvn_trans_y = 0.0
