@@ -15,8 +15,10 @@ var gbAnim = false
 
 var rotX = 0.0, rotY = 0.0
 
-var view = [0.0, 15.133, -47.1]
+var view = [0.0, 0.0, 5.0]
 
+
+//Scene 2 camera positions [0.0, 15.133, -47.1]
 //Scene 2 z = -47.1 -> 1.3
 
 var val_AJ = 0;

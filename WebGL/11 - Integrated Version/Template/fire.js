@@ -8,7 +8,9 @@ var vertBuff_Fire;
 var ColorBuff_Fire;
 var texSamplerFire;
 
-
+var modelMatrixFireUniform;
+var viewMatrixFireUniform;
+var perspectiveMatrixFireUniform;
 
 var vertexShaderObject_FboFire;
 var fragmentShaderObject_FboFire;
@@ -198,11 +200,14 @@ function initFireFBO()
 
 	
 	"out vec2 outTexture;" +
-	"uniform mat4 u_mvp_matrix;"+
+	"uniform mat4 u_model_matrix;"+
+	"uniform mat4 u_view_matrix;"+
+	"uniform mat4 u_projection_matrix;"+
+
 	"void main(void)"+
 	"{" +
     "outTexture = vTexture; " +
-	"gl_Position = u_mvp_matrix * vPosition;"+
+	"gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * vPosition;"+
 	"}";
 	vertexShaderObject_FboFire=gl.createShader(gl.VERTEX_SHADER);
 	gl.shaderSource(vertexShaderObject_FboFire, vertexShaderSourceCode);
@@ -336,7 +341,13 @@ sampleruniform_FboFire = gl.getUniformLocation(shaderProgramObject_FBO_FboFire, 
 	mvpUniformFireFbo = gl.getUniformLocation(shaderProgramObject_normal_FboFire, "u_mvp_matrix");
 	sampleruniformFireFbo = gl.getUniformLocation(shaderProgramObject_normal_FboFire, "u_texture_sampler");
 
-	
+	modelMatrixFireUniform = gl.getUniformLocation(shaderProgramObject_normal_FboFire, "u_model_matrix");
+	viewMatrixFireUniform = gl.getUniformLocation(shaderProgramObject_normal_FboFire, "u_view_matrix");
+	projectionMatrixFireUniform = gl.getUniformLocation(shaderProgramObject_normal_FboFire, "u_projection_matrix");
+
+
+
+
 	pyramid_texture_FboFire = gl.createTexture();
 	
 	pyramid_texture_FboFire.image = new Image();
@@ -791,15 +802,25 @@ gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 
 
 	modelViewMatrix = mat4.identity(modelViewMatrix);
+
+	var modelMatrix = mat4.create();
+	var viewMatrix = mat4.create();
+
+
 	modelViewProjectionMatrix = mat4.identity(modelViewProjectionMatrix);
-	mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -3.0]);
+	mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -25.0]);
 	// mat4.rotateX(modelViewMatrix,modelViewMatrix,degreeToRadian(gAngleSquare));
 	// mat4.rotateY(modelViewMatrix,modelViewMatrix,degreeToRadian(gAngleSquare));
-	 mat4.rotateZ(modelViewMatrix,modelViewMatrix,deg2rad(180.0));
-	mat4.multiply(modelViewProjectionMatrix, perspectiveMatrix, modelViewMatrix);
+	 mat4.rotateZ(modelMatrix,modelMatrix,deg2rad(180.0));
+//	mat4.multiply(modelViewProjectionMatrix, perspectiveMatrix, modelViewMatrix);
+
+
+
 	gl.useProgram(shaderProgramObject_normal_FboFire);
 
-	gl.uniformMatrix4fv(mvpUniformFireFbo, false, modelViewProjectionMatrix);
+	gl.uniformMatrix4fv(modelMatrixFireUniform, false, modelMatrix);
+	gl.uniformMatrix4fv(viewMatrixFireUniform, false, gViewMatrix);
+	gl.uniformMatrix4fv(projectionMatrixFireUniform, false, perspectiveMatrix);
 	//gl.bindTexture(gl.TEXTURE_2D, cube_texture);
 	gl.uniform1i(samplerUniformFireFbo, 0);
 	gl.bindVertexArray(vao_rectangle_FboFire);
