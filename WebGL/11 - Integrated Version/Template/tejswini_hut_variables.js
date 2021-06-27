@@ -17,11 +17,20 @@ var stack_tvn = [];
 var index_tvn = -1;
 var angle1_tvn;
 
+var normals_hut = new Float32Array(37680);
+
+
+var normalsCounterHut = 0;
+
 
 var degrees;
 var tvn_vertexShaderObject;
 var tvn_fragmentShaderObject;
 var tvn_shaderProgramObject;
+
+
+var hut_vbo_normals;
+
 
 var tvn_vao;
 var tvn_vao_rectangle;
@@ -36,6 +45,20 @@ var tvn_projectionMatrix;
 var tvn_modelMatrix;
 var tvn_viewMatrix;
 
+var tvn_vbo_normal_hut;
+
+
+//AKHI
+var ASJ_ambientUniform_pointLight_tvnHut;
+var ASJ_lightColorUniform_pointLight_tvnHut;
+var ASJ_lightPositionUniform_pointLight_tvnHut;
+
+var ASJ_lightPositionUniform_pointLight_tvnHut_2;
+var ASJ_shininessUniform_pointLight_tvnHut;
+var ASJ_strengthUniform_pointLight_tvnHut;
+var ASJ_eyeDirectionUniform_pointLight_tvnHut;
+var ASJ_attenuationUniform_pointLight_tvnHut;
+
 function tejswini_hut_init() {
 
     /*************Cylinder **********************/
@@ -44,9 +67,17 @@ function tejswini_hut_init() {
         vertices_tvn[i_tvn++] = (1.2);
         vertices_tvn[i_tvn++] = (Math.sin(angle1_tvn) * radius_tvn);
 
+        normals_hut[normalsCounterHut++] = 1.0;
+        normals_hut[normalsCounterHut] = (1.0);
+        normals_hut[normalsCounterHut] = 0.0;
+
         vertices_tvn[i_tvn++] = (Math.cos(angle1_tvn) * radius_tvn);
         vertices_tvn[i_tvn++] = -1.0;
         vertices_tvn[i_tvn++] = (Math.sin(angle1_tvn) * radius_tvn);
+
+        normals_hut[normalsCounterHut++] = 0.0;
+        normals_hut[normalsCounterHut] = (1.0);
+        normals_hut[normalsCounterHut] = 1.0;
 
     }
 
@@ -57,15 +88,22 @@ function tejswini_hut_init() {
         "\n" +
         "in vec4 vPosition;" +
         "in vec2 vtexcoord;" +
+        "in vec3 vNormal;" +
         "uniform mat4 model_matrix;" +
         "uniform mat4 view_matrix;" +
         "uniform mat4 projection_matrix;" +
         "out vec2 out_tex_coord;" +
+        //akhi out
+        "out vec4 Position;" +
+        "out vec3 tNormal;" +
         "void main(void)" +
         "{" +
         "gl_Position = projection_matrix * view_matrix * model_matrix * vPosition;" +
         "out_tex_coord.x = vPosition.x;" +
         "out_tex_coord.y = vPosition.y;" +
+        //akhi
+        "Position= model_matrix * vPosition;" +
+        "tNormal=normalize(mat3(model_matrix)*vNormal);" +
         "}";
 
     tvn_vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
@@ -75,7 +113,7 @@ function tejswini_hut_init() {
         var error = gl.getShaderInfoLog(tvn_vertexShaderObject);
         if (error.length > 0) {
             alert(error);
-            uninitialize();
+            tejswini_hut_uninit();
         }
     }
 
@@ -87,9 +125,71 @@ function tejswini_hut_init() {
         "in vec2 out_tex_coord;" +
         "uniform sampler2D u_texture_sampler;" +
         "out vec4 FragColor;" +
+
+        //Akhi Uniform
+        "uniform vec4 Ambient_AJ;" +
+        "uniform vec3 LightColor_AJ;" +
+        "uniform vec3 LightPosition_AJ;" +
+        "uniform vec3 LightPosition_2_AJ;" +
+        "uniform float Shininess_AJ;" +
+        "uniform float Strength_AJ;" +
+        "uniform vec3 EyeDirection_AJ;" +
+        "uniform float Attenuation_AJ;" +
+        //Akhi in
+        "in vec4 Position;" +
+        "in vec3 tNormal;" +
+        "float extra;"+
+        //akhi func
+        "vec4 pointLight(vec3 Normal,vec4 Color,vec3 LightPosition)" +
+        "{" +
+
+        "vec3 lightDirection=vec3(Position)-LightPosition;" +
+        "\n" +
+        "float lightDistance=length(lightDirection);" +
+        "lightDirection= lightDirection / lightDistance;" +
+        "\n" +
+        "vec3 HalfVector=normalize(EyeDirection_AJ - lightDirection);" +
+        "\n" +
+        "float AttenuaFactor = 1.0 / (Attenuation_AJ * lightDistance * lightDistance  );" +
+
+        "float diffuse=max(0.0f,-1.0*dot(Normal,lightDirection)) * 0.5;" +
+        "extra=diffuse;"+
+        "\n" +
+        "float specular=max(0.0f,1.0*dot(Normal,HalfVector));" +
+
+        "if(diffuse<=0.00001)" +
+        "{" +
+        "specular=0.0f;" +
+        "}" +
+        "else" +
+        "{" +
+        "specular=pow(specular,Shininess_AJ);" +
+        "}" +
+        "\n" +
+        "vec4 scatteredLight=Ambient_AJ + vec4(LightColor_AJ * diffuse * AttenuaFactor,1.0);" +
+        "vec4 ReflectedLight=vec4(LightColor_AJ * specular * Strength_AJ * AttenuaFactor,1.0);" +
+
+        "vec4 res=min(Color * scatteredLight + ReflectedLight,vec4(1.0));" +
+        "return res;" +
+        "}" +
+
+
         "void main(void)" +
         "{" +
-        "FragColor = texture(u_texture_sampler, out_tex_coord);" +
+        "vec3 Light3=vec3(2.700000000000001, -0.39900000000000646, -14.699999999999964 );"+
+        //Akhi Lighting Calculation
+        "vec4 color;" +
+        "color=texture(u_texture_sampler, out_tex_coord);" +
+        "vec3 Normal_AJ=tNormal;" +
+        "vec4 result_1;" +
+        "vec4 result_2;"+
+        "vec4 result_3;"+
+        "result_1=pointLight(Normal_AJ,color,LightPosition_AJ);" +
+       "result_2=pointLight(Normal_AJ,color,LightPosition_2_AJ);"+
+        "result_3=pointLight(Normal_AJ,color,Light3);" +
+        //(result_2*extra*3.0)
+        "FragColor=color*(result_1 + (result_3));" +
+       // "FragColor=vec4(1,1,1,1);"+
         "}";
 
     tvn_fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
@@ -111,7 +211,7 @@ function tejswini_hut_init() {
     //pre-link binding of shader program object with vertex shader attributes
     gl.bindAttribLocation(tvn_shaderProgramObject, macros.AMC_ATTRIB_POSITION, "vPosition");
     gl.bindAttribLocation(tvn_shaderProgramObject, macros.AMC_ATTRIB_TEXCOORD, "vtexcoord");
-
+    gl.bindAttribLocation(tvn_shaderProgramObject, macros.AMC_ATTRIB_NORMAL, "vNormal");
 
     //linking 
     gl.linkProgram(tvn_shaderProgramObject);
@@ -119,7 +219,7 @@ function tejswini_hut_init() {
         var error = gl.getProgramInfoLog(tvn_shaderProgramObject);
         if (error.length > 0) {
             alert(error);
-            uninitialize();
+            tejswini_hut_uninit();
         }
     }
 
@@ -129,6 +229,19 @@ function tejswini_hut_init() {
     tvn_viewMatrix = gl.getUniformLocation(tvn_shaderProgramObject, "view_matrix");
     tvn_modelMatrix = gl.getUniformLocation(tvn_shaderProgramObject, "model_matrix");
     textureSamplerUniform = gl.getUniformLocation(tvn_shaderProgramObject, "u_texture_sampler");
+
+    //AKHI UNIFORM location
+    ASJ_ambientUniform_pointLight_tvnHut = gl.getUniformLocation(tvn_shaderProgramObject, "Ambient_AJ");
+    ASJ_lightColorUniform_pointLight_tvnHut = gl.getUniformLocation(tvn_shaderProgramObject, "LightColor_AJ");
+    ASJ_lightPositionUniform_pointLight_tvnHut = gl.getUniformLocation(tvn_shaderProgramObject, "LightPosition_AJ");
+    ASJ_lightPositionUniform_pointLight_tvnHut_2 = gl.getUniformLocation(tvn_shaderProgramObject, "LightPosition_2_AJ");
+
+    ASJ_shininessUniform_pointLight_tvnHut = gl.getUniformLocation(tvn_shaderProgramObject, "Shininess_AJ");
+    ASJ_strengthUniform_pointLight_tvnHut = gl.getUniformLocation(tvn_shaderProgramObject, "Strength_AJ");
+    ASJ_eyeDirectionUniform_pointLight_tvnHut = gl.getUniformLocation(tvn_shaderProgramObject, "EyeDirection_AJ");
+    ASJ_attenuationUniform_pointLight_tvnHut = gl.getUniformLocation(tvn_shaderProgramObject, "Attenuation_AJ");
+
+
 
     // ** vertices , color , shader attribs, vbo initialization***
 
@@ -194,6 +307,36 @@ function tejswini_hut_init() {
 
     ]);
 
+    //akhi
+    var tvncubeNormal = new Float32Array([
+
+        //RIGHT FACE
+        -1.0, 0.0, 0.0,
+        -1.0, 0.0, 0.0,
+        -1.0, 0.0, 0.0,
+        -1.0, 0.0, 0.0,
+
+
+        //LEFT FACE
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        //BOTTOM FACE
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+
+        //TOP FACE
+        0.0, -1.0, 0.0,
+        0.0, -1.0, 0.0,
+        0.0, -1.0, 0.0,
+        0.0, -1.0, 0.0,
+
+
+    ]);
+
     /***********************rectangle position**********************************/
     tvn_vao_rectangle = gl.createVertexArray();
     gl.bindVertexArray(tvn_vao_rectangle);
@@ -218,6 +361,14 @@ function tejswini_hut_init() {
     gl.enableVertexAttribArray(macros.AMC_ATTRIB_TEXCOORD);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
+    //normal
+    tvn_vbo_normal_hut = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, tvn_vbo_normal_hut);
+    gl.bufferData(gl.ARRAY_BUFFER, tvncubeNormal, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(macros.AMC_ATTRIB_NORMAL, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(macros.AMC_ATTRIB_NORMAL);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
     gl.bindVertexArray(null);
 
     /*******************************************************************/
@@ -234,6 +385,20 @@ function tejswini_hut_init() {
         false,
         0, 0);
     gl.enableVertexAttribArray(macros.AMC_ATTRIB_POSITION); // 
+
+
+    hut_vbo_normals = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, hut_vbo_normals);
+    gl.bufferData(gl.ARRAY_BUFFER, normals_hut, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(macros.AMC_ATTRIB_NORMAL,
+        3, // 3 is for x,y,z co-cordinates is our triangle Verteices array
+        gl.FLOAT,
+        false,
+        0, 0);
+    gl.enableVertexAttribArray(macros.AMC_ATTRIB_NORMAL); // 
+
+
+
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
 
@@ -301,6 +466,31 @@ function tejswini_hut_draw() {
     var translateMatrix = mat4.create();
     var rotateMatrix = mat4.create();
 
+
+    //akhilesh
+    var Eye_AJ = new Float32Array([0.0, 0.0, 2.0]);
+    var shininess_AJ = 2.50;
+    var strength_AJ = parseFloat(5);
+    var attenuation_AJ = parseFloat(0.50);
+    var Ambient_AJ = new Float32Array([0.0, 0.0, 0.0, 1.0]);
+    var LightColor_AJ = new Float32Array([1.0, 1.0, 1.0]);
+    var lightPosition_AJ = view;//new Float32Array([0.0, 1.0, -15 + val_AJ]);
+
+    var lightPosition_AJ_2 = new Float32Array([2.9000000000000012, 0.23199999999999107, -15.399999999999961]);
+
+    //lightPosition_AJ[2]=
+    gl.uniform4fv(ASJ_ambientUniform_pointLight_tvnHut, Ambient_AJ);
+    gl.uniform3fv(ASJ_lightColorUniform_pointLight_tvnHut, LightColor_AJ);
+    gl.uniform3fv(ASJ_lightPositionUniform_pointLight_tvnHut, lightPosition_AJ);
+    gl.uniform1f(ASJ_shininessUniform_pointLight_tvnHut, shininess_AJ);
+    gl.uniform1f(ASJ_strengthUniform_pointLight_tvnHut, strength_AJ);
+    gl.uniform3fv(ASJ_eyeDirectionUniform_pointLight_tvnHut, Eye_AJ);
+    gl.uniform1f(ASJ_attenuationUniform_pointLight_tvnHut, attenuation_AJ);
+
+    gl.uniform3fv(ASJ_lightPositionUniform_pointLight_tvnHut_2, lightPosition_AJ_2);
+
+    //akhilesh end
+
     modelMatrix = stackpush(modelMatrix);
     mat4.translate(translateMatrix, translateMatrix, [tvn_trans_x, tvn_trans_y, tvn_trans_z]);
     //mat4.rotateY(rotateMatrix, rotateMatrix, deg2rad(45));
@@ -343,7 +533,7 @@ function tejswini_hut_draw() {
         (modelMatrix, translateMatrix, rotateMatrix);
     modelMatrix = stackpush(modelMatrix);
     stackpop();
-    
+
 
     mat4.multiply(projectionMatrix, projectionMatrix, perspectiveMatrix);
 

@@ -196,7 +196,7 @@ function init() {
 	 initNormalMapRoad()
 
 	// initCubeMap()
-//	 tejswini_hut_init()
+	 tejswini_hut_init()
 	// tvn_init_lamp_arch();
 //	 GRInitChaiCup();
 
@@ -290,7 +290,7 @@ function render() {
 		//drawFire();
 	//	Display_CubeMap()
 	//	 GRDisplay()
-	//	tejswini_hut_draw()
+		tejswini_hut_draw()
 		 renderNormalMapRoad()
 
 	//	 GRDisplayRoadside();
