@@ -198,7 +198,7 @@ function init() {
 	// initCubeMap()
 	 tejswini_hut_init()
 	// tvn_init_lamp_arch();
-//	 GRInitChaiCup();
+	 GRInitChaiCup();
 
 	//initShadow();
 
@@ -297,7 +297,7 @@ function render() {
 		//  //tvn_draw_lamp_arch();
 	//	   drawModel();
 	//	ASJ_draw_stove();
-	// GRDisplayChaiCup();
+	 GRDisplayChaiCup();
 
 		// utensil_display();
 	} else if(currentScene == scenes.SCENE_2) {
