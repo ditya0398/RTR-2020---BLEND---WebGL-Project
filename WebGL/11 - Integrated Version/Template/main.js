@@ -234,14 +234,14 @@ function init() {
 	});
 
 
-	loadModel('Models/Coffee Cup_final.obj',vao_teacup,vbo_teacup,function(parts_teacup,numElem1){
-		console.log("succeeded");
-		numElements_Teacup = numElem1;
-		console.log(numElements_Teacup);
-		 gParts_TeaCup = parts_teacup;
-		console.log(gParts_TeaCup.length);
-		//numElem = null;
-	});
+	// loadModel('Models/Coffee Cup_final.obj',vao_teacup,vbo_teacup,function(parts_teacup,numElem1){
+	// 	console.log("succeeded");
+	// 	numElements_Teacup = numElem1;
+	// 	console.log(numElements_Teacup);
+	// 	 gParts_TeaCup = parts_teacup;
+	// 	console.log(gParts_TeaCup.length);
+	// 	//numElem = null;
+	// });
 
 
 	loadModel('Models/car.obj',vao_car,vbo_car,function(parts_car,numElem2){
@@ -297,7 +297,7 @@ function render() {
 		//  //tvn_draw_lamp_arch();
 		   drawModel();
 		ASJ_draw_stove();
-	 GRDisplayChaiCup();
+	 	GRDisplayChaiCup();
 
 		// utensil_display();
 	} else if(currentScene == scenes.SCENE_2) {
