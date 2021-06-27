@@ -16,7 +16,7 @@ var gbAnim = false
 var rotX = 0.0, rotY = 0.0
 
 //first scene view 
-var view = [-2.31, -1.19, -1.799]
+var view = [2.49, -1.19, -1.899]
 
 
 
@@ -430,9 +430,17 @@ function update() {
 	}
 	else if(currentScene == scenes.SCENE_1)
 	{
+
+		
+		/* Old Camera
 		view[0] += 0.0008;
 		view[2] -= 0.002;
-		view[1] += 0.0001;
+		view[1] += 0.0001;*/
+
+		if(view[2] > -14.0)
+			view[2] -= 0.005;
+
+		
 	}
 }
 

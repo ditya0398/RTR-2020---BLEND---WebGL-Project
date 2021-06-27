@@ -922,7 +922,7 @@ function drawModel() {
 
 
 
-    console.log(i);
+ //   console.log(i);
 
     // if( gAngleTriangle_modelLoading >= 360.0)
     // 		gAngleTriangle_modelLoading = 0.0;
