@@ -46,7 +46,11 @@ var sampleruniformAlpha_FboFire;
 var pyramid_texture_FboFire = 0;
 var cube_texture_FboFire = 0;
 
+var fireTransX = 0.0;
+var fireTransY = 0.0;
+var fireTransZ = -15.0;
 
+var fireScale = 1.0;
 
 var options = {
     // this option is not actually in the UI
@@ -267,7 +271,10 @@ var fragmentShaderSource1 =
 	"void main(void)"+
 	"{"+
 	"vec4 texColor = texture(u_texture_sampler, outTexture);"+
-	
+	"float sum = texColor.r + texColor.g  + texColor.b;" +
+	"if(sum == 0.0 || sum <= 0.5)" +
+		"discard;" +	
+	"FragColor = texColor;" +
 	
 	"FragColor = texColor;" +
 	"}";
@@ -808,7 +815,8 @@ gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 
 
 	modelViewProjectionMatrix = mat4.identity(modelViewProjectionMatrix);
-	mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -25.0]);
+	mat4.translate(modelMatrix, modelMatrix, [fireTransX, fireTransY, fireTransZ]);
+	mat4.scale(modelMatrix, modelMatrix, [fireScale, fireScale, fireScale]);
 	// mat4.rotateX(modelViewMatrix,modelViewMatrix,degreeToRadian(gAngleSquare));
 	// mat4.rotateY(modelViewMatrix,modelViewMatrix,degreeToRadian(gAngleSquare));
 	 mat4.rotateZ(modelMatrix,modelMatrix,deg2rad(180.0));

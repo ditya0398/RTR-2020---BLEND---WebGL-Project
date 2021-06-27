@@ -111,32 +111,32 @@ function keyDown(event) {
 		case 78: //N
 			break
 		case 38: //up arrow
-			TeacupTransZ -= 0.05
+			fireTransZ -= 0.05
 			break
 		case 40: //down arrow
-			TeacupTransZ += 0.05
+		fireTransZ += 0.05
 			break
 		case 37: //left arrow
-			TeacupTransX -= 0.05
+		fireTransX -= 0.05
 			break
 		case 39: //right arrow
-			TeacupTransX += 0.05
+		fireTransX += 0.05
 			break
 
 		case 84: //Y
-			TeacupTransY += 0.05
+		fireTransY += 0.05
 			break
 
 		case 85: //U
-			TeacupTransY -= 0.05
+		fireTransY -= 0.05
 			break
 
 		case 100: //4
-			TeacupScale -= 0.02
+			fireScale -= 0.02
 			break
 
 		case 102: //6
-			TeacupScale += 0.02
+		fireScale += 0.02
 			break
 		case 104:
 			val_AJ = val_AJ + 0.5;
@@ -190,15 +190,15 @@ function init() {
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
 
-	// initFire();
-	// GRInit()
-	// GRInitRoadside();
-	// initNormalMapRoad()
+	initFire();
+	GRInit()
+	GRInitRoadside();
+	initNormalMapRoad()
 
-	// // initCubeMap()
-	//  tejswini_hut_init()
-	// // tvn_init_lamp_arch();
-	//  GRInitChaiCup();
+	// initCubeMap()
+	 tejswini_hut_init()
+	// tvn_init_lamp_arch();
+	 GRInitChaiCup();
 
 	//initShadow();
 
@@ -287,17 +287,17 @@ function render() {
 	mat4.lookAt(gViewMatrix, view, [0.0, view[1], view[2] - 20.0], [0.0, 1.0, 0.0])
 
 	if(currentScene == scenes.SCENE_1) {
-	//	drawFire();
+		drawFire();
 	//	Display_CubeMap()
-		// GRDisplay()
-		// tejswini_hut_draw()
-		// renderNormalMapRoad()
+		 GRDisplay()
+		tejswini_hut_draw()
+		 renderNormalMapRoad()
 
-		//  GRDisplayRoadside();
+		 GRDisplayRoadside();
 		//  //tvn_draw_lamp_arch();
-		//   drawModel();
-		// ASJ_draw_stove();
-		// GRDisplayChaiCup();
+		   drawModel();
+		ASJ_draw_stove();
+	 GRDisplayChaiCup();
 
 		// utensil_display();
 	} else if(currentScene == scenes.SCENE_2) {
