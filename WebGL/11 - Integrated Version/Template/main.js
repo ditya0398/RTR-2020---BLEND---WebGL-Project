@@ -40,7 +40,7 @@ const scenes = {
 }
 
 
-var currentScene = scenes.SCENE_1
+var currentScene = scenes.SCENE_4
 
 
 var blackWhiteDistortion = 1.0
@@ -190,15 +190,15 @@ function init() {
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
 
-	initFire();
-	GRInit()
-	GRInitRoadside();
-	initNormalMapRoad()
+	// initFire();
+	// GRInit()
+	// GRInitRoadside();
+	// initNormalMapRoad()
 
 	// initCubeMap()
-	 tejswini_hut_init()
+//	 tejswini_hut_init()
 	// tvn_init_lamp_arch();
-	 GRInitChaiCup();
+//	 GRInitChaiCup();
 
 	//initShadow();
 
@@ -215,13 +215,13 @@ function init() {
 	// GRInitCamera();
 
 
+init_InteriorStarbucks();
 
 
-
-	ASJ_init_stove();
+	//ASJ_init_stove();
 	//utensil_init();
 
-	initStarbucksOuter();
+//	initStarbucksOuter();
 	
 	
 	loadModel('Models/teapot.obj',vao_teapot,vbo_teapot,function(parts_teapot,numElem){
@@ -315,6 +315,10 @@ function render() {
 		// displayStarBucksOuter();
 		// drawCar();
 		ASJ_draw_laptop();
+	}
+	else if(currentScene == scenes.SCENE_4)
+	{
+		display_InteriorStarbucks();
 	}
 	if(gbAnim) {
 		update()
