@@ -362,12 +362,12 @@ function ASJ_draw_stove() {
 
 	//akhilesh
 	var Eye_AJ = new Float32Array([0.0, 0.0, 2.0]);
-	var shininess_AJ = 2.50;
-	var strength_AJ = parseFloat(5);
-	var attenuation_AJ = parseFloat(0.50);
+	var shininess_AJ = 0.05;
+	var strength_AJ = parseFloat(0.5);
+	var attenuation_AJ = parseFloat(10.5);
 	var Ambient_AJ = new Float32Array([0.0, 0.0, 0.0, 1.0]);
 	var LightColor_AJ = new Float32Array([1.0, 1.0, 1.0]);
-	var lightPosition_AJ = view;//new Float32Array([0.0, 1.0, -15 + val_AJ]);
+	var lightPosition_AJ =  [stove_Transx,stove_Transy,stove_Transz]//view;//new Float32Array([0.0, 1.0, -15 + val_AJ]);
 
 	//lightPosition_AJ[2]=
 	gl.uniform4fv(ASJ_ambientUniform_pointLight_stove, Ambient_AJ);
