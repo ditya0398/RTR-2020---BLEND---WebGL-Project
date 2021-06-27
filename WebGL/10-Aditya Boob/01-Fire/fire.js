@@ -408,8 +408,9 @@ function logic() {
 
 function render() {
 
+  gl.enable(gl.BLEND);
   gl.useProgram(program_Fire);
-  gl.clear(gl.COLOR_BUFFER_BIT);
+  //gl.clear(gl.COLOR_BUFFER_BIT);
   // set the resolution
   //gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
   gl.uniform1i(texSamplerFire, 0);

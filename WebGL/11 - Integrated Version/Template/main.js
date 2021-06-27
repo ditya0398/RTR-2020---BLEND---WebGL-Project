@@ -188,29 +188,29 @@ function init() {
 	gl.viewportWidth = canvas.width
 	gl.viewportHeight = canvas.height
 
-	initFire();
-	GRInit()
-	GRInitRoadside();
-	initNormalMapRoad()
+	// initFire();
+	// GRInit()
+	// GRInitRoadside();
+	// initNormalMapRoad()
 
-	// initCubeMap()
-	 tejswini_hut_init()
-	// tvn_init_lamp_arch();
-	 GRInitChaiCup();
+	// // initCubeMap()
+	//  tejswini_hut_init()
+	// // tvn_init_lamp_arch();
+	//  GRInitChaiCup();
 
 	//initShadow();
 
-	//GRInitMic();
-	//tvn_script_init();
-	//tvn_speaker_init();
-	//tvn_init_tripod();
-	//tvn_drama_init();
+	// GRInitMic();
+	// tvn_script_init();
+	// tvn_speaker_init();
+	// tvn_init_tripod();
+	// tvn_drama_init();
 	
 
-	//GRInitScene2();
-	//DL_initChair()
-	//GRInitStageLights();
-	//GRInitCamera();
+	// GRInitScene2();
+	// DL_initChair()
+	// GRInitStageLights();
+	// GRInitCamera();
 
 
 
@@ -274,6 +274,9 @@ function reshape() {
 	gl.viewport(0, 0, canvas.width, canvas.height)
 
 	mat4.perspective(perspectiveMatrix,45.0, parseFloat(canvas.width) / parseFloat(canvas.height), 0.1, 1000.0)
+	
+	gWindowHeight_FboFire = canvas.height;
+	gWindowWidth_FboFire = canvas.width;
 }
 
 function render() {
@@ -282,17 +285,17 @@ function render() {
 	mat4.lookAt(gViewMatrix, view, [0.0, view[1], view[2] - 20.0], [0.0, 1.0, 0.0])
 
 	if(currentScene == scenes.SCENE_1) {
-		animateFire();
+	//	drawFire();
 	//	Display_CubeMap()
-		GRDisplay()
-		tejswini_hut_draw()
-		renderNormalMapRoad()
+		// GRDisplay()
+		// tejswini_hut_draw()
+		// renderNormalMapRoad()
 
-		 GRDisplayRoadside();
-		 //tvn_draw_lamp_arch();
-		  drawModel();
-		ASJ_draw_stove();
-		GRDisplayChaiCup();
+		//  GRDisplayRoadside();
+		//  //tvn_draw_lamp_arch();
+		//   drawModel();
+		// ASJ_draw_stove();
+		// GRDisplayChaiCup();
 
 		// utensil_display();
 	} else if(currentScene == scenes.SCENE_2) {
@@ -322,14 +325,14 @@ function render() {
 function update() {
 	if(scenes.SCENE_2) {
 		if(gbInitializeScene2Camera) {
-			// view = [0.0, 15.133, -47.1]
-			view = [0.0, 0.0, 1.6]
+			 view = [0.0, 15.133, -47.1]
+			//view = [0.0, 0.0, 1.6]
 			gbInitializeScene2Camera = false
 		} else {
-			// if(view[2] < 1.6) {
-			// 	view[2] += 0.1
-			// 	view[1] -= 0.03333
-			// } else
+			if(view[2] < 1.6) {
+				view[2] += 0.1
+				view[1] -= 0.03333
+			 } else
 			if(tvn_trans_z_drama_main_1 > -53.9) {
 				tvn_trans_z_drama_main_1 -= 0.1
 				tvn_trans_y_drama_main_1 += 0.011
