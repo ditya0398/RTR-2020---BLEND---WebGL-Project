@@ -58,7 +58,9 @@ var U_LPosition_BrickS_DM_StarbuckOuter;/*Positon*/
 
 var texture_Sampler_Uniform_StarbuckOuter;
 
-
+var modelMatrixStarbuckOuter;
+var viewMatrixStarbuckOuter;
+var projectionMatrixStarbuckOuter;
 
 function initStarbucksOuter()
 {
@@ -69,9 +71,11 @@ function initStarbucksOuter()
         "in vec4 vPosition;             \n" +
         "in vec2 vTexCoord;             \n" +
 		"out vec2 out_TexCoord;         \n" +
-		"uniform mat4 u_mvp_matrix;     \n" +
+		"uniform mat4 u_model_matrix;     \n" +
+        "uniform mat4 u_view_matrix;     \n" +
+        "uniform mat4 u_projection_matrix;     \n" +
 		"void main(void){               \n" +
-		"gl_Position = u_mvp_matrix * vPosition;\n" +
+		"gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * vPosition;\n" +
 		"out_TexCoord = vTexCoord;             \n" +
         "}";
 
@@ -133,7 +137,9 @@ function initStarbucksOuter()
         }
     }
 
-    mvpUniform_DM_StarbuckOuter = gl.getUniformLocation(ShaderProgramObject_StarbuckOuter, "u_mvp_matrix");
+    modelMatrixStarbuckOuter = gl.getUniformLocation(ShaderProgramObject_StarbuckOuter, "u_model_matrix");
+    viewMatrixStarbuckOuter = gl.getUniformLocation(ShaderProgramObject_StarbuckOuter, "u_view_matrix");
+    projectionMatrixStarbuckOuter = gl.getUniformLocation(ShaderProgramObject_StarbuckOuter, "u_projection_matrix");
     texture_Sampler_Uniform_StarbuckOuter = gl.getUniformLocation(ShaderProgramObject_StarbuckOuter,"u_Texture_Sampler");
 
     var Square_Vertices = new Float32Array([
@@ -706,15 +712,17 @@ function displayStarBucksOuter()
  
      mat4.rotateY(XRotationMatrix, XRotationMatrix, deg2rad(angle_StarbuckOuter));
  
-     //mat4.multiply(modelMatrix, modelMatrix, XRotationMatrix);
+     mat4.multiply(modelMatrix, modelMatrix, XRotationMatrix);
  
      mat4.lookAt(ViewMatrix, [0.0, 0.0, 10.0], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
      
-     mat4.multiply(modelViewMatrix, ViewMatrix, modelMatrix);
+    //  mat4.multiply(modelViewMatrix, ViewMatrix, modelMatrix);
      
-     mat4.multiply(modelViewProjectionMatrix, perspectiveMatrix, modelViewMatrix);
+    //  mat4.multiply(modelViewProjectionMatrix, perspectiveMatrix, modelViewMatrix);
      
-     gl.uniformMatrix4fv(mvpUniform_DM_StarbuckOuter, false, modelViewProjectionMatrix);
+     gl.uniformMatrix4fv(modelMatrixStarbuckOuter, false, modelMatrix);
+     gl.uniformMatrix4fv(viewMatrixStarbuckOuter, false, ViewMatrix);
+     gl.uniformMatrix4fv(projectionMatrixStarbuckOuter, false, perspectiveMatrix);
  
      gl.activeTexture(gl.TEXTURE0);
      gl.bindTexture(gl.TEXTURE_2D, Front_Side_Starbugs);
@@ -779,49 +787,49 @@ function displayStarBucksOuter()
  
  /*  ******************************** Brick shader Program obj ***************************************** */
      
-     gl.useProgram(gshaderProgramObj_StarbuckOuter);
+    //  gl.useProgram(gshaderProgramObj_StarbuckOuter);
  
-     gl.uniform3f(BrickColor_DM_StarbuckOuter, 1.0, 0.3, 0.2);
-     gl.uniform3f(MortarColor_DM_StarbuckOuter, 0.85, 0.86, 0.84);
-     gl.uniform2f(BrickSize_DM_StarbuckOuter, 0.30, 0.15);
-     gl.uniform2f(Brickpct_DM_StarbuckOuter, 0.90, 0.85);
-     gl.uniform3f(U_LPosition_BrickS_DM_StarbuckOuter,8.0 * deg2rad( Math.sin(angle_StarbuckOuter)), 1.0, 8.0 * deg2rad( Math.cos(angle_StarbuckOuter)));
+    //  gl.uniform3f(BrickColor_DM_StarbuckOuter, 1.0, 0.3, 0.2);
+    //  gl.uniform3f(MortarColor_DM_StarbuckOuter, 0.85, 0.86, 0.84);
+    //  gl.uniform2f(BrickSize_DM_StarbuckOuter, 0.30, 0.15);
+    //  gl.uniform2f(Brickpct_DM_StarbuckOuter, 0.90, 0.85);
+    //  gl.uniform3f(U_LPosition_BrickS_DM_StarbuckOuter,8.0 * deg2rad( Math.sin(angle_StarbuckOuter)), 1.0, 8.0 * deg2rad( Math.cos(angle_StarbuckOuter)));
  
-     var projectionMatrix = mat4.create();
+    //  var projectionMatrix = mat4.create();
  
-     mat4.identity(projectionMatrix);
+    //  mat4.identity(projectionMatrix);
  
-     mat4.multiply(projectionMatrix, perspectiveMatrix, modelViewMatrix);
+    //  mat4.multiply(projectionMatrix, perspectiveMatrix, modelViewMatrix);
  
-     gl.uniformMatrix4fv(gPMatrixUniform_DM_StarbuckOuter, false, projectionMatrix);
-     gl.uniformMatrix4fv(gMVMatrixUniform_DM_StarbuckOuter, false, modelViewMatrix);
+    //  gl.uniformMatrix4fv(gPMatrixUniform_DM_StarbuckOuter, false, perspectiveMatrix);
+    //  gl.uniformMatrix4fv(gMVMatrixUniform_DM_StarbuckOuter, false, modelViewMatrix);
  
-     gl.bindVertexArray(gVao_Brick_Shader_StarbuckOuter);
+    //  gl.bindVertexArray(gVao_Brick_Shader_StarbuckOuter);
  
-     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
-     gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
-     gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
+    //  gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    //  gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
+    //  gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
+    //  gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
  
-     gl.bindVertexArray(null);
+    //  gl.bindVertexArray(null);
  
-     gl.uniform3f(BrickColor_DM_StarbuckOuter, 0.5, 0.3, 0.0);
-     gl.uniform3f(MortarColor_DM_StarbuckOuter, 0.85, 0.86, 0.84);
+    //  gl.uniform3f(BrickColor_DM_StarbuckOuter, 0.5, 0.3, 0.0);
+    //  gl.uniform3f(MortarColor_DM_StarbuckOuter, 0.85, 0.86, 0.84);
  
-     gl.bindVertexArray(gVao_Brick_Shader_StarbuckOuter);
+    //  gl.bindVertexArray(gVao_Brick_Shader_StarbuckOuter);
  
-     gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
-     gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
-     gl.drawArrays(gl.TRIANGLE_FAN, 24, 4);
+    //  gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
+    //  gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
+    //  gl.drawArrays(gl.TRIANGLE_FAN, 24, 4);
  
-     gl.bindVertexArray(null);
+    //  gl.bindVertexArray(null);
  
-     gl.bindVertexArray(gVao_Brick_Shader_StarbuckOuter);
+    //  gl.bindVertexArray(gVao_Brick_Shader_StarbuckOuter);
  
-     gl.drawArrays(gl.TRIANGLES, 28, 3);
+    //  gl.drawArrays(gl.TRIANGLES, 28, 3);
  
-     gl.bindVertexArray(null);
+    //  gl.bindVertexArray(null);
  
-     gl.useProgram(null);
+    //  gl.useProgram(null);
  
 }

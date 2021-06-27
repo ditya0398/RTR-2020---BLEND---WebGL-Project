@@ -325,7 +325,7 @@ function render() {
 			tvn_drama_draw();
 		break;
 		case scenes.SCENE_3:
-			//displayStarBucksOuter();
+			displayStarBucksOuter();
 			 drawCar();
 		
 		break;
