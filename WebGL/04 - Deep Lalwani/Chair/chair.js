@@ -13,6 +13,9 @@ var dl_matAmbientUniform
 var dl_matDiffuseUniform
 var dl_matSpecularUniform
 var dl_matShininessUnifom
+var dl_texSamUniform
+var dl_isLightUniform
+var dl_directorTex_chair
 
 function DL_getRotatedVertices(angle, axis, povars) {
 	if(axis == 0) {
@@ -855,7 +858,66 @@ function DL_getChairVertexData() {
 			[0.0, 0.0]
 		);
 	}
+
+	var angle = Math.PI / 180 * 25;
+	array = array.concat(
+		DL_getRotatedVertices(angle, 0, [0.6, 0.9, -0.01]), 
+		DL_getRotatedVertices(angle, 0, [0.0, 0.0, 1.0]), 
+		[0.62, 0.55]
+	);
+
+	array = array.concat(
+		DL_getRotatedVertices(angle, 0, [-0.6, 0.9, -0.01]), 
+		DL_getRotatedVertices(angle, 0, [0.0, 0.0, 1.0]), 
+		[0.37, 0.55]
+	);
+
+	array = array.concat(
+		DL_getRotatedVertices(angle, 0, [-0.6, 0.6, -0.01]), 
+		DL_getRotatedVertices(angle, 0, [0.0, 0.0, 1.0]), 
+		[0.37, 0.45]
+	);
+
+	
+	array = array.concat(
+		DL_getRotatedVertices(angle, 0, [-0.6, 0.6, -0.01]), 
+		DL_getRotatedVertices(angle, 0, [0.0, 0.0, 1.0]), 
+		[0.37, 0.45]
+	);
+
+	array = array.concat(
+		DL_getRotatedVertices(angle, 0, [0.6, 0.6, -0.01]), 
+		DL_getRotatedVertices(angle, 0, [0.0, 0.0, 1.0]), 
+		[0.62, 0.45]
+	);
+
+	array = array.concat(
+		DL_getRotatedVertices(angle, 0, [0.6, 0.9, -0.01]), 
+		DL_getRotatedVertices(angle, 0, [0.0, 0.0, 1.0]), 
+		[0.62, 0.55]
+	);
+
 	return Float32Array.from(array)
+}
+
+function createFontTexture(font, color, str) {
+	var textCanvas = document.createElement("canvas")
+	textCanvas.width = 1024
+	textCanvas.height = 1024
+	var context = textCanvas.getContext("2d")
+	if(!context) {
+		console.log("Context Not Found")
+	}
+
+	context.fillStyle = "rgba(0, 0, 0, 0.0)"
+	context.fillRect(0, 0, textCanvas.width, textCanvas.height)
+	context.textAlign = "center"
+	context.textBaseline = "middle"
+	context.font = font
+
+	context.fillStyle = color
+	context.fillText(str, textCanvas.width / 2, textCanvas.height / 2)
+	return textCanvas
 }
 
 function DL_initChair() {
@@ -863,18 +925,21 @@ function DL_initChair() {
 	"#version 300 es\n"+
 	"in vec4 vPos;\n"+
 	"in vec3 vNormal;\n"+
+	"in vec2 vTexCoord;\n"+
 	"uniform mat4 u_mvMat;\n"+
 	"uniform mat4 u_projMat;\n"+
 	"uniform vec4 lightPosition;\n"+
 	"out vec3 vs_N;\n"+
 	"out vec3 vs_L;\n"+
 	"out vec3 vs_V;\n"+
+	"out vec2 vs_texCoord;\n"+
 	"void main(void) {\n"+
 	"gl_Position = u_projMat * u_mvMat * vPos;\n"+
 	"vec4 P = u_mvMat * vPos;\n"+
 	"vs_N = mat3(u_mvMat) * vNormal;\n"+
 	"vs_L = vec3(lightPosition - P);\n"+
 	"vs_V = -P.xyz;\n"+
+	"vs_texCoord = vec2(vTexCoord.x, 1.0 - vTexCoord.y);\n"+
 	"}\n"
 
 	var fragSrc = 
@@ -883,6 +948,7 @@ function DL_initChair() {
 	"in vec3 vs_N;\n"+
 	"in vec3 vs_L;\n"+
 	"in vec3 vs_V;\n"+
+	"in vec2 vs_texCoord;\n"+
 	"uniform vec4 lightAmbient;\n"+
 	"uniform vec4 lightDiffuse;\n"+
 	"uniform vec4 lightSpecular;\n"+
@@ -890,8 +956,11 @@ function DL_initChair() {
 	"uniform vec4 matDiffuse;\n"+
 	"uniform vec4 matSpecular;\n"+
 	"uniform float matShininess;\n"+
+	"uniform bool isLight;\n"+
+	"uniform sampler2D texSam;\n"+
 	"out vec4 FragColor;\n"+
 	"void main(void) {\n"+
+	"if(isLight) {\n"+
 	"vec3 N = normalize(vs_N);\n"+
 	"vec3 L = normalize(vs_L);\n"+
 	"vec3 V = normalize(vs_V);\n"+
@@ -901,6 +970,9 @@ function DL_initChair() {
 	"vec4 specular = pow(max(dot(R, V), 0.0), matShininess) * lightSpecular * matSpecular;\n"+
 	"FragColor = ambient + diffuse + specular;\n"+
 	"FragColor.w = 1.0;\n"+
+	"} else {\n"+
+	"FragColor = texture(texSam, vs_texCoord);\n"+
+	"}\n"+
 	// "FragColor = vec4(1.0);\n"+
 	"}\n"
 
@@ -942,12 +1014,21 @@ function DL_initChair() {
 	dl_matDiffuseUniform = gl.getUniformLocation(dl_program, "matDiffuse")
 	dl_matSpecularUniform = gl.getUniformLocation(dl_program, "matSpecular")
 	matShininessUniform = gl.getUniformLocation(dl_program, "matShininess")
+	dl_texSamUniform = gl.getUniformLocation(dl_program, "texSam")
+	dl_isLightUniform = gl.getUniformLocation(dl_program, "isLight")
 	
 	gl.detachShader(dl_program, vertShader)
 	gl.deleteShader(vertShader)
 	gl.detachShader(dl_program, fragShader)
 	gl.deleteShader(fragShader)
 
+	dl_directorTex_chair = gl.createTexture()
+	gl.bindTexture(gl.TEXTURE_2D, dl_directorTex_chair)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("44px SansSerif", "white", "DIRECTOR"))
+	gl.generateMipmap(gl.TEXTURE_2D)
+	
 	dl_vao = gl.createVertexArray()
 	gl.bindVertexArray(dl_vao)
 
@@ -970,6 +1051,9 @@ function DL_renderChair() {
 	gl.clear(gl.COLOR_BUFFER_BIT)
 	gl.useProgram(dl_program)
 	
+	gl.enable(gl.BLEND)
+	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+
 	var mvMat = mat4.create()
 	mat4.translate(mvMat, mvMat, [0.0, 0.0, -4.0])
 	mat4.rotateY(mvMat, mvMat, rotY)
@@ -986,9 +1070,25 @@ function DL_renderChair() {
 	gl.uniform4f(dl_matDiffuseUniform, 0.5, 0.2, 0.7, 1.0)
 	gl.uniform4f(dl_matSpecularUniform, 0.7, 0.7, 0.7, 1.0)
 	gl.uniform1f(matShininessUniform, 50.0)
+	gl.uniform1i(dl_texSamUniform, 0)
+	gl.uniform1i(dl_isLightUniform, 1)
 
 	gl.bindVertexArray(dl_vao)
-	gl.drawArrays(gl.TRIANGLES, 0, dl_numOfTri)
+	gl.drawArrays(gl.TRIANGLES, 0, dl_numOfTri-6)
+
+	gl.uniform4f(dl_lightPositionUniform, 10.0, 10.0, 10.0, 1.0)
+	gl.uniform4f(dl_lightAmbientUniform, 0.1, 0.1, 0.1, 1.0)
+	gl.uniform4f(dl_lightDiffuseUniform, 1.0, 1.0, 1.0, 1.0)
+	gl.uniform4f(dl_lightSpecularUniform, 1.0, 1.0, 1.0, 1.0)
+	gl.uniform4f(dl_matAmbientUniform, 0.1, 0.1, 0.1, 1.0)
+	gl.uniform4f(dl_matDiffuseUniform, 1.0, 1.0, 1.0, 1.0)
+	gl.uniform4f(dl_matSpecularUniform, 1.0, 1.0, 1.0, 1.0)
+	gl.uniform1f(matShininessUniform, 50.0)
+	gl.uniform1i(dl_texSamUniform, 0)
+	gl.uniform1i(dl_isLightUniform, 0)
+	gl.drawArrays(gl.TRIANGLES, dl_numOfTri-6, 6)
 	gl.bindVertexArray(null)
 	gl.useProgram(null)
+
+	gl.disable(gl.BLEND)
 }
