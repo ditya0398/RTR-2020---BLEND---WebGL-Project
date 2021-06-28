@@ -19,12 +19,15 @@ var rotX = 0.0, rotY = 0.0
 var view = [2.49, -1.19, -1.899]
 
 
-var SceneTransitionValue = 0.0;
+var SceneTransitionValue = 1.0;
 
-
+var globalQuadBlendingValue = 0.001; 
 var secondSceneCamera = false;
 
-
+var firstSceneFadeInTransition = true;
+var firstSceneFadeOutTransition = false;
+var secondSceneFadeInTransition = false;
+var secondSceneFadeOutTransition = false;
 
 //Scene 2 camera positions [0.0, 15.133, -47.1]
 //Scene 2 z = -47.1 -> 1.3
@@ -308,6 +311,7 @@ function render() {
 
 	mat4.lookAt(gViewMatrix, view, [0.0, view[1], view[2] - 20.0], [0.0, 1.0, 0.0])
 
+	
 
 	switch(currentScene)
 	{
@@ -316,6 +320,8 @@ function render() {
 		break;
 
 		case scenes.SCENE_1:
+
+			
 			// drawFire();
 			// //	Display_CubeMap()
 			GRDisplay()
@@ -352,6 +358,8 @@ function render() {
 		break;
 
 	}
+
+
 
 	if(secondSceneCamera)
 	{	
@@ -397,9 +405,15 @@ function render() {
 	// {
 	// 	display_InteriorStarbucks();
 	// }
+
+
+
 	if(gbAnim) {
 		update()
 	}
+	
+	SceneTransitions();
+	dl_render_fade();
 //	Draw_Shadow();
 
 	animFrame(render, canvas)
@@ -453,7 +467,6 @@ function update() {
 	}
 	else if(currentScene == scenes.SCENE_1)
 	{
-
 		
 		/* Old Camera
 		view[0] += 0.0008;
@@ -465,11 +478,63 @@ function update() {
 			view[2] -= 0.005;
 			view[1] += 0.0001
 		}
-
+		else
+		{
+			
+		}
 		
 	}
 }
 
+function SceneTransitions()
+{
+	switch(currentScene)
+	{
+	case scenes.SCENE_1:
+		if(SceneTransitionValue >= 0.0 && firstSceneFadeInTransition)
+		{
+				SceneTransitionValue -= globalQuadBlendingValue;
+				if(SceneTransitionValue < 0.0)
+				{
+					SceneTransitionValue = 0.0;
+					
+				}
+
+				if(view[2] <= -13.0)
+				{
+					firstSceneFadeInTransition = false;
+					firstSceneFadeOutTransition = true;
+					
+				}
+		}
+		if(SceneTransitionValue <= 1.0 && firstSceneFadeOutTransition)
+		{
+			SceneTransitionValue += globalQuadBlendingValue;
+			if(SceneTransitionValue >= 1.0)
+			{
+				SceneTransitionValue = 1.0;
+				firstSceneFadeOutTransition = false;
+				secondSceneFadeInTransition = true;
+				view[0] = 0.0;
+				view[1] = 15.133;
+				view[2] =  -47.1;
+				currentScene = scenes.SCENE_2;
+			}
+		}
+	break;
+	
+	case scenes.SCENE_2:
+		if(secondSceneFadeInTransition && SceneTransitionValue >= 0.0)
+		{
+			SceneTransitionValue -= globalQuadBlendingValue;
+			if(SceneTransitionValue <= 0.0)
+				secondSceneFadeInTransition = false;
+		}
+
+	break;
+
+	}	
+}
 function uninit() {
 
 	//GRUninitialize()
