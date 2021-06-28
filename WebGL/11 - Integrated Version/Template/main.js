@@ -19,10 +19,15 @@ var rotX = 0.0, rotY = 0.0
 var view = [2.49, -1.19, -1.899]
 
 
+var SceneTransitionValue = 1.0;
 
+var globalQuadBlendingValue = 0.001; 
+var secondSceneCamera = false;
 
-
-
+var firstSceneFadeInTransition = true;
+var firstSceneFadeOutTransition = false;
+var secondSceneFadeInTransition = false;
+var secondSceneFadeOutTransition = false;
 
 //Scene 2 camera positions [0.0, 15.133, -47.1]
 //Scene 2 z = -47.1 -> 1.3
@@ -46,7 +51,9 @@ const scenes = {
 }
 
 
+
 var currentScene = scenes.SCENE_4
+
 
 
 var blackWhiteDistortion = 1.0
@@ -75,6 +82,12 @@ function keyDown(event) {
 		case 70:
 			toggleFullscreen()
 			break
+			case 71:
+                SBR_DM_angle += 0.1;
+            break;
+            case 72:
+                SBR_DM_angle -= 0.1;
+            break;
 		case 76://L
 			blackWhiteDistortion += 0.1
 			if(blackWhiteDistortion > 1.0) {
@@ -91,6 +104,7 @@ function keyDown(event) {
 			gbAnim = true
 			break
 		case 89 :                   // y key
+			secondSceneCamera = true;
 			break
 		case 65: //A
 			SBR_DM_X_ -= 0.1
@@ -123,26 +137,28 @@ function keyDown(event) {
 		ASJ_trans[2] += 0.05
 			break
 		case 37: //left arrow
-		ASJ_trans[0] -= 0.05
+
+		TeacupTransX -= 0.05
 			break
 		case 39: //right arrow
-		ASJ_trans[0] += 0.05
+		TeacupTransX += 0.025
 			break
 
-		case 84: //T
-		ASJ_trans[1] += 0.05
+		case 84: //Y
+		TeacupTransY += 0.05
 			break
 
 		case 85: //U
-		ASJ_trans[1] -= 0.05
+		TeacupTransY -= 0.05
+
 			break
 
 		case 100: //4
-			fireScale -= 0.02
+			TeacupScale -= 0.005
 			break
 
 		case 102: //6
-		fireScale += 0.02
+		TeacupScale += 0.005
 			break
 		case 104:
 			val_AJ = val_AJ + 0.5;
@@ -204,26 +220,30 @@ function init() {
 	 GRInitRoadside();
 	 initNormalMapRoad()
 	 ASJ_init_stove();
-	// initCubeMap()
 	 tejswini_hut_init()
+
 	// tvn_init_lamp_arch();
 	GRInitChaiCup();
+
 	dl_init_sir_shadow()
+
 	//initShadow();
+
+	dl_init_fade();
 
 
 	//Scene 2
-	  //GRInitMic();
-	//  tvn_script_init();
-	//  tvn_speaker_init();
-	//  tvn_init_tripod();
-	//  tvn_drama_init();
+	  GRInitMic();
+	   tvn_script_init();
+	   tvn_speaker_init();
+	   tvn_init_tripod();
+	   tvn_drama_init();
 	
 
-	//  GRInitScene2();
-	//  DL_initChair()
-	//  GRInitStageLights();
-	// GRInitCamera();
+	  GRInitScene2();
+	  DL_initChair()
+	  GRInitStageLights();
+	  GRInitCamera();
 
 
 	init_InteriorStarbucks();
@@ -274,7 +294,7 @@ function init() {
 
 	gl.enable(gl.DEPTH_TEST)
 	gl.depthFunc(gl.LEQUAL)
-	gl.clearColor(1.0, 0.0, 0.0, 1.0)
+	gl.clearColor(0.0, 0.0, 0.0, 1.0)
 }
 
 function reshape() {
@@ -299,6 +319,7 @@ function render() {
 
 	mat4.lookAt(gViewMatrix, view, [0.0, view[1], view[2] - 20.0], [0.0, 1.0, 0.0])
 
+	
 
 	switch(currentScene)
 	{
@@ -307,6 +328,8 @@ function render() {
 		break;
 
 		case scenes.SCENE_1:
+
+			
 			// drawFire();
 			// //	Display_CubeMap()
 			GRDisplay()
@@ -318,7 +341,7 @@ function render() {
 			drawModel();
 			ASJ_draw_stove();
 			GRDisplayChaiCup();
-			dl_render_sir_shadow()
+			//dl_render_sir_shadow()
 		break;
 
 		case scenes.SCENE_2:
@@ -333,7 +356,7 @@ function render() {
 			tvn_drama_draw();
 		break;
 		case scenes.SCENE_3:
-			displayStarBucksOuter();
+			 displayStarBucksOuter();
 			 drawCar();
 		
 		break;
@@ -344,6 +367,19 @@ function render() {
 		break;
 
 	}
+
+
+
+	if(secondSceneCamera)
+	{	
+		view[0] = 0.0;
+		view[1] = 15.133;
+		view[2] =  -47.1;
+		secondSceneCamera = false;
+	}
+
+
+
 	// if(currentScene == scenes.SCENE_1) {
 	// 	//drawFire();
 	// //	Display_CubeMap()
@@ -378,9 +414,15 @@ function render() {
 	// {
 	// 	display_InteriorStarbucks();
 	// }
+
+
+
 	if(gbAnim) {
 		update()
 	}
+	
+	//SceneTransitions();
+	//dl_render_fade();
 //	Draw_Shadow();
 
 	animFrame(render, canvas)
@@ -434,7 +476,6 @@ function update() {
 	}
 	else if(currentScene == scenes.SCENE_1)
 	{
-
 		
 		/* Old Camera
 		view[0] += 0.0008;
@@ -446,7 +487,10 @@ function update() {
 			view[2] -= 0.005;
 			view[1] += 0.0001
 		}
-
+		else
+		{
+			
+		}
 		
 	} else if(currentScene == scenes.SCENE_4) {
 		if(SBR_DM_Y_ < -0.4) {
@@ -459,6 +503,55 @@ function update() {
 	}
 }
 
+function SceneTransitions()
+{
+	switch(currentScene)
+	{
+	case scenes.SCENE_1:
+		if(SceneTransitionValue >= 0.0 && firstSceneFadeInTransition)
+		{
+				SceneTransitionValue -= globalQuadBlendingValue;
+				if(SceneTransitionValue < 0.0)
+				{
+					SceneTransitionValue = 0.0;
+					
+				}
+
+				if(view[2] <= -13.0)
+				{
+					firstSceneFadeInTransition = false;
+					firstSceneFadeOutTransition = true;
+					
+				}
+		}
+		if(SceneTransitionValue <= 1.0 && firstSceneFadeOutTransition)
+		{
+			SceneTransitionValue += globalQuadBlendingValue;
+			if(SceneTransitionValue >= 1.0)
+			{
+				SceneTransitionValue = 1.0;
+				firstSceneFadeOutTransition = false;
+				secondSceneFadeInTransition = true;
+				view[0] = 0.0;
+				view[1] = 15.133;
+				view[2] =  -47.1;
+				currentScene = scenes.SCENE_2;
+			}
+		}
+	break;
+	
+	case scenes.SCENE_2:
+		if(secondSceneFadeInTransition && SceneTransitionValue >= 0.0)
+		{
+			SceneTransitionValue -= globalQuadBlendingValue;
+			if(SceneTransitionValue <= 0.0)
+				secondSceneFadeInTransition = false;
+		}
+
+	break;
+
+	}	
+}
 function uninit() {
 
 	//GRUninitialize()

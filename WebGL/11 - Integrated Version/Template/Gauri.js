@@ -6,14 +6,10 @@ const WebGLMacros =
     GR_ATTRIBUTE_NORMAL: 3
 };
 
-var grvertexShaderObject;
-var grfragmentShadeerObject;
-var grshaderProgramObject;
+var grvertexShaderObjectTableBench;
+var grfragmentShaderObjectTableBench;
+var grshaderProgramObjectTableBench;
 
-var grvaoTriangle;
-var grvboTrianglePosition;
-var grvboTriangleTexCoord;
-var perspectiveMatrix;
 
 var grgVaoRadio;
 var grgVboPositionRadio;
@@ -61,13 +57,13 @@ var grtextureRoad;
 var grtextureFootpath;
 var grtextureSamplerUniform;
 
-var grgModelMatrixUniform;
-var grgViewMatrixUniform;
-var grgProjectionMatrixUniform;
-var grperspectiveMatrix;
+var grgModelMatrixUniformTableBench;
+var grgViewMatrixUniformTableBench;
+var grgProjectionMatrixUniformTableBench;
 
-var grstackMatrix = [];
-var grmatrixPosition = -1;
+
+var grstackMatrixTableBench = [];
+var grmatrixPositionTableBench = -1;
 
 //AKHI
 var ASJ_ambientUniform_pointLight_gauri;
@@ -106,11 +102,11 @@ function GRInit() {
         "tNormal= normalize(mat3(u_model_matrix) * vNormal);" +
         "}";
 
-    grvertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(grvertexShaderObject, grvertexShaderSourceCode);
-    gl.compileShader(grvertexShaderObject);
-    if (gl.getShaderParameter(grvertexShaderObject, gl.COMPILE_STATUS) == false) {
-        var error = gl.getShaderInfoLog(grvertexShaderObject);
+    grvertexShaderObjectTableBench = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(grvertexShaderObjectTableBench, grvertexShaderSourceCode);
+    gl.compileShader(grvertexShaderObjectTableBench);
+    if (gl.getShaderParameter(grvertexShaderObjectTableBench, gl.COMPILE_STATUS) == false) {
+        var error = gl.getShaderInfoLog(grvertexShaderObjectTableBench);
         if (error.length > 0) {
             alert(error);
             uninitialize();
@@ -183,11 +179,11 @@ function GRInit() {
         "FragColor =color * result;" +
         "}";
 
-    grfragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(grfragmentShaderObject, grfragmentShaderSourceCode);
-    gl.compileShader(grfragmentShaderObject);
-    if (gl.getShaderParameter(grfragmentShaderObject, gl.COMPILE_STATUS) == false) {
-        var error = gl.getShaderInfoLog(grfragmentShaderObject);
+    grfragmentShaderObjectTableBench = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(grfragmentShaderObjectTableBench, grfragmentShaderSourceCode);
+    gl.compileShader(grfragmentShaderObjectTableBench);
+    if (gl.getShaderParameter(grfragmentShaderObjectTableBench, gl.COMPILE_STATUS) == false) {
+        var error = gl.getShaderInfoLog(grfragmentShaderObjectTableBench);
         if (error.length > 0) {
             alert(error);
             uninitialize();
@@ -197,18 +193,18 @@ function GRInit() {
     }
 
     // shader program
-    grshaderProgramObject = gl.createProgram();
+    grshaderProgramObjectTableBench = gl.createProgram();
     //attach shader object
-    gl.attachShader(grshaderProgramObject, grvertexShaderObject);
-    gl.attachShader(grshaderProgramObject, grfragmentShaderObject);
+    gl.attachShader(grshaderProgramObjectTableBench, grvertexShaderObjectTableBench);
+    gl.attachShader(grshaderProgramObjectTableBench, grfragmentShaderObjectTableBench);
     // pre-linking
-    gl.bindAttribLocation(grshaderProgramObject, WebGLMacros.GR_ATTRIBUTE_POSITION, "vPosition");
-    gl.bindAttribLocation(grshaderProgramObject, WebGLMacros.GR_ATTRIBUTE_TEXTURE, "vTexCoord");
+    gl.bindAttribLocation(grshaderProgramObjectTableBench, WebGLMacros.GR_ATTRIBUTE_POSITION, "vPosition");
+    gl.bindAttribLocation(grshaderProgramObjectTableBench, WebGLMacros.GR_ATTRIBUTE_TEXTURE, "vTexCoord");
 
     // linking
-    gl.linkProgram(grshaderProgramObject);
-    if (!gl.getProgramParameter(grshaderProgramObject, gl.LINK_STATUS)) {
-        var err = gl.getProgramInfoLog(grshaderProgramObject);
+    gl.linkProgram(grshaderProgramObjectTableBench);
+    if (!gl.getProgramParameter(grshaderProgramObjectTableBench, gl.LINK_STATUS)) {
+        var err = gl.getProgramInfoLog(grshaderProgramObjectTableBench);
         if (err.length > 0) {
             alert(err);
 
@@ -220,19 +216,19 @@ function GRInit() {
     }
 
     // mvp uniform binding
-    grgModelMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_model_matrix");
-    grgViewMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_view_matrix");
-    grgProjectionMatrixUniform = gl.getUniformLocation(grshaderProgramObject, "u_projection_matrix");
-    grtextureSamplerUniform = gl.getUniformLocation(grshaderProgramObject, "u_texture_sampler");
+    grgModelMatrixUniformTableBench = gl.getUniformLocation(grshaderProgramObjectTableBench, "u_model_matrix");
+    grgViewMatrixUniformTableBench = gl.getUniformLocation(grshaderProgramObjectTableBench, "u_view_matrix");
+    grgProjectionMatrixUniformTableBench = gl.getUniformLocation(grshaderProgramObjectTableBench, "u_projection_matrix");
+    grtextureSamplerUniform = gl.getUniformLocation(grshaderProgramObjectTableBench, "u_texture_sampler");
 
     //AKHI UNIFORM binding
-    ASJ_ambientUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "Ambient_AJ");
-    ASJ_lightColorUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "LightColor_AJ");
-    ASJ_lightPositionUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "LightPosition_AJ");
-    ASJ_shininessUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "Shininess_AJ");
-    ASJ_strengthUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "Strength_AJ");
-    ASJ_eyeDirectionUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "EyeDirection_AJ");
-    ASJ_attenuationUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObject, "Attenuation_AJ");
+    ASJ_ambientUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "Ambient_AJ");
+    ASJ_lightColorUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "LightColor_AJ");
+    ASJ_lightPositionUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "LightPosition_AJ");
+    ASJ_shininessUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "Shininess_AJ");
+    ASJ_strengthUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "Strength_AJ");
+    ASJ_eyeDirectionUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "EyeDirection_AJ");
+    ASJ_attenuationUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "Attenuation_AJ");
 
     // radio 
     var grradioVertices = new Float32Array(
@@ -560,7 +556,7 @@ function GRDisplay() {
 
 
 
-    gl.useProgram(grshaderProgramObject);
+    gl.useProgram(grshaderProgramObjectTableBench);
 
     //akhilesh
     var Eye_AJ = new Float32Array([0.0, 0.0, 2.0]);
@@ -594,9 +590,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureRadio);
@@ -629,9 +625,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureAntenna);
@@ -662,9 +658,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureAntenna);
@@ -698,9 +694,9 @@ function GRDisplay() {
     //console.log("antenna model matrix : " + grmodelMatrix);
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureAntenna);
@@ -752,9 +748,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBench);
@@ -790,9 +786,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
@@ -827,9 +823,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
@@ -880,9 +876,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
@@ -915,9 +911,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
@@ -950,9 +946,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
@@ -985,9 +981,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
@@ -1020,9 +1016,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
@@ -1055,9 +1051,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
@@ -1090,9 +1086,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
@@ -1125,9 +1121,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
@@ -1160,9 +1156,9 @@ function GRDisplay() {
 
     mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, gViewMatrix);
-    gl.uniformMatrix4fv(grgProjectionMatrixUniform, false, grprojectionMatrix);
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grtextureBenchLegs);
@@ -1185,33 +1181,33 @@ function GRDisplay() {
 }
 
 function GRPushToStack(matrix) {
-    if (grmatrixPosition == -1) {
-        grstackMatrix.push(matrix);
-        //console.log("in push, matrixposition 0 : " +grstackMatrix[0]);
-        grmatrixPosition++;
+    if (grmatrixPositionTableBench == -1) {
+        grstackMatrixTableBench.push(matrix);
+        //console.log("in push, matrixposition 0 : " +grstackMatrixTableBench[0]);
+        grmatrixPositionTableBench++;
         return matrix;
     }
     else {
-        var topMatrix = grstackMatrix[grmatrixPosition];
+        var topMatrix = grstackMatrixTableBench[grmatrixPositionTableBench];
         //console.log("in GRPushToStack, top matrix : " + topMatrix);
         mat4.multiply(matrix, topMatrix, matrix);
-        grstackMatrix.push(matrix);
-        grmatrixPosition++;
-        //sconsole.log("return pushed matrix : position : " + grmatrixPosition + " matrix : " + grstackMatrix);
-        return grstackMatrix[grmatrixPosition];
+        grstackMatrixTableBench.push(matrix);
+        grmatrixPositionTableBench++;
+        //sconsole.log("return pushed matrix : position : " + grmatrixPositionTableBench + " matrix : " + grstackMatrixTableBench);
+        return grstackMatrixTableBench[grmatrixPositionTableBench];
     }
 
 }
 
 function GRPopFromStack() {
-    if (!grstackMatrix[0]) {
-        grstackMatrix[0] = mat4.create();
-        return grstackMatrix[0];
+    if (!grstackMatrixTableBench[0]) {
+        grstackMatrixTableBench[0] = mat4.create();
+        return grstackMatrixTableBench[0];
     }
     else {
-        grstackMatrix.pop();
-        grmatrixPosition--;
-        return grstackMatrix[grmatrixPosition];
+        grstackMatrixTableBench.pop();
+        grmatrixPositionTableBench--;
+        return grstackMatrixTableBench[grmatrixPositionTableBench];
     }
 
 }
@@ -1227,21 +1223,21 @@ function GRUninitialize() {
         grgVboPositionRadio = null;
     }
 
-    if (grshaderProgramObject) {
-        if (grfragmentShaderObject) {
-            gl.detachShader(grshaderProgramObject, grfragmentShaderObject);
-            gl.deleteShader(grfragmentShaderObject);
-            grfragmentShaderObject = null;
+    if (grshaderProgramObjectTableBench) {
+        if (grfragmentShaderObjectTableBench) {
+            gl.detachShader(grshaderProgramObjectTableBench, grfragmentShaderObjectTableBench);
+            gl.deleteShader(grfragmentShaderObjectTableBench);
+            grfragmentShaderObjectTableBench = null;
         }
 
-        if (grfragmentShaderObject) {
-            gl.detachShader(grshaderProgramObject, grvertexShaderObject);
-            gl.deleteShader(grvertexShaderObject);
-            grvertexShaderObject = null;
+        if (grfragmentShaderObjectTableBench) {
+            gl.detachShader(grshaderProgramObjectTableBench, grvertexShaderObjectTableBench);
+            gl.deleteShader(grvertexShaderObjectTableBench);
+            grvertexShaderObjectTableBench = null;
         }
 
-        gl.deleteProgram(grshaderProgramObject);
-        grshaderProgramObject = null;
+        gl.deleteProgram(grshaderProgramObjectTableBench);
+        grshaderProgramObjectTableBench = null;
     }
 }
 

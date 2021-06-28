@@ -3,7 +3,7 @@ var grvertexShaderObjectMic;
 var grfragmentShaderObjectMic;
 var grshaderProgramObjectMic;
 
-var grgPerspectiveProjectionMatrix;
+
 
 var grgVaoMic;
 var grgVboMicPosition;
