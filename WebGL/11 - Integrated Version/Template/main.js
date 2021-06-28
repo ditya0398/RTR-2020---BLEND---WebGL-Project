@@ -21,7 +21,7 @@ var x_audio;
 var view = [2.49, -1.19, -10.899]
 
 
-var SceneTransitionValue = 1.0;
+var SceneTransitionValue = 0.0;
 
 var globalQuadBlendingValue = 0.001; 
 var secondSceneCamera = false;
@@ -56,7 +56,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_1
+var currentScene = scenes.SCENE_0
 
 
 
@@ -260,13 +260,13 @@ function init() {
 	init_InteriorStarbucks();
 
 
-
 	//utensil_init();
 
 	init_macWindow()
 	initStarbucksOuter();
 	ASJ_init_laptop()
 	
+	initEndScreen()
 	
 	loadModel('Models/teapot.obj',vao_teapot,vbo_teapot,function(parts_teapot,numElem){
 		console.log("succeeded");
@@ -334,6 +334,7 @@ function render() {
 	{
 		case scenes.SCENE_0:
 			//Intro
+			renderStartScreen()
 		break;
 
 		case scenes.SCENE_1:
@@ -435,8 +436,9 @@ function render() {
 
 function update() {
 
-
-	if(currentScene == scenes.SCENE_2) {
+	if(currentScene == scenes.SCENE_0) {
+		updateStartScene()
+	} else if(currentScene == scenes.SCENE_2) {
 		if(gbInitializeScene2Camera) {
 			 view = [0.0, 15.133, -47.1]
 			//view = [0.0, 0.0, 1.6]

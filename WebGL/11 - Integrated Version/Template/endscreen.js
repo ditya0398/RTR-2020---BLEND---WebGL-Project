@@ -17,6 +17,8 @@ var texTeacherTitle_end
 var texTeacherSir_end
 var texTeacherMaam_end
 var texTeacherPradnyaMaam_end
+var texAstromedicomp_end
+var texPresents_end
 var mvUniform_end
 var projUniform_end
 var samplerUniform_end
@@ -35,6 +37,9 @@ var dl_trans_grp2_y_end = 0.0
 var dl_trans_grp2_z_end = 0.0
 var dl_shear_grp2_x_end = 0.5
 var dl_shear_grp2_z_end = 0.5
+
+var dl_astromedicomp_end = 1.0
+var dl_presents_end = -1.0
 
 var dl_trans_title1_z_end = 3.0
 var dl_rot_title1_x_end = Math.PI * 8.0
@@ -79,7 +84,7 @@ function createFontTexture(font, color, str) {
 		console.log("Context Not Found")
 	}
 
-	context.fillStyle = "rgba(0, 255, 0, 1.0)"
+	context.fillStyle = "rgba(0.0, 0, 0, 0.0)"
 	context.fillRect(0, 0, textCanvas.width, textCanvas.height)
 	context.textAlign = "center"
 	context.textBaseline = "middle"
@@ -265,6 +270,20 @@ function initEndScreen() {
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("55px Nimbus Roman", "white", "Pradnya Ma'am"))
 	gl.generateMipmap(gl.TEXTURE_2D)
 
+	texAstromedicomp_end = gl.createTexture()
+	gl.bindTexture(gl.TEXTURE_2D, texAstromedicomp_end)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("180px Chopin Script", "white", "Astromedicomp's"))
+	gl.generateMipmap(gl.TEXTURE_2D)
+
+	texPresents_end = gl.createTexture()
+	gl.bindTexture(gl.TEXTURE_2D, texPresents_end)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("90px Fonesia Bold", "white", "presents..."))
+	gl.generateMipmap(gl.TEXTURE_2D)
+
 	var quadVertices = new Float32Array([
 		//GrpName
 		0.66, 0.2, 0.0,				0.83, 0.66,
@@ -286,6 +305,11 @@ function initEndScreen() {
 		-0.6, 0.08, 0.0,			0.2, 0.53,
 		-0.6, -0.08, 0.0,			0.2, 0.47,
 		0.6, -0.08, 0.0,			0.8, 0.47,
+		//Astromedicomp
+		1.0, 0.25, 0.0,				1.0, 0.625,
+		-1.0, 0.25, 0.0,			0.0, 0.625,
+		-1.0, -0.25, 0.0,			0.0, 0.375,
+		1.0, -0.25, 0.0,			1.0, 0.375
 	])
 
 	vao_end = gl.createVertexArray()
@@ -305,7 +329,9 @@ function initEndScreen() {
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 }
 
-function renderEndScreen() {
+function renderStartScreen() {
+	gl.enable(gl.BLEND)
+	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	gl.useProgram(program_end)
 
 	gl.bindVertexArray(vao_end)
@@ -325,7 +351,15 @@ function renderEndScreen() {
 	gl.uniformMatrix4fv(projUniform_end, false, perspMat)
 
 	shearMatrix[4] = dl_shear_grp1_x_end
-	shearMatrix[6] = dl_shear_grp1_z_end
+	// shearMatrix[6] = dl_shear_grp1_z_end
+
+	//Astromedicomp
+	mvMat = mat4.create()
+	mat4.translate(mvMat, mvMat, [-0.9, 0.6 + dl_astromedicomp_end, -3.0])
+	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
+	
+	gl.bindTexture(gl.TEXTURE_2D, texAstromedicomp_end)
+	gl.drawArrays(gl.TRIANGLE_FAN, 16, 4)
 
 	//Grp Name 1
 	mvMat = mat4.create()
@@ -337,7 +371,7 @@ function renderEndScreen() {
 	gl.drawArrays(gl.TRIANGLE_FAN, 0, 4)
 	
 	shearMatrix[4] = dl_shear_grp2_x_end
-	shearMatrix[6] = dl_shear_grp2_z_end
+	// shearMatrix[6] = dl_shear_grp2_z_end
 
 	//Grp Name 2
 	mvMat = mat4.create()
@@ -347,7 +381,32 @@ function renderEndScreen() {
 	
 	gl.bindTexture(gl.TEXTURE_2D, texGrpName2_end)
 	gl.drawArrays(gl.TRIANGLE_FAN, 0, 4)
+
+	mvMat = mat4.create()
+	mat4.translate(mvMat, mvMat, [1.0, -0.6 + dl_presents_end, -3.0])
+	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
 	
+	gl.bindTexture(gl.TEXTURE_2D, texPresents_end)
+	gl.drawArrays(gl.TRIANGLE_FAN, 16, 4)
+
+	gl.disable(gl.BLEND)
+}
+
+function renderEndScreen() {
+	gl.enable(gl.BLEND)
+	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+	gl.useProgram(program_end)
+
+	gl.bindVertexArray(vao_end)
+	
+	gl.uniform1i(samplerUniform_end, 0)
+	
+	var mvMat
+	var perspMat = mat4.create()
+	mat4.perspective(perspMat, 45.0 * Math.PI / 180.0, canvas.width / canvas.height, 0.1, 10.0)
+
+	gl.uniformMatrix4fv(projUniform_end, false, perspMat)
+
 	mvMat = mat4.create()
 	mat4.translate(mvMat, mvMat, [0.0, 0.8 + dl_trans_leadermember_y_end, -3.0 + dl_trans_title1_z_end])
 	mat4.rotateX(mvMat, mvMat, dl_rot_title1_x_end)
@@ -443,83 +502,99 @@ function renderEndScreen() {
 	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
 	gl.bindTexture(gl.TEXTURE_2D, texTeacherPradnyaMaam_end)
 	gl.drawArrays(gl.TRIANGLE_FAN, 12, 4)
+
+	gl.disable(gl.BLEND)
 }
 
-const dl_update_macros_end = {
+const dl_update_macros_start = {
+	grp_astromedicomp_translate:0,
 	grp_name_1_translate:1,
 	grp_name_1_shear:2,
 	grp_name_1_shear_back:3,
 	grp_name_2_translate:4,
 	grp_name_2_shear:5,
 	grp_name_2_shear_back:6,
-	grp_name_translate_up:7,
-	grp_title_1_translate:8,
-	grp_leader_translate:9,
-	grp_title_2_translate:10,
-	grp_member_1_translate:11,
-	grp_member_2_translate:12,
-	grp_member_3_translate:13,
-	grp_member_4_translate:14,
-	grp_member_5_translate:15,
-	grp_member_6_translate:16,
-	grp_leadermember_translate_up:17,
-	grp_teacher_translate_init:18,
-	grp_teacher_wait:19,
-	grp_teacher_translate_up:20,
-	end:21
+	grp_prensets_translate:7,
+	end_start:8
+}
+const dl_update_macros_end = {
+	grp_title_1_translate:1,
+	grp_leader_translate:2,
+	grp_title_2_translate:3,
+	grp_member_1_translate:4,
+	grp_member_2_translate:5,
+	grp_member_3_translate:6,
+	grp_member_4_translate:7,
+	grp_member_5_translate:8,
+	grp_member_6_translate:9,
+	grp_leadermember_translate_up:10,
+	grp_teacher_translate_init:11,
+	grp_teacher_wait:12,
+	grp_teacher_translate_up:13,
+	end_end:14
 }
 
-var dl_current_update_end = dl_update_macros_end.grp_name_1_translate
+var dl_current_update_end = dl_update_macros_end.grp_title_1_translate
+var dl_current_update_start = dl_update_macros_start.grp_astromedicomp_translate
 
-function updateEndScene() {
-	if(dl_current_update_end == dl_update_macros_end.grp_name_1_translate) {
+function updateStartScene() {
+	if(dl_current_update_start == dl_update_macros_start.grp_astromedicomp_translate) {
+		if(dl_astromedicomp_end > 0.0) {
+			dl_astromedicomp_end -= 0.006
+		} else {
+			dl_current_update_start = dl_update_macros_start.grp_name_1_translate
+		}
+	} else if(dl_current_update_start == dl_update_macros_start.grp_name_1_translate) {
 		if(dl_trans_grp1_x_end < 0.0) {
 			dl_trans_grp1_x_end += 0.1
 		} else {
-			dl_current_update_end = dl_update_macros_end.grp_name_1_shear
+			dl_current_update_start = dl_update_macros_start.grp_name_1_shear
 		}
-	} else if(dl_current_update_end == dl_update_macros_end.grp_name_1_shear) {
+	} else if(dl_current_update_start == dl_update_macros_start.grp_name_1_shear) {
 		if(dl_shear_grp1_x_end < 1.0) {
 			dl_shear_grp1_x_end += 0.2
 			dl_shear_grp1_z_end += 0.2
 		} else {
-			dl_current_update_end = dl_update_macros_end.grp_name_1_shear_back
+			dl_current_update_start = dl_update_macros_start.grp_name_1_shear_back
 		}
-	} else if(dl_current_update_end == dl_update_macros_end.grp_name_1_shear_back) {
+	} else if(dl_current_update_start == dl_update_macros_start.grp_name_1_shear_back) {
 		if(dl_shear_grp1_x_end > 0.0) {
 			dl_shear_grp1_x_end -= 0.2
 			dl_shear_grp1_z_end -= 0.2
 		} else {
-			dl_current_update_end = dl_update_macros_end.grp_name_2_translate
+			dl_current_update_start = dl_update_macros_start.grp_name_2_translate
 		}
-	} else if(dl_current_update_end == dl_update_macros_end.grp_name_2_translate) {
+	} else if(dl_current_update_start == dl_update_macros_start.grp_name_2_translate) {
 		if(dl_trans_grp2_x_end > 0.0) {
 			dl_trans_grp2_x_end -= 0.1
 		} else {
-			dl_current_update_end = dl_update_macros_end.grp_name_2_shear
+			dl_current_update_start = dl_update_macros_start.grp_name_2_shear
 		}
-	} else if(dl_current_update_end == dl_update_macros_end.grp_name_2_shear) {
+	} else if(dl_current_update_start == dl_update_macros_start.grp_name_2_shear) {
 		if(dl_shear_grp2_x_end < 1.0) {
 			dl_shear_grp2_x_end += 0.2
 			dl_shear_grp2_z_end += 0.2
 		} else {
-			dl_current_update_end = dl_update_macros_end.grp_name_2_shear_back
+			dl_current_update_start = dl_update_macros_start.grp_name_2_shear_back
 		}
-	} else if(dl_current_update_end == dl_update_macros_end.grp_name_2_shear_back) {
+	} else if(dl_current_update_start == dl_update_macros_start.grp_name_2_shear_back) {
 		if(dl_shear_grp2_x_end > 0.0) {
 			dl_shear_grp2_x_end -= 0.2
 			dl_shear_grp2_z_end -= 0.2
 		} else {
-			dl_current_update_end = dl_update_macros_end.grp_name_translate_up
+			dl_current_update_start = dl_update_macros_start.grp_prensets_translate
 		}
-	} else if(dl_current_update_end == dl_update_macros_end.grp_name_translate_up) {
-		if(dl_trans_grp1_y_end < 1.7) {
-			dl_trans_grp1_y_end += 0.005
-			dl_trans_grp2_y_end += 0.005
+	} else if(dl_current_update_start == dl_update_macros_start.grp_prensets_translate) {
+		if(dl_presents_end < 0.0) {
+			dl_presents_end += 0.006
 		} else {
-			dl_current_update_end = dl_update_macros_end.grp_title_1_translate
+			dl_current_update_start = dl_update_macros_start.grp_prensets_translate
 		}
-	} else if(dl_current_update_end == dl_update_macros_end.grp_title_1_translate) {
+	}
+} 
+
+function updateEndScene() {
+	if(dl_current_update_end == dl_update_macros_end.grp_title_1_translate) {
 		if(dl_trans_title1_z_end > 0.0) {
 			dl_trans_title1_z_end -= 0.01
 			dl_rot_title1_x_end -= 0.0836
@@ -605,7 +680,7 @@ function updateEndScene() {
 		if(dl_trans_teacher_y < 2.0) {
 			dl_trans_teacher_y += 0.005
 		} else {
-			dl_current_update_end = dl_update_macros_end.grp_teacher_translate_up
+			dl_current_update_end = dl_update_macros_end.end_end
 		}
 	}
 }

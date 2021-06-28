@@ -907,25 +907,25 @@ function DL_getChairVertexData() {
 	return Float32Array.from(array)
 }
 
-function createFontTexture(font, color, str) {
-	var textCanvas = document.createElement("canvas")
-	textCanvas.width = 1024
-	textCanvas.height = 1024
-	var context = textCanvas.getContext("2d")
-	if(!context) {
-		console.log("Context Not Found")
-	}
+// function createFontTexture(font, color, str) {
+// 	var textCanvas = document.createElement("canvas")
+// 	textCanvas.width = 1024
+// 	textCanvas.height = 1024
+// 	var context = textCanvas.getContext("2d")
+// 	if(!context) {
+// 		console.log("Context Not Found")
+// 	}
 
-	context.fillStyle = "rgba(0, 0, 0, 0.0)"
-	context.fillRect(0, 0, textCanvas.width, textCanvas.height)
-	context.textAlign = "center"
-	context.textBaseline = "middle"
-	context.font = font
+// 	context.fillStyle = "rgba(0, 0, 0, 0.0)"
+// 	context.fillRect(0, 0, textCanvas.width, textCanvas.height)
+// 	context.textAlign = "center"
+// 	context.textBaseline = "middle"
+// 	context.font = font
 
-	context.fillStyle = color
-	context.fillText(str, textCanvas.width / 2, textCanvas.height / 2)
-	return textCanvas
-}
+// 	context.fillStyle = color
+// 	context.fillText(str, textCanvas.width / 2, textCanvas.height / 2)
+// 	return textCanvas
+// }
 
 
 function DL_initChair() {
