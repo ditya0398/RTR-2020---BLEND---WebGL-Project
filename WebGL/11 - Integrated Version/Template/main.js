@@ -15,6 +15,8 @@ var gbAnim = false
 
 var rotX = 0.0, rotY = 0.0
 
+var x_audio;
+
 //first scene view 
 var view = [2.49, -1.19, -1.899]
 
@@ -65,6 +67,9 @@ function main() {
 		console.log("Canvas Not Found")
 	}
 
+	x_audio = document.createElement("audio");
+
+    x_audio.src = "outfoxing.mp3";
 	//Get Canvas Width and Height
 	canvas_og_width = canvas.width
 	canvas_og_height = canvas.height
@@ -80,6 +85,7 @@ function main() {
 function keyDown(event) {
 	switch(event.keyCode) {
 		case 70:
+			//x_audio.play();
 			toggleFullscreen()
 			break
 			case 71:
@@ -257,14 +263,14 @@ function init() {
 	ASJ_init_laptop()
 	
 	
-	// loadModel('Models/teapot.obj',vao_teapot,vbo_teapot,function(parts_teapot,numElem){
-	// 	console.log("succeeded");
-	// 	numElements_Teapot = numElem;
-	// 	console.log(numElements_Teapot);
-	// 	 gParts_Teapot = parts_teapot;
-	// 	console.log(gParts_Teapot.length);
-	// 	//numElem = null;
-	// });
+	loadModel('Models/teapot.obj',vao_teapot,vbo_teapot,function(parts_teapot,numElem){
+		console.log("succeeded");
+		numElements_Teapot = numElem;
+		console.log(numElements_Teapot);
+		 gParts_Teapot = parts_teapot;
+		console.log(gParts_Teapot.length);
+		//numElem = null;
+	});
 
 
 	// loadModel('Models/Coffee Cup_final.obj',vao_teacup,vbo_teacup,function(parts_teacup,numElem1){
@@ -277,14 +283,14 @@ function init() {
 	// });
 
 
-	// loadModel('Models/car.obj',vao_car,vbo_car,function(parts_car,numElem2){
-	// 	console.log("succeeded");
-	// 	numElements_Car = numElem2;
-	// 	console.log(numElements_Car);
-	// 	 gParts_Car = parts_car;
-	// 	console.log(gParts_Car.length);
-	// 	//numElem = null;
-	// });
+	loadModel('Models/car.obj',vao_car,vbo_car,function(parts_car,numElem2){
+		console.log("succeeded");
+		numElements_Car = numElem2;
+		console.log(numElements_Car);
+		 gParts_Car = parts_car;
+		console.log(gParts_Car.length);
+		//numElem = null;
+	});
 
 	modelLoadingProgramObject = initializeModel();
 
