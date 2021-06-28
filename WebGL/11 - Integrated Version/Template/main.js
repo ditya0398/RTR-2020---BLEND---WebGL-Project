@@ -46,7 +46,7 @@ const scenes = {
 }
 
 
-var currentScene = scenes.SCENE_1
+var currentScene = scenes.SCENE_4
 
 
 var blackWhiteDistortion = 1.0
@@ -93,48 +93,48 @@ function keyDown(event) {
 		case 89 :                   // y key
 			break
 		case 65: //A
-			view[0] -= 0.1
+			SBR_DM_X_ -= 0.1
 			break
 		case 83: //S
-			view[2] += 0.1
+			SBR_DM_Z_ += 0.1
 			//view[1] -= 0.033
 			break
 		case 68: //D
-			view[0] += 0.1
+			SBR_DM_X_ += 0.1
 			break
 		case 87: //W
-			view[2] -= 0.1
+			SBR_DM_Z_ -= 0.1
 			//view[1] += 0.033
 			break
 		case 81: //Q
-			view[1] -= 0.1
+			SBR_DM_Y_ -= 0.1
 			break
 		case 69: //E
-			view[1] += 0.1
+			SBR_DM_Y_ += 0.1
 			break
 		case 77: //M
 			break
 		case 78: //N
 			break
 		case 38: //up arrow
-		TeacupTransZ -= 0.05
+		ASJ_trans[2] -= 0.05
 			break
 		case 40: //down arrow
-		TeacupTransZ += 0.05
+		ASJ_trans[2] += 0.05
 			break
 		case 37: //left arrow
-		fireTransX -= 0.05
+		ASJ_trans[0] -= 0.05
 			break
 		case 39: //right arrow
-		fireTransX += 0.05
+		ASJ_trans[0] += 0.05
 			break
 
-		case 84: //Y
-		fireTransY += 0.05
+		case 84: //T
+		ASJ_trans[1] += 0.05
 			break
 
 		case 85: //U
-		fireTransY -= 0.05
+		ASJ_trans[1] -= 0.05
 			break
 
 		case 100: //4
@@ -207,7 +207,7 @@ function init() {
 	// initCubeMap()
 	 tejswini_hut_init()
 	// tvn_init_lamp_arch();
-	 GRInitChaiCup();
+	GRInitChaiCup();
 	dl_init_sir_shadow()
 	//initShadow();
 
@@ -232,17 +232,19 @@ function init() {
 
 	//utensil_init();
 
+	init_macWindow()
 	initStarbucksOuter();
+	ASJ_init_laptop()
 	
 	
-	loadModel('Models/teapot.obj',vao_teapot,vbo_teapot,function(parts_teapot,numElem){
-		console.log("succeeded");
-		numElements_Teapot = numElem;
-		console.log(numElements_Teapot);
-		 gParts_Teapot = parts_teapot;
-		console.log(gParts_Teapot.length);
-		//numElem = null;
-	});
+	// loadModel('Models/teapot.obj',vao_teapot,vbo_teapot,function(parts_teapot,numElem){
+	// 	console.log("succeeded");
+	// 	numElements_Teapot = numElem;
+	// 	console.log(numElements_Teapot);
+	// 	 gParts_Teapot = parts_teapot;
+	// 	console.log(gParts_Teapot.length);
+	// 	//numElem = null;
+	// });
 
 
 	// loadModel('Models/Coffee Cup_final.obj',vao_teacup,vbo_teacup,function(parts_teacup,numElem1){
@@ -255,14 +257,14 @@ function init() {
 	// });
 
 
-	loadModel('Models/car.obj',vao_car,vbo_car,function(parts_car,numElem2){
-		console.log("succeeded");
-		numElements_Car = numElem2;
-		console.log(numElements_Car);
-		 gParts_Car = parts_car;
-		console.log(gParts_Car.length);
-		//numElem = null;
-	});
+	// loadModel('Models/car.obj',vao_car,vbo_car,function(parts_car,numElem2){
+	// 	console.log("succeeded");
+	// 	numElements_Car = numElem2;
+	// 	console.log(numElements_Car);
+	// 	 gParts_Car = parts_car;
+	// 	console.log(gParts_Car.length);
+	// 	//numElem = null;
+	// });
 
 	modelLoadingProgramObject = initializeModel();
 
@@ -337,7 +339,8 @@ function render() {
 		break;
 		case scenes.SCENE_4:
 			display_InteriorStarbucks();
-			//ASJ_draw_laptop();
+			ASJ_draw_laptop();
+			render_macWindow()
 		break;
 
 	}
@@ -445,6 +448,14 @@ function update() {
 		}
 
 		
+	} else if(currentScene == scenes.SCENE_4) {
+		if(SBR_DM_Y_ < -0.4) {
+			SBR_DM_Y_ += 0.005
+			SBR_DM_Z_ += 0.0165
+		} else if(SBR_DM_EYE_Y_ < 0.3) {
+			SBR_DM_EYE_Y_ += 0.01
+			SBR_DM_EYE_X_ -= 0.02
+		}
 	}
 }
 

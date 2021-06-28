@@ -33,7 +33,12 @@ var DM_starbucks_logo_texture;
 var SBR_DM_Chair_Wood_Texture;
 
 var SBR_DM_X_ = 5.0;
-var SBR_DM_Z_ = 3.0;
+var SBR_DM_Y_ = -0.645//0.0;
+var SBR_DM_Z_ = 4.54//5.5;
+
+var SBR_DM_EYE_X_ = 5.0;
+var SBR_DM_EYE_Y_ = -0.7//0.0;
+var SBR_DM_EYE_Z_ = 0.0//5.5;
 
 var SBR_DM_Stack_Matrix = [];
 var SBR_DM_Matrix_Count = -1;
@@ -1285,7 +1290,7 @@ function LoadTexture_InteriorStarbucks()
 
     SBR_DM_Chair_Wood_Texture = gl.createTexture();
     SBR_DM_Chair_Wood_Texture.image = new Image();
-    SBR_DM_Chair_Wood_Texture.image.src = "Res/Wood_02.jpg";
+    SBR_DM_Chair_Wood_Texture.image.src = "Res/wood_02.jpg";
     
     SBR_DM_Chair_Wood_Texture.image.onload = function (){ 
         
@@ -1301,19 +1306,22 @@ function LoadTexture_InteriorStarbucks()
     }
 }
 
+var DM_Projection_Matrix
+var DM_View_Matrix
+    
 
 function display_InteriorStarbucks()
 {
     gl.useProgram(SBR_DM_ShaderProgramObject);
 
+    DM_Projection_Matrix = mat4.create();
+    DM_View_Matrix = mat4.create();
     var DM_Model_Matrix = mat4.create();
-    var DM_Projection_Matrix = mat4.create();
-    var DM_View_Matrix = mat4.create();
     var DM_XRotation_Matrix = mat4.create();
     var DM_XTranslate_Matrix = mat4.create();
     var DM_Scale_Matrix = mat4.create();
 
-    mat4.lookAt(DM_View_Matrix, [SBR_DM_X_, 0.0, SBR_DM_Z_], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
+    mat4.lookAt(DM_View_Matrix, [SBR_DM_X_, SBR_DM_Y_, SBR_DM_Z_], [SBR_DM_EYE_X_, SBR_DM_EYE_Y_, SBR_DM_EYE_Z_], [0.0, 1.0, 0.0]);
     
     mat4.multiply(DM_Model_Matrix, DM_Model_Matrix, DM_XRotation_Matrix);
     
@@ -1911,7 +1919,6 @@ function display_InteriorStarbucks()
     
     DM_Model_Matrix = mat4.create();
     DM_Projection_Matrix = mat4.create();
-    DM_View_Matrix = mat4.create();
     DM_XRotation_Matrix = mat4.create();
     DM_XTranslate_Matrix = mat4.create();
     DM_Scale_Matrix = mat4.create();
@@ -1920,7 +1927,6 @@ function display_InteriorStarbucks()
     mat4.translate(DM_XTranslate_Matrix, DM_XTranslate_Matrix, [-2.5, 1.25, -6.7]);
     //mat4.scale(DM_Scale_Matrix, DM_Scale_Matrix, [1.0, 2.0, 0.1]);
 
-    mat4.lookAt(DM_View_Matrix, [SBR_DM_X_, 0.0, SBR_DM_Z_], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
     mat4.multiply(DM_Model_Matrix, DM_Model_Matrix,  DM_XTranslate_Matrix);
     
     DM_Model_Matrix = PushMatrix_InteriorStarBucks(DM_Model_Matrix);
