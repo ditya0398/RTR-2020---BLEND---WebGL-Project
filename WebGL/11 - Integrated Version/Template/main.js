@@ -18,10 +18,10 @@ var rotX = 0.0, rotY = 0.0
 var x_audio;
 
 //first scene view 
-var view = [2.49, -1.19, -10.899]
+var view = [2.49, -1.19, -1.899]
 
 
-var SceneTransitionValue = 1.0;
+var SceneTransitionValue = 0.0;
 
 var globalQuadBlendingValue = 0.001; 
 var secondSceneCamera = false;
@@ -59,7 +59,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_1
+var currentScene = scenes.SCENE_0
 
 
 
@@ -396,9 +396,11 @@ function render() {
 		update()
 	}
 	
-	 SceneTransitions();
-	 dl_render_fade();
-
+//	if(currentScene == scenes.Scene0)
+//	{
+		SceneTransitions();
+		dl_render_fade();
+	//}
 
 
 //	Draw_Shadow();
@@ -496,6 +498,7 @@ function SceneTransitions()
 {
 	switch(currentScene)
 	{
+
 	case scenes.SCENE_1:
 		if(SceneTransitionValue >= 0.0 && firstSceneFadeInTransition)
 		{

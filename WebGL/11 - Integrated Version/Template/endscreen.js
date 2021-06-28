@@ -390,6 +390,17 @@ function renderStartScreen() {
 	gl.drawArrays(gl.TRIANGLE_FAN, 16, 4)
 
 	gl.disable(gl.BLEND)
+
+	if(dl_current_update_start == dl_update_macros_start.end_start)
+		{
+			if(SceneTransitionValue <= 1.0)
+				SceneTransitionValue += globalQuadBlendingValue +0.002;
+			else
+				currentScene  = scenes.SCENE_1;
+
+		}
+
+		
 }
 
 function renderEndScreen() {
@@ -588,7 +599,7 @@ function updateStartScene() {
 		if(dl_presents_end < 0.0) {
 			dl_presents_end += 0.006
 		} else {
-			dl_current_update_start = dl_update_macros_start.grp_prensets_translate
+			dl_current_update_start = dl_update_macros_start.end_start
 		}
 	}
 } 
