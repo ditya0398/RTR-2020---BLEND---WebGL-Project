@@ -22,7 +22,7 @@ var view =[2.49, -1.19, -1.899]
 //[2.49, -1.19, -1.899]
 
 
-var SceneTransitionValue = 1.0;
+var SceneTransitionValue = 0.0;
 
 var globalQuadBlendingValue = 0.001; 
 var secondSceneCamera = false;
