@@ -71,16 +71,16 @@ var vbo_cube_tp_modelLoading;
 
 var modelLoadingProgramObject;
 
-var TeapotTransX = 2.0500000000000007;
-var TeapotTransY = 0.9000000000000002;
-var TeapotTransZ = -16.100000000000016;
+var TeapotTransX = 2.62;
+var TeapotTransY = 0.3;
+var TeapotTransZ = -15.8;
 var TeapotScale = 0.1199999999999994;
 
 
 
 var TeacupTransX = -1.06;
 var TeacupTransY = -1.79;
-var TeacupTransZ = 8.57; // go till -4.44
+var TeacupTransZ = 8.5; // go till -4.44
 var TeacupScale = 0.039;
 
 //AKHI

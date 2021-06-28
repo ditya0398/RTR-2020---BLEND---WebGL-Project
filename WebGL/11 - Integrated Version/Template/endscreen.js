@@ -396,7 +396,10 @@ function renderStartScreen() {
 			if(SceneTransitionValue <= 1.0)
 				SceneTransitionValue += globalQuadBlendingValue +0.002;
 			else
+			{
 				currentScene  = scenes.SCENE_1;
+				x_audio.play();
+			}
 
 		}
 
@@ -605,6 +608,7 @@ function updateStartScene() {
 } 
 
 function updateEndScene() {
+	console.log("into the update EndScene");
 	if(dl_current_update_end == dl_update_macros_end.grp_title_1_translate) {
 		if(dl_trans_title1_z_end > 0.0) {
 			dl_trans_title1_z_end -= 0.01

@@ -18,7 +18,8 @@ var rotX = 0.0, rotY = 0.0
 var x_audio;
 
 //first scene view 
-var view = [2.49, -1.19, -1.899]
+var view =[2.49, -1.19, -1.899]
+//[2.49, -1.19, -1.899]
 
 
 var SceneTransitionValue = 0.0;
@@ -77,7 +78,14 @@ function main() {
 
 
 
-    x_audio.src = "MainSong.mp3";
+    x_audio.src = "FootSteps2.mp3";
+
+
+	x_audio.onended = function() {
+		x_audio.src = "MainSong.mp3";
+		x_audio.play();
+	}; 
+
 	//Get Canvas Width and Height
 	canvas_og_width = canvas.width
 	canvas_og_height = canvas.height
@@ -145,25 +153,25 @@ function keyDown(event) {
 		case 78: //N
 			break
 		case 38: //up arrow
-		TeacupTransZ -= 0.05
+		TeapotTransZ -= 0.05
 			break
 		case 40: //down arrow
-		TeacupTransZ += 0.05
+		TeapotTransZ += 0.05
 			break
 		case 37: //left arrow
 
-		TeacupTransX -= 0.05
+		TeapotTransX -= 0.05
 			break
 		case 39: //right arrow
-		TeacupTransX += 0.025
+		TeapotTransX += 0.025
 			break
 
 		case 84: //Y
-		TeacupTransY += 0.05
+		TeapotTransY += 0.05
 			break
 
 		case 85: //U
-		TeacupTransY -= 0.05
+		TeapotTransY -= 0.05
 			break
 
 		case 100: //4
@@ -395,13 +403,19 @@ function render() {
 	if(gbAnim) {
 		update()
 	}
-	
-//	if(currentScene == scenes.Scene0)
-//	{
+
+
+	if(currentScene == scenes.SCENE_5)
+	{
+		SceneTransitionValue = 0.0
+		updateEndScene();
+	}
+	else
+	{
 		SceneTransitions();
 		dl_render_fade();
-	//}
-
+	}
+	
 
 //	Draw_Shadow();
 
@@ -469,7 +483,7 @@ function update() {
 		if(view[2] > -13.0)
 		{
 			view[2] -= 0.005;
-			view[1] += 0.0001
+			view[1] += 0.00012
 		}
 		else
 		{
@@ -490,7 +504,7 @@ function update() {
 			SBR_DM_EYE_X_ -= 0.007
 		}
 	} else if(currentScene == scenes.SCENE_5) {
-		updateEndScene()
+		//updateEndScene()
 	}
 }
 
@@ -510,8 +524,8 @@ function SceneTransitions()
 				if(view[2] <= -13.0)
 				{				
 					console.log("playing the AUDIO");	
-					x_audio.play();
-					SceneTransitionValue = -0.8;
+				//	x_audio.play();
+					SceneTransitionValue = -1.1; // -0.8 was the start
 					firstSceneFadeInTransition = false;
 					firstSceneFadeOutTransition = true;					
 				}
@@ -595,7 +609,7 @@ function SceneTransitions()
 				SceneTransitionValue -= globalQuadBlendingValue;
 				if(SceneTransitionValue <= 0.0)
 				{
-					SceneTransitionValue = -0.7;
+					SceneTransitionValue = -0.4;
 					fourthSceneFadeInTransition = false;	
 					fourthSceneFadeOutTransition = true;			
 				}				
