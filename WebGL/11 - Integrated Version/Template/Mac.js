@@ -25,6 +25,8 @@ var modelMatrixUniform_laptop;
 var viewMatrixUnifrom_laptop;
 var projectionMatrixUniform_laptop;
 
+var ASJ_trans = [5, -0.65, 4.1]
+
 var spin_laptop = 0;
 
 function ASJ_init_laptop() {
@@ -169,7 +171,7 @@ function ASJ_init_laptop() {
 
 	macTexture_laptop = gl.createTexture();
 	macTexture_laptop.image = new Image();
-	macTexture_laptop.image.src = "AkhileshResources/mac.PNG";
+	macTexture_laptop.image.src = "AkhileshResources/mac.png";
 
 	macTexture_laptop.image.onload = function () {
 		gl.bindTexture(gl.TEXTURE_2D, macTexture_laptop);
@@ -182,7 +184,7 @@ function ASJ_init_laptop() {
 
 	wallpaper_laptop = gl.createTexture();
 	wallpaper_laptop.image = new Image();
-	wallpaper_laptop.image.src = "AkhileshResources/bigSur.PNG";
+	wallpaper_laptop.image.src = "AkhileshResources/bigSur.png";
 
 	wallpaper_laptop.image.onload = function () {
 		gl.bindTexture(gl.TEXTURE_2D, wallpaper_laptop);
@@ -310,8 +312,9 @@ function ASJ_draw_laptop() {
 
 
 
-	mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -3.0]);
+	mat4.translate(modelMatrix, modelMatrix, ASJ_trans);
 	mat4.rotateY(modelMatrix, modelMatrix, degTwoRadians_laptop(spin_laptop));
+	mat4.scale(modelMatrix, modelMatrix, [0.45, 0.45, 0.45])
 	mat4.scale(modelMatrix, modelMatrix, [0.9, 0.6, 0.02]);
 	stack_laptop.push(modelMatrix);
 
@@ -328,8 +331,8 @@ function ASJ_draw_laptop() {
 	gl.enableVertexAttribArray(WebGLMacrosASJ.ASJ_ATTRIBUTE_TEXTURE);
 	gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-	gl.uniformMatrix4fv(viewMatrixUnifrom_laptop, false, gViewMatrix);
-	gl.uniformMatrix4fv(projectionMatrixUniform_laptop, false, perspectiveMatrix);
+	gl.uniformMatrix4fv(viewMatrixUnifrom_laptop, false, DM_View_Matrix);
+	gl.uniformMatrix4fv(projectionMatrixUniform_laptop, false, DM_Projection_Matrix);
 
 
 	//DISPLAY PANEL
