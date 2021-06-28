@@ -6,6 +6,7 @@ var tvn_distortion_uniform_speaker;
 
 var tvn_vao_speaker;
 var tvn_vbo_speaker;
+var tvn_vao_rectangle_speaker;
 var tvn_vbo_rectangle_speaker;
 var tvn_vbo_tex_coord_speaker;
 var tvn_projectionMatrix_speaker;

@@ -416,11 +416,14 @@ function update() {
 			//view = [0.0, 0.0, 1.6]
 			gbInitializeScene2Camera = false
 		} else {
+			
 			if(view[2] < 1.6) {
 				view[2] += 0.035
 				view[1] -= 0.01
 			 } else
 			if(tvn_trans_z_drama_main_1 > -53.9) {
+				if(blackWhiteDistortion <= 1.0)
+					blackWhiteDistortion += 0.007;
 				tvn_trans_z_drama_main_1 -= 0.1
 				tvn_trans_y_drama_main_1 += 0.011
 				tvn_trans_x_drama_main_1 += 0.03
