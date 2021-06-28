@@ -51,7 +51,7 @@ const scenes = {
 }
 
 
-var currentScene = scenes.SCENE_1
+var currentScene = scenes.SCENE_3
 
 
 var blackWhiteDistortion = 1.0
@@ -129,32 +129,32 @@ function keyDown(event) {
 		case 78: //N
 			break
 		case 38: //up arrow
-		fireTransZ -= 0.05
+		TeacupTransZ -= 0.05
 			break
 		case 40: //down arrow
-		fireTransZ += 0.05
+		TeacupTransZ += 0.05
 			break
 		case 37: //left arrow
-		fireTransX -= 0.05
+		TeacupTransX -= 0.05
 			break
 		case 39: //right arrow
-		fireTransX += 0.025
+		TeacupTransX += 0.025
 			break
 
 		case 84: //Y
-		fireTransY += 0.05
+		TeacupTransY += 0.05
 			break
 
 		case 85: //U
-		fireTransY -= 0.05
+		TeacupTransY -= 0.05
 			break
 
 		case 100: //4
-			fireScale -= 0.02
+			TeacupScale -= 0.005
 			break
 
 		case 102: //6
-		fireScale += 0.02
+		TeacupScale += 0.005
 			break
 		case 104:
 			val_AJ = val_AJ + 0.5;
@@ -348,7 +348,7 @@ function render() {
 			tvn_drama_draw();
 		break;
 		case scenes.SCENE_3:
-			displayStarBucksOuter();
+			 displayStarBucksOuter();
 			 drawCar();
 		
 		break;
@@ -412,8 +412,8 @@ function render() {
 		update()
 	}
 	
-	SceneTransitions();
-	dl_render_fade();
+	//SceneTransitions();
+	//dl_render_fade();
 //	Draw_Shadow();
 
 	animFrame(render, canvas)
