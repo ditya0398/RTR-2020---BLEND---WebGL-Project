@@ -30,7 +30,8 @@ var firstSceneFadeInTransition = true;
 var firstSceneFadeOutTransition = false;
 var secondSceneFadeInTransition = false;
 var secondSceneFadeOutTransition = false;
-
+var thirdSceneFadeOutTransition = false;
+var thirdSceneFadeInTransition = false;
 //Scene 2 camera positions [0.0, 15.133, -47.1]
 //Scene 2 z = -47.1 -> 1.3
 
@@ -61,7 +62,7 @@ var currentScene = scenes.SCENE_1
 
 
 
-var blackWhiteDistortion = 1.0
+var blackWhiteDistortion = 0.0
 
 function main() {
 	//Get Canvas from DOM
@@ -142,10 +143,10 @@ function keyDown(event) {
 		case 78: //N
 			break
 		case 38: //up arrow
-		ASJ_trans[2] -= 0.05
+		TeacupTransZ -= 0.05
 			break
 		case 40: //down arrow
-		ASJ_trans[2] += 0.05
+		TeacupTransZ += 0.05
 			break
 		case 37: //left arrow
 
@@ -426,8 +427,8 @@ function render() {
 		update()
 	}
 	
-	SceneTransitions();
-	dl_render_fade();
+	 SceneTransitions();
+	 dl_render_fade();
 //	Draw_Shadow();
 
 	animFrame(render, canvas)
@@ -552,11 +553,53 @@ function SceneTransitions()
 			SceneTransitionValue -= globalQuadBlendingValue;
 			if(SceneTransitionValue <= 0.0)
 			{
-				secondSceneFadeInTransition = false;				
+				SceneTransitionValue = -4.0;
+				secondSceneFadeInTransition = false;	
+				secondSceneFadeOutTransition = true;			
 			}
 		}
+		else if(secondSceneFadeOutTransition && SceneTransitionValue <= 1.0){
+			SceneTransitionValue += globalQuadBlendingValue;
+		}
+		if(SceneTransitionValue >= 1.0 && secondSceneFadeOutTransition)
+		{
+			secondSceneFadeOutTransition = false;
+			currentScene = scenes.SCENE_3;
+			thirdSceneFadeInTransition = true;
+		}
+
+
 
 	break;
+
+		case scenes.SCENE_3:
+			if(thirdSceneFadeInTransition && SceneTransitionValue >= 0.0)
+			{
+				SceneTransitionValue -= globalQuadBlendingValue;
+				if(SceneTransitionValue <= 0.0)
+				{
+					SceneTransitionValue = -1.3;
+					thirdSceneFadeInTransition = false;	
+					thirdSceneFadeOutTransition = true;			
+				}				
+			}
+			else if(thirdSceneFadeOutTransition && SceneTransitionValue <= 1.0){
+				SceneTransitionValue += globalQuadBlendingValue;
+			}
+
+			if(SceneTransitionValue >= -1.1)
+			{
+				if(TeacupTransZ >= -5.4)
+					TeacupTransZ -= 0.005
+			}
+			if(SceneTransitionValue >= 1.0 && thirdSceneFadeOutTransition)
+			{
+				thirdSceneFadeOutTransition = false;
+				currentScene = scenes.SCENE_4;
+				thirdSceneFadeInTransition = true;
+			}
+			
+		break;
 
 	}	
 }

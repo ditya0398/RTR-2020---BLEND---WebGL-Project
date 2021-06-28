@@ -203,7 +203,7 @@ function tvn_drama_init() {
 
     drama_texture_1 = gl.createTexture();
     drama_texture_1.image = new Image();
-    drama_texture_1.image.src = "Tejswini_Resources/natak_1.jpg";
+    drama_texture_1.image.src = "Tejswini_Resources/natak1.jpg";
 
     drama_texture_1.image.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, drama_texture_1);
