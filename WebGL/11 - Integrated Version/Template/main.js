@@ -391,47 +391,16 @@ function render() {
 		secondSceneCamera = false;
 	}
 
-	// if(currentScene == scenes.SCENE_1) {
-	// 	//drawFire();
-	// //	Display_CubeMap()
-	// 	 GRDisplay()
-	// 	tejswini_hut_draw()
-	// 	 renderNormalMapRoad()
-
-	// 	 GRDisplayRoadside();
-	// 	//  //tvn_draw_lamp_arch();
-	// 	   drawModel();
-	// 	ASJ_draw_stove();
-	//  	GRDisplayChaiCup();
-
-	// 	// utensil_display();
-	// } else if(currentScene == scenes.SCENE_2) {
-	// 	GRDisplayScene2();
-	// 	GRDisplayStageLights();
-	// 	tvn_tripod_draw();
-	// 	GRDisplayMic();
-	// 	tvn_speaker_draw();
-	// 	DL_renderChair()
-	// 	GRDisplayCamera();
-	// 	tvn_script_draw();
-	// 	tvn_drama_draw();
-	// }
-	// else if(currentScene == scenes.SCENE_3){
-	// 	// displayStarBucksOuter();
-	// 	// drawCar();
-	// 	ASJ_draw_laptop();
-	// }
-	// else if(currentScene == scenes.SCENE_4)
-	// {
-	// 	display_InteriorStarbucks();
-	// }
-
+	
 	if(gbAnim) {
 		update()
 	}
 	
 	 SceneTransitions();
 	 dl_render_fade();
+
+
+
 //	Draw_Shadow();
 
 	animFrame(render, canvas)
@@ -502,13 +471,18 @@ function update() {
 			
 		}
 		
-	} else if(currentScene == scenes.SCENE_4) {
+	} else if(currentScene == scenes.SCENE_4 && SceneTransitionValue < 0.2) {
 		if(SBR_DM_Y_ < -0.4) {
-			SBR_DM_Y_ += 0.005
-			SBR_DM_Z_ += 0.0165
+			// SBR_DM_Y_ += 0.005
+			// SBR_DM_Z_ += 0.0165
+
+			SBR_DM_Y_ += 0.001
+			SBR_DM_Z_ += 0.0035
+
+
 		} else if(SBR_DM_EYE_Y_ < 0.3) {
-			SBR_DM_EYE_Y_ += 0.01
-			SBR_DM_EYE_X_ -= 0.02
+			SBR_DM_EYE_Y_ += 0.0045
+			SBR_DM_EYE_X_ -= 0.007
 		}
 	} else if(currentScene == scenes.SCENE_5) {
 		updateEndScene()
@@ -589,7 +563,7 @@ function SceneTransitions()
 				}				
 			}
 			else if(thirdSceneFadeOutTransition && SceneTransitionValue <= 1.0){
-				SceneTransitionValue += globalQuadBlendingValue + 0.001;
+				SceneTransitionValue += globalQuadBlendingValue + 0.0002;
 			}
 
 		//	if(SceneTransitionValue >= -0.5)
@@ -599,12 +573,15 @@ function SceneTransitions()
 		//	}
 			if(SceneTransitionValue >= 1.0 && thirdSceneFadeOutTransition)
 			{
+				SceneTransitionValue = 1.0;
 				thirdSceneFadeOutTransition = false;
 				currentScene = scenes.SCENE_4;
-				thirdSceneFadeInTransition = true;
+				fourthSceneFadeInTransition = true;
 			}
 			
 		break;
+
+
 		case scenes.SCENE_4:
 
 			if(fourthSceneFadeInTransition && SceneTransitionValue >= 0.0)
@@ -612,10 +589,19 @@ function SceneTransitions()
 				SceneTransitionValue -= globalQuadBlendingValue;
 				if(SceneTransitionValue <= 0.0)
 				{
-					SceneTransitionValue = -1.3;
+					SceneTransitionValue = -0.7;
 					fourthSceneFadeInTransition = false;	
 					fourthSceneFadeOutTransition = true;			
 				}				
+			}
+			else if(fourthSceneFadeOutTransition && SceneTransitionValue <= 1.0){
+				SceneTransitionValue += globalQuadBlendingValue;
+			}
+			if(SceneTransitionValue >= 1.0 && fourthSceneFadeOutTransition)
+			{
+				fourthSceneFadeOutTransition = false;
+				currentScene = scenes.SCENE_5;
+				//thirdSceneFadeInTransition = true;
 			}
 		break;
 

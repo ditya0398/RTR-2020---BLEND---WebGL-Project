@@ -80,7 +80,7 @@ var TeapotScale = 0.1199999999999994;
 
 var TeacupTransX = -1.06;
 var TeacupTransY = -1.79;
-var TeacupTransZ = 8.4; // go till -4.44
+var TeacupTransZ = 8.57; // go till -4.44
 var TeacupScale = 0.039;
 
 //AKHI
