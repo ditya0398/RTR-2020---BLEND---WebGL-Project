@@ -21,7 +21,7 @@ var x_audio;
 var view = [2.49, -1.19, -10.899]
 
 
-var SceneTransitionValue = 0.0;
+var SceneTransitionValue = 1.0;
 
 var globalQuadBlendingValue = 0.001; 
 var secondSceneCamera = false;
@@ -32,6 +32,8 @@ var secondSceneFadeInTransition = false;
 var secondSceneFadeOutTransition = false;
 var thirdSceneFadeOutTransition = false;
 var thirdSceneFadeInTransition = false;
+var fourthSceneFadeOutTransition = false;
+var fourthceneFadeInTransition = false;
 //Scene 2 camera positions [0.0, 15.133, -47.1]
 //Scene 2 z = -47.1 -> 1.3
 
@@ -57,7 +59,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_0
+var currentScene = scenes.SCENE_1
 
 
 
@@ -526,7 +528,8 @@ function SceneTransitions()
 					SceneTransitionValue = 0.0;					
 				}
 				if(view[2] <= -13.0)
-				{					
+				{				
+					console.log("playing the AUDIO");	
 					x_audio.play();
 					SceneTransitionValue = -0.8;
 					firstSceneFadeInTransition = false;
@@ -586,14 +589,14 @@ function SceneTransitions()
 				}				
 			}
 			else if(thirdSceneFadeOutTransition && SceneTransitionValue <= 1.0){
-				SceneTransitionValue += globalQuadBlendingValue;
+				SceneTransitionValue += globalQuadBlendingValue + 0.001;
 			}
 
-			if(SceneTransitionValue >= -1.1)
-			{
-				if(TeacupTransZ >= -5.4)
+		//	if(SceneTransitionValue >= -0.5)
+		//	{
+				if(TeacupTransZ > -4.8)
 					TeacupTransZ -= 0.005
-			}
+		//	}
 			if(SceneTransitionValue >= 1.0 && thirdSceneFadeOutTransition)
 			{
 				thirdSceneFadeOutTransition = false;
@@ -601,6 +604,19 @@ function SceneTransitions()
 				thirdSceneFadeInTransition = true;
 			}
 			
+		break;
+		case scenes.SCENE_4:
+
+			if(fourthSceneFadeInTransition && SceneTransitionValue >= 0.0)
+			{
+				SceneTransitionValue -= globalQuadBlendingValue;
+				if(SceneTransitionValue <= 0.0)
+				{
+					SceneTransitionValue = -1.3;
+					fourthSceneFadeInTransition = false;	
+					fourthSceneFadeOutTransition = true;			
+				}				
+			}
 		break;
 
 	}	
