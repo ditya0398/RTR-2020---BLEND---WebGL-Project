@@ -18,7 +18,7 @@ var rotX = 0.0, rotY = 0.0
 var x_audio;
 
 //first scene view 
-var view = [2.49, -1.19, -1.899]
+var view = [2.49, -1.19, -10.899]
 
 
 var SceneTransitionValue = 1.0;
@@ -54,7 +54,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_4
+var currentScene = scenes.SCENE_1
 
 
 
@@ -69,7 +69,9 @@ function main() {
 
 	x_audio = document.createElement("audio");
 
-    x_audio.src = "outfoxing.mp3";
+
+
+    x_audio.src = "MainSong.mp3";
 	//Get Canvas Width and Height
 	canvas_og_width = canvas.width
 	canvas_og_height = canvas.height
@@ -156,7 +158,6 @@ function keyDown(event) {
 
 		case 85: //U
 		TeacupTransY -= 0.05
-
 			break
 
 		case 100: //4
@@ -221,7 +222,7 @@ function init() {
 
 // Scene 1
 
-	//  initFire();
+	 initFire();
 	 GRInit()
 	 GRInitRoadside();
 	 initNormalMapRoad()
@@ -325,8 +326,6 @@ function render() {
 
 	mat4.lookAt(gViewMatrix, view, [0.0, view[1], view[2] - 20.0], [0.0, 1.0, 0.0])
 
-	
-
 	switch(currentScene)
 	{
 		case scenes.SCENE_0:
@@ -336,7 +335,7 @@ function render() {
 		case scenes.SCENE_1:
 
 			
-			// drawFire();
+			 drawFire();
 			// //	Display_CubeMap()
 			GRDisplay()
 			tejswini_hut_draw()
@@ -374,8 +373,6 @@ function render() {
 
 	}
 
-
-
 	if(secondSceneCamera)
 	{	
 		view[0] = 0.0;
@@ -383,8 +380,6 @@ function render() {
 		view[2] =  -47.1;
 		secondSceneCamera = false;
 	}
-
-
 
 	// if(currentScene == scenes.SCENE_1) {
 	// 	//drawFire();
@@ -421,14 +416,12 @@ function render() {
 	// 	display_InteriorStarbucks();
 	// }
 
-
-
 	if(gbAnim) {
 		update()
 	}
 	
-	//SceneTransitions();
-	//dl_render_fade();
+	SceneTransitions();
+	dl_render_fade();
 //	Draw_Shadow();
 
 	animFrame(render, canvas)
@@ -444,8 +437,8 @@ function update() {
 			gbInitializeScene2Camera = false
 		} else {
 			if(view[2] < 1.6) {
-				view[2] += 0.1
-				view[1] -= 0.03333
+				view[2] += 0.035
+				view[1] -= 0.01
 			 } else
 			if(tvn_trans_z_drama_main_1 > -53.9) {
 				tvn_trans_z_drama_main_1 -= 0.1
@@ -519,15 +512,14 @@ function SceneTransitions()
 				SceneTransitionValue -= globalQuadBlendingValue;
 				if(SceneTransitionValue < 0.0)
 				{
-					SceneTransitionValue = 0.0;
-					
+					SceneTransitionValue = 0.0;					
 				}
-
 				if(view[2] <= -13.0)
-				{
+				{					
+					x_audio.play();
+					SceneTransitionValue = -0.8;
 					firstSceneFadeInTransition = false;
-					firstSceneFadeOutTransition = true;
-					
+					firstSceneFadeOutTransition = true;					
 				}
 		}
 		if(SceneTransitionValue <= 1.0 && firstSceneFadeOutTransition)
@@ -551,7 +543,10 @@ function SceneTransitions()
 		{
 			SceneTransitionValue -= globalQuadBlendingValue;
 			if(SceneTransitionValue <= 0.0)
+			{
 				secondSceneFadeInTransition = false;
+				
+			}
 		}
 
 	break;
