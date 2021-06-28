@@ -42,11 +42,12 @@ const scenes = {
 	SCENE_1:1,
 	SCENE_2:2,
 	SCENE_3:3,
-	SCENE_4:4
+	SCENE_4:4,
+	SCENE_5:5,
 }
 
 
-var currentScene = scenes.SCENE_4
+var currentScene = scenes.SCENE_5
 
 
 var blackWhiteDistortion = 1.0
@@ -210,7 +211,7 @@ function init() {
 	GRInitChaiCup();
 	dl_init_sir_shadow()
 	//initShadow();
-
+	initEndScreen()
 
 	//Scene 2
 	  //GRInitMic();
@@ -274,7 +275,7 @@ function init() {
 
 	gl.enable(gl.DEPTH_TEST)
 	gl.depthFunc(gl.LEQUAL)
-	gl.clearColor(1.0, 0.0, 0.0, 1.0)
+	gl.clearColor(0.0, 0.0, 0.0, 1.0)
 }
 
 function reshape() {
@@ -342,7 +343,9 @@ function render() {
 			ASJ_draw_laptop();
 			render_macWindow()
 		break;
-
+		case scenes.SCENE_5:
+			renderEndScreen()
+		break
 	}
 	// if(currentScene == scenes.SCENE_1) {
 	// 	//drawFire();
@@ -456,6 +459,8 @@ function update() {
 			SBR_DM_EYE_Y_ += 0.01
 			SBR_DM_EYE_X_ -= 0.02
 		}
+	} else if(currentScene == scenes.SCENE_5) {
+		updateEndScene()
 	}
 }
 
