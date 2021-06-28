@@ -14,7 +14,7 @@ var grfangleChaiCupY = 0.0;
 var grtransChaiCupX = 1.8;
 var grtransChaiCupY = -0.94;
 var grtransChaiCupZ = -14.6;
-
+var grgIsChaiSphereUniform;
 
 // texture
 var grgtextureCupSphere;
@@ -200,7 +200,7 @@ function GRInitChaiCup() {
     grgViewMatrixUniformChaiCup = gl.getUniformLocation(grshaderProgramObjectChai, "u_view_matrix");
     grgProjectionMatrixUniformChaiCup = gl.getUniformLocation(grshaderProgramObjectChai, "u_projection_matrix");
     grtextureSamplerUniform = gl.getUniformLocation(grshaderProgramObjectChai, "u_texture_sampler");
-    grgIsMicSphereUniform = gl.getUniformLocation(grshaderProgramObjectChai, "u_is_sphere");
+    grgIsChaiSphereUniform = gl.getUniformLocation(grshaderProgramObjectChai, "u_is_sphere");
 
 
 
@@ -365,7 +365,7 @@ function GRChaiCup() {
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureCupSphere);
-    gl.uniform1i(grgIsMicSphereUniform, 1);
+    gl.uniform1i(grgIsChaiSphereUniform, 1);
     gl.uniform1i(grtextureSamplerUniform, 0);
 
     gl.bindVertexArray(grgVaoChaiCup);
@@ -399,7 +399,7 @@ function GRChaiCup() {
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureCupSphere);
-    gl.uniform1i(grgIsMicSphereUniform, 1);
+    gl.uniform1i(grgIsChaiSphereUniform, 1);
     gl.uniform1i(grtextureSamplerUniform, 0);
 
     gl.bindVertexArray(grgVaoChaiCup);
@@ -433,7 +433,7 @@ function GRChaiCup() {
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureCupSphere);
-    gl.uniform1i(grgIsMicSphereUniform, 0);
+    gl.uniform1i(grgIsChaiSphereUniform, 0);
     gl.uniform1i(grtextureSamplerUniform, 0);
 
     gl.bindVertexArray(grgVaoChaiCup);
@@ -464,7 +464,7 @@ function GRChaiCup() {
     gl.uniformMatrix4fv(grgViewMatrixUniformChaiCup, false, gViewMatrix);
     gl.uniformMatrix4fv(grgProjectionMatrixUniformChaiCup, false, grprojectionMatrixChaiCup);
 
-    gl.uniform1i(grgIsMicSphereUniform, 0);
+    gl.uniform1i(grgIsChaiSphereUniform, 0);
     gl.uniform1i(grtextureSamplerUniform, 0);
 
     gl.bindVertexArray(grgVaoChaiCup);

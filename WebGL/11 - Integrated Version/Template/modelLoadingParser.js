@@ -78,10 +78,10 @@ var TeapotScale = 0.1199999999999994;
 
 
 
-var TeacupTransX = 2.2;
-var TeacupTransY = -1.1000000000000003;
-var TeacupTransZ = -15.0;
-var TeacupScale = 0.03999999999999938;
+var TeacupTransX = 0.985;
+var TeacupTransY = -1.5500000000000007;
+var TeacupTransZ = -7.6999999999999025;
+var TeacupScale = 0.034999999999999386;
 
 //AKHI
 var ASJ_ambientUniform_pointLight_model;
@@ -996,7 +996,7 @@ function drawCar() {
     //var angleInRadian = degreeToRadian(gAngle);
     mat4.translate(modelMatrix, modelMatrix, [TeacupTransX, TeacupTransY, TeacupTransZ]);
     mat4.scale(modelMatrix, modelMatrix, [TeacupScale, TeacupScale, TeacupScale]);
-    //mat4.rotateY(modelMatrix,modelMatrix,deg2rad(gAngleTriangle_modelLoading));
+    mat4.rotateY(modelMatrix,modelMatrix,deg2rad(10));
 
     //	gAngleTriangle_modelLoading += 0.02;
     //mat4.rotateY(modelMatrix,modelMatrix,degreeToRadian(gAngleTriangle));
