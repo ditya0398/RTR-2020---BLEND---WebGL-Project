@@ -49,12 +49,15 @@ const scenes = {
 	SCENE_1:1,
 	SCENE_2:2,
 	SCENE_3:3,
-	SCENE_4:4
+	SCENE_4:4,
+	SCENE_5:5,
 }
 
 
 
+
 var currentScene = scenes.SCENE_1
+
 
 
 
@@ -239,6 +242,7 @@ function init() {
 	dl_init_fade();
 
 
+
 	//Scene 2
 	  GRInitMic();
 	   tvn_script_init();
@@ -370,7 +374,9 @@ function render() {
 			ASJ_draw_laptop();
 			render_macWindow()
 		break;
-
+		case scenes.SCENE_5:
+			renderEndScreen()
+		break
 	}
 
 	if(secondSceneCamera)
@@ -499,6 +505,8 @@ function update() {
 			SBR_DM_EYE_Y_ += 0.01
 			SBR_DM_EYE_X_ -= 0.02
 		}
+	} else if(currentScene == scenes.SCENE_5) {
+		updateEndScene()
 	}
 }
 
