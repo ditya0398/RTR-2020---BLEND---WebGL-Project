@@ -544,8 +544,7 @@ function SceneTransitions()
 			SceneTransitionValue -= globalQuadBlendingValue;
 			if(SceneTransitionValue <= 0.0)
 			{
-				secondSceneFadeInTransition = false;
-				
+				secondSceneFadeInTransition = false;				
 			}
 		}
 
