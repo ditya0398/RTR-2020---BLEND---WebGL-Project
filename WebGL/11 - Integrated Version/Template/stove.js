@@ -397,7 +397,7 @@ function ASJ_draw_stove() {
 
 	//3side cube
 	mat4.translate(cover, temp, [0.8, -0.3, -0.8]);
-	mat4.scale(cover, cover, [0.85, 1, 1]);
+	mat4.scale(cover, cover, [0.85, 1, 0.65]);
 
 	gl.uniformMatrix4fv(modelMatrixUniform_stove, false, cover);
 	gl.bindVertexArray(vao_square_stove);

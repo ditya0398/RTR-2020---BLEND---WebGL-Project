@@ -73,6 +73,7 @@ var ASJ_shininessUniform_pointLight_gauri;
 var ASJ_strengthUniform_pointLight_gauri;
 var ASJ_eyeDirectionUniform_pointLight_gauri;
 var ASJ_attenuationUniform_pointLight_gauri;
+var ASJ_lightPositionUniform_pointLight_gauri_2;
 
 var gr_vbo_normal_table;
 var gr_vbo_normal_bench;
@@ -130,14 +131,17 @@ function GRInit() {
         "uniform float Strength_AJ;" +
         "uniform vec3 EyeDirection_AJ;" +
         "uniform float Attenuation_AJ;" +
+
+        //2nd point light
+        "uniform vec3 LightPosition_2_AJ;" +
         //Akhi in
         "in vec4 Position;" +
         "in vec3 tNormal;" +
         //akhi func
-        "vec4 pointLight(vec3 Normal,vec4 Color)" +
+        "vec4 pointLight(vec3 Normal,vec4 Color,vec3 LightPosition)" +
         "{" +
 
-        "vec3 lightDirection=vec3(Position)-LightPosition_AJ;" +
+        "vec3 lightDirection=vec3(Position)-LightPosition;" +
         "\n" +
         "float lightDistance=length(lightDirection);" +
         "lightDirection= lightDirection / lightDistance;" +
@@ -172,11 +176,13 @@ function GRInit() {
         "color= texture(u_texture_sampler, out_texcoord);" +
         //Akhi Lighting Calculation
         "vec3 Normal_AJ=tNormal;" +
-        "vec4 result;" +
+        "vec4 result_1;" +
+        "vec4 result_2;" +
 
-        "result=pointLight(Normal_AJ,color);" +
+        "result_1=pointLight(Normal_AJ,color,LightPosition_AJ);" +
+        "result_2=pointLight(Normal_AJ,color,LightPosition_2_AJ);" +
 
-        "FragColor =color * result;" +
+        "FragColor =color * (result_1 + result_2 );" +
         "}";
 
     grfragmentShaderObjectTableBench = gl.createShader(gl.FRAGMENT_SHADER);
@@ -229,6 +235,9 @@ function GRInit() {
     ASJ_strengthUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "Strength_AJ");
     ASJ_eyeDirectionUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "EyeDirection_AJ");
     ASJ_attenuationUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "Attenuation_AJ");
+
+    ASJ_lightPositionUniform_pointLight_gauri_2 = gl.getUniformLocation(grshaderProgramObjectTableBench, "LightPosition_2_AJ");
+
 
     // radio 
     var grradioVertices = new Float32Array(
@@ -567,6 +576,9 @@ function GRDisplay() {
     var LightColor_AJ = new Float32Array([1.0, 1.0, 1.0]);
     var lightPosition_AJ = view;//new Float32Array([0.0, 1.0, -15 + val_AJ]);
 
+    var lightPosition_AJ_2 = new Float32Array([2.9000000000000012, 0.33199999999999107, -14.299999999999961]);
+
+
     //lightPosition_AJ[2]=
     gl.uniform4fv(ASJ_ambientUniform_pointLight_gauri, Ambient_AJ);
     gl.uniform3fv(ASJ_lightColorUniform_pointLight_gauri, LightColor_AJ);
@@ -575,7 +587,7 @@ function GRDisplay() {
     gl.uniform1f(ASJ_strengthUniform_pointLight_gauri, strength_AJ);
     gl.uniform3fv(ASJ_eyeDirectionUniform_pointLight_gauri, Eye_AJ);
     gl.uniform1f(ASJ_attenuationUniform_pointLight_gauri, attenuation_AJ);
-
+    gl.uniform3fv(ASJ_lightPositionUniform_pointLight_gauri_2, lightPosition_AJ_2);
 
     //************************************************************************************************ radio ********************************************************
     //***************************************************************************************************************************************************************
