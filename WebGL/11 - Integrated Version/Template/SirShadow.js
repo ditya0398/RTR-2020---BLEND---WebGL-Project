@@ -45,10 +45,8 @@ function dl_init_sir_shadow() {
 	"void main(void)"+
 	"{"+
 	"vec4 Color = texture(u_texture_sampler, outTexture);"+
-	"float f = Color.r + Color.g + Color.b;"+
-	"float a = 0.0;"+
-	"if(f > 0.01) { a = 1.0; }"+
-	"FragColor = vec4(vec3(0.0), a);" +
+	"if(Color.a > 0.5) { Color.a = 1.0; } else { Color.a = 0.0; }"+
+	"FragColor = Color;"+
 	"}";
 	
     var vertShader = gl.createShader(gl.VERTEX_SHADER)
@@ -83,7 +81,7 @@ function dl_init_sir_shadow() {
 
     dl_tex_sir_shadow = gl.createTexture();
 	dl_tex_sir_shadow.image = new Image();
-	dl_tex_sir_shadow.image.src = "DeepResources/sir.png";
+	dl_tex_sir_shadow.image.src = "DeepResources/sirhead.png";
 	dl_tex_sir_shadow.image.onload = function ()
 	{
 		gl.bindTexture(gl.TEXTURE_2D, dl_tex_sir_shadow);
@@ -105,6 +103,29 @@ function dl_init_sir_shadow() {
 		gl.bindTexture(gl.TEXTURE_2D, null);
 	}
 	
+	dl_tex_sirleg_shadow = gl.createTexture();
+	dl_tex_sirleg_shadow.image = new Image();
+	dl_tex_sirleg_shadow.image.src = "DeepResources/sirleg.png";
+	dl_tex_sirleg_shadow.image.onload = function ()
+	{
+		gl.bindTexture(gl.TEXTURE_2D, dl_tex_sirleg_shadow);
+		gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+		var ext = (
+			gl.getExtension('EXT_texture_filter_anisotropic') ||
+			gl.getExtension('MOZ_EXT_texture_filter_anisotropic') ||
+			gl.getExtension('WEBKIT_EXT_texture_filter_anisotropic')
+		);
+		if (ext){
+			var max = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+			console.log(max)
+			gl.texParameterf(gl.TEXTURE_2D, ext.TEXTURE_MAX_ANISOTROPY_EXT, max);
+		}
+		gl.texImage2D(gl.TEXTURE_2D, 0 , gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, dl_tex_sirleg_shadow.image);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+		gl.generateMipmap(gl.TEXTURE_2D)
+		gl.bindTexture(gl.TEXTURE_2D, null);
+	}
 }
 
 function dl_render_sir_shadow() {
@@ -112,18 +133,32 @@ function dl_render_sir_shadow() {
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	gl.useProgram(dl_program_sir_shadow)
     
-    var modelMatrix = mat4.create()
-	mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -4.0]);
-
-    gl.uniformMatrix4fv(dl_mUniform_sir_shadow, false, modelMatrix)
     gl.uniformMatrix4fv(dl_vUniform_sir_shadow, false, gViewMatrix)
     gl.uniformMatrix4fv(dl_pUniform_sir_shadow, false, perspectiveMatrix)
+    
+	var modelMatrix = mat4.create()
+	mat4.translate(modelMatrix, modelMatrix, [0.0, -4.0, -12.5]);
+	mat4.scale(modelMatrix, modelMatrix, [1.0, 1.0, 1.0])
+    gl.uniformMatrix4fv(dl_mUniform_sir_shadow, false, modelMatrix)
+    gl.uniform1i(dl_sampleruniform_sir_shadow, 0)
+    gl.activeTexture(gl.TEXTURE0)
+    gl.bindTexture(gl.TEXTURE_2D, dl_tex_sirleg_shadow)
+
+	gl.drawArrays(gl.TRIANGLE_FAN, 0,4);
+
+
+	modelMatrix = mat4.create()
+	mat4.translate(modelMatrix, modelMatrix, [0.0, -1.7, -10.7]);
+	mat4.rotateX(modelMatrix, modelMatrix, Math.PI * 0.10)
+	mat4.scale(modelMatrix, modelMatrix, [2.0, 2.0, 2.0])
+	gl.uniformMatrix4fv(dl_mUniform_sir_shadow, false, modelMatrix)
     gl.uniform1i(dl_sampleruniform_sir_shadow, 0)
     gl.activeTexture(gl.TEXTURE0)
     gl.bindTexture(gl.TEXTURE_2D, dl_tex_sir_shadow)
 
 	gl.drawArrays(gl.TRIANGLE_FAN, 0,4);
 
+	
     gl.bindTexture(gl.TEXTURE_2D, null)
     gl.useProgram(null)
     gl.disable(gl.BLEND)

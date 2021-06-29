@@ -1086,7 +1086,7 @@ function DL_renderChair() {
 	gl.uniform1f(dl_distortionUniform_chair, blackWhiteDistortion)
 	gl.uniform1i(dl_texSamUniform, 0)
 	
-	gl.activeTexture(gl.TEXTURE_0)
+	gl.activeTexture(gl.TEXTURE0)
 	gl.bindTexture(gl.TEXTURE_2D, dl_directorTex_chair)
 	gl.bindVertexArray(dl_vao_chair)
 	gl.uniform1i(dl_isLightUniform, 1)
