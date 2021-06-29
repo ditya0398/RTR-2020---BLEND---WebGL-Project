@@ -74,7 +74,7 @@ var options = {
     fireSpeedVariance: 80.0,
     fireSpeedVarianceSlider: {min:0.0,max:100.0},
   
-    fireDeathSpeed: 0.009,
+    fireDeathSpeed: 0.015,
     fireDeathSpeedSlider: {min: 0.001, max: 0.05},
   
     fireTriangleness: 0.00015,
@@ -83,7 +83,7 @@ var options = {
     fireTextureHue: 0.0,
     fireTextureHueSlider: {min:-180,max:180},
   
-    fireTextureHueVariance: 30.0,
+    fireTextureHueVariance: 80.0,
     fireTextureHueVarianceSlider: {min:0.0,max:180},
   
     fireTextureColorize: true,

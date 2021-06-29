@@ -73,10 +73,23 @@ var ASJ_shininessUniform_pointLight_gauri;
 var ASJ_strengthUniform_pointLight_gauri;
 var ASJ_eyeDirectionUniform_pointLight_gauri;
 var ASJ_attenuationUniform_pointLight_gauri;
+var ASJ_lightPositionUniform_pointLight_gauri_2;
 
 var gr_vbo_normal_table;
 var gr_vbo_normal_bench;
 var gr_vbo_normal_radio;
+
+
+
+var textureKaagazKePhool;
+
+
+
+
+
+var posterX = 3.89;
+var posterY = -0.6;
+var posterZ = -6.099;
 
 function GRInit() {
     // vertex shader
@@ -130,14 +143,17 @@ function GRInit() {
         "uniform float Strength_AJ;" +
         "uniform vec3 EyeDirection_AJ;" +
         "uniform float Attenuation_AJ;" +
+
+        //2nd point light
+        "uniform vec3 LightPosition_2_AJ;" +
         //Akhi in
         "in vec4 Position;" +
         "in vec3 tNormal;" +
         //akhi func
-        "vec4 pointLight(vec3 Normal,vec4 Color)" +
+        "vec4 pointLight(vec3 Normal,vec4 Color,vec3 LightPosition)" +
         "{" +
 
-        "vec3 lightDirection=vec3(Position)-LightPosition_AJ;" +
+        "vec3 lightDirection=vec3(Position)-LightPosition;" +
         "\n" +
         "float lightDistance=length(lightDirection);" +
         "lightDirection= lightDirection / lightDistance;" +
@@ -172,11 +188,13 @@ function GRInit() {
         "color= texture(u_texture_sampler, out_texcoord);" +
         //Akhi Lighting Calculation
         "vec3 Normal_AJ=tNormal;" +
-        "vec4 result;" +
+        "vec4 result_1;" +
+        "vec4 result_2;" +
 
-        "result=pointLight(Normal_AJ,color);" +
+        "result_1=pointLight(Normal_AJ,color,LightPosition_AJ);" +
+        "result_2=pointLight(Normal_AJ,color,LightPosition_2_AJ);" +
 
-        "FragColor =color * result;" +
+        "FragColor =color * (result_1 + result_2 );" +
         "}";
 
     grfragmentShaderObjectTableBench = gl.createShader(gl.FRAGMENT_SHADER);
@@ -229,6 +247,9 @@ function GRInit() {
     ASJ_strengthUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "Strength_AJ");
     ASJ_eyeDirectionUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "EyeDirection_AJ");
     ASJ_attenuationUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "Attenuation_AJ");
+
+    ASJ_lightPositionUniform_pointLight_gauri_2 = gl.getUniformLocation(grshaderProgramObjectTableBench, "LightPosition_2_AJ");
+
 
     // radio 
     var grradioVertices = new Float32Array(
@@ -541,6 +562,22 @@ function GRInit() {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, grtextureAntenna.image);
         gl.bindTexture(gl.TEXTURE_2D, null);
     };
+    
+  //texture for kaagaz ke phool
+  textureKaagazKePhool = gl.createTexture();
+  textureKaagazKePhool.image = new Image();
+  textureKaagazKePhool.image.src = "AdityaResources/KaagazKePhool2.jpg";
+  textureKaagazKePhool.image.onload = function () {
+      gl.bindTexture(gl.TEXTURE_2D, textureKaagazKePhool);
+      //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 2);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureKaagazKePhool.image);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+  };
 
 }
 
@@ -567,6 +604,9 @@ function GRDisplay() {
     var LightColor_AJ = new Float32Array([1.0, 1.0, 1.0]);
     var lightPosition_AJ = view;//new Float32Array([0.0, 1.0, -15 + val_AJ]);
 
+    var lightPosition_AJ_2 = new Float32Array([2.9000000000000012, 0.33199999999999107, -14.299999999999961]);
+
+
     //lightPosition_AJ[2]=
     gl.uniform4fv(ASJ_ambientUniform_pointLight_gauri, Ambient_AJ);
     gl.uniform3fv(ASJ_lightColorUniform_pointLight_gauri, LightColor_AJ);
@@ -575,7 +615,7 @@ function GRDisplay() {
     gl.uniform1f(ASJ_strengthUniform_pointLight_gauri, strength_AJ);
     gl.uniform3fv(ASJ_eyeDirectionUniform_pointLight_gauri, Eye_AJ);
     gl.uniform1f(ASJ_attenuationUniform_pointLight_gauri, attenuation_AJ);
-
+    gl.uniform3fv(ASJ_lightPositionUniform_pointLight_gauri_2, lightPosition_AJ_2);
 
     //************************************************************************************************ radio ********************************************************
     //***************************************************************************************************************************************************************
@@ -1175,9 +1215,38 @@ function GRDisplay() {
 
     gl.bindTexture(gl.TEXTURE_2D, null);
     GRPopFromStack();
-
+    //drawFilmPosters();
     gl.useProgram(null);
 
+}
+
+function drawFilmPosters()
+{
+
+    var modelMatrix = mat4.create();
+   
+    
+    mat4.translate(modelMatrix, modelMatrix, [posterX,posterY, posterZ]);
+    mat4.scale(modelMatrix,modelMatrix,[0.2,0.2,0.2]);
+    mat4.rotateY(modelMatrix, modelMatrix, deg2rad(270.0));
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, modelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, perspectiveMatrix);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, textureKaagazKePhool);
+    gl.uniform1i(grtextureSamplerUniform, 0);
+
+    gl.bindVertexArray(grgVaoBenchTable);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        //  gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
+        //  gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
+    // gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
+    // gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
+    //gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
+    gl.bindVertexArray(null);
+
+    gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
 function GRPushToStack(matrix) {
