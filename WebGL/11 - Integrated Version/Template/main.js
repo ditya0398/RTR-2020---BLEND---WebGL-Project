@@ -60,7 +60,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_0
+var currentScene = scenes.SCENE_2
 
 
 
@@ -132,6 +132,7 @@ function keyDown(event) {
 			SBR_DM_X_ -= 0.1
 			break
 		case 83: //S
+			view[2] += 0.1
 			SBR_DM_Z_ += 0.1
 			//view[1] -= 0.033
 			break
@@ -139,6 +140,7 @@ function keyDown(event) {
 			SBR_DM_X_ += 0.1
 			break
 		case 87: //W
+			view[2] -= 0.1
 			SBR_DM_Z_ -= 0.1
 			//view[1] += 0.033
 			break
@@ -236,7 +238,8 @@ function init() {
 
 // Scene 1
 
-	 initFire();
+	//Something clashing with sir_shadow have to check, commented for now -Deep Lalwani
+	//  initFire);
 	 GRInit()
 	 GRInitRoadside();
 	 initNormalMapRoad()
@@ -351,7 +354,7 @@ function render() {
 		case scenes.SCENE_1:
 
 			
-			 drawFire();
+			//  drawFire();
 			// //	Display_CubeMap()
 			GRDisplay()
 			tejswini_hut_draw()
@@ -362,7 +365,6 @@ function render() {
 			drawModel();
 			ASJ_draw_stove();
 			GRDisplayChaiCup();
-			//dl_render_sir_shadow()
 		break;
 
 		case scenes.SCENE_2:
@@ -375,6 +377,7 @@ function render() {
 			GRDisplayCamera();
 			tvn_script_draw();
 			tvn_drama_draw();
+			dl_render_sir_shadow()
 		break;
 		case scenes.SCENE_3:
 			 displayStarBucksOuter();
