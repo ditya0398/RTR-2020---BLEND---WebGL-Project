@@ -79,6 +79,18 @@ var gr_vbo_normal_table;
 var gr_vbo_normal_bench;
 var gr_vbo_normal_radio;
 
+
+
+var textureKaagazKePhool;
+
+
+
+
+
+var posterX = 3.89;
+var posterY = -0.6;
+var posterZ = -6.099;
+
 function GRInit() {
     // vertex shader
     var grvertexShaderSourceCode =
@@ -550,6 +562,22 @@ function GRInit() {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, grtextureAntenna.image);
         gl.bindTexture(gl.TEXTURE_2D, null);
     };
+    
+  //texture for kaagaz ke phool
+  textureKaagazKePhool = gl.createTexture();
+  textureKaagazKePhool.image = new Image();
+  textureKaagazKePhool.image.src = "AdityaResources/KaagazKePhool2.jpg";
+  textureKaagazKePhool.image.onload = function () {
+      gl.bindTexture(gl.TEXTURE_2D, textureKaagazKePhool);
+      //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 2);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureKaagazKePhool.image);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+  };
 
 }
 
@@ -1187,9 +1215,38 @@ function GRDisplay() {
 
     gl.bindTexture(gl.TEXTURE_2D, null);
     GRPopFromStack();
-
+    //drawFilmPosters();
     gl.useProgram(null);
 
+}
+
+function drawFilmPosters()
+{
+
+    var modelMatrix = mat4.create();
+   
+    
+    mat4.translate(modelMatrix, modelMatrix, [posterX,posterY, posterZ]);
+    mat4.scale(modelMatrix,modelMatrix,[0.2,0.2,0.2]);
+    mat4.rotateY(modelMatrix, modelMatrix, deg2rad(270.0));
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, modelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, perspectiveMatrix);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, textureKaagazKePhool);
+    gl.uniform1i(grtextureSamplerUniform, 0);
+
+    gl.bindVertexArray(grgVaoBenchTable);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        //  gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
+        //  gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
+    // gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
+    // gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
+    //gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
+    gl.bindVertexArray(null);
+
+    gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
 function GRPushToStack(matrix) {
