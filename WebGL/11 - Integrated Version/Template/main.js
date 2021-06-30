@@ -60,7 +60,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_2
+var currentScene = scenes.SCENE_4
 
 
 
@@ -280,6 +280,7 @@ function init() {
 	init_macWindow()
 	initStarbucksOuter();
 	ASJ_init_laptop()
+	GRInitBluetooth();
 	
 	initEndScreen()
 	
@@ -389,6 +390,7 @@ function render() {
 			display_InteriorStarbucks();
 			ASJ_draw_laptop();
 			render_macWindow()
+			GRDisplayBluetooth();
 		break;
 		case scenes.SCENE_5:
 			renderEndScreen()
@@ -648,6 +650,7 @@ function uninit() {
 	GRUninitializeChaiCup();
 	GRUninitializeMic();
 	GRUninitializeCamera();
+	GRUninitializeBluetooth();
 	gl.deleteVertexArray(vao_footpath)
 	gl.deleteBuffer(vbo_footpath)
 	gl.deleteProgram(program)
