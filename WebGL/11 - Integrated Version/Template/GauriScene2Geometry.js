@@ -50,6 +50,7 @@ var ASJ_attenuationUniform_spotLight_gauri;
 var ASJ_coneDirUniform_gauri;
 var ASJ_spotCosCutoffUniform_gauri;
 var ASJ_spotExponentUniform_gauri;
+var gFlagSpotLightUniform;
 
 function GRInitScene2()
 {
@@ -119,7 +120,7 @@ function GRInitScene2()
          "uniform vec3 ConeDirection;" +
          "uniform float SpotCosCutoff;" +
          "uniform float SpotExponent;" +
-
+         "uniform mediump int spotLightFlag;" +
          "vec4 res;" +
         // "vec3 normalizedConeDirection;" +
          //akhi function
@@ -176,7 +177,14 @@ function GRInitScene2()
          "FragColor = texture(u_texture_sampler, out_texcoord) * u_color;" +
          "result_spotLight=spotLight(Normal_AJ,FragColor);"+
      "vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
-     "FragColor =  vec4(mix(vec3(FragColor), gray, distortion), 1.0) * result_spotLight;" +
+     "if(spotLightFlag == 1) " +
+     "{" +
+        "FragColor =  vec4(mix(vec3(FragColor), gray, distortion), 1.0) * result_spotLight;" +
+     "}" +
+     "else" +
+     "{" +
+        "FragColor =  vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
+     "}"+
      "}";
   //  vec4(mix(vec3(FragColor), gray, distortion), 1.0) + result_spotLight
      grfragmentShaderObjectStage = gl.createShader(gl.FRAGMENT_SHADER);
@@ -242,7 +250,7 @@ function GRInitScene2()
     ASJ_coneDirUniform_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "ConeDirection");
     ASJ_spotCosCutoffUniform_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "SpotCosCutoff");
     ASJ_spotExponentUniform_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "SpotExponent");
-
+    gFlagSpotLightUniform = gl.getUniformLocation(grshaderProgramObjectStage, "spotLightFlag");
  
      var grstageTexcoords = new Float32Array(
          [
@@ -551,6 +559,8 @@ function GRStage()
 
 
     gl.uniform1f(grgDistortionUniformStage, blackWhiteDistortion)
+    gl.uniform1i(gFlagSpotLightUniform, 0)
+
 
     var grmodelMatrix = mat4.create();
     var grviewMatrix = mat4.create();
@@ -621,7 +631,7 @@ function GRStage()
     gl.bindTexture(gl.TEXTURE_2D, null);
 
 
-
+    gl.uniform1i(gFlagSpotLightUniform, 1)
     //Floor
     grmodelMatrix = mat4.create();
     grviewMatrix = mat4.create();
@@ -659,7 +669,7 @@ function GRStage()
 
     gl.bindTexture(gl.TEXTURE_2D, null);
 
-
+    gl.uniform1i(gFlagSpotLightUniform, 0)
 
     //Stage roof
     grmodelMatrix = mat4.create();
