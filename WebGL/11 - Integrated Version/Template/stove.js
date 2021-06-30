@@ -132,7 +132,7 @@ function ASJ_init_stove() {
 		"vec4 color;" +
 		"if(flag==1)" +
 		"{" +
-		"color=vec4(0, 0, 0,0.9);" +
+		"color=vec4(0, 0, 0,1);" +
 		"}" +
 		"else" +
 		"{" +
@@ -397,7 +397,7 @@ function ASJ_draw_stove() {
 
 	//3side cube
 	mat4.translate(cover, temp, [0.8, -0.3, -0.8]);
-	mat4.scale(cover, cover, [0.85, 1, 0.65]);
+	mat4.scale(cover, cover, [0.85, 1, 0.7]);
 
 	gl.uniformMatrix4fv(modelMatrixUniform_stove, false, cover);
 	gl.bindVertexArray(vao_square_stove);
@@ -440,6 +440,8 @@ function ASJ_draw_stove() {
 
 	stack_stove.push(temp);
 
+	//L1
+	mat4.translate(scaleMatrix, scaleMatrix, [0, 0.0, -0.4]);
 
 	mat4.scale(scaleMatrix, scaleMatrix, [0.05, 0.5, 0.05]);
 	mat4.multiply(scaleMatrix, temp, scaleMatrix);
@@ -455,7 +457,7 @@ function ASJ_draw_stove() {
 	gl.bindVertexArray(null);
 
 	//0
-	mat4.translate(scaleMatrix, scaleMatrix, [16.8, 1, 0]);
+	mat4.translate(scaleMatrix, scaleMatrix, [16.8, 0, 0]); //16.8, 0, 0
 	mat4.rotateZ(scaleMatrix, scaleMatrix, degTwoRadians(-90));
 	mat4.scale(scaleMatrix, scaleMatrix, [0.05, 16, 1]);
 	gl.uniformMatrix4fv(modelMatrixUniform_stove, false, scaleMatrix);
@@ -474,7 +476,7 @@ function ASJ_draw_stove() {
 	stack_stove.push(temp);
 	//1
 	scaleMatrix = mat4.create();
-	mat4.translate(temp, temp, [0, 0.48, 0]);
+	mat4.translate(temp, temp, [0, 0.48, -0.4]);//0, 0.48, 0
 	mat4.rotateZ(temp, temp, degTwoRadians(-120));
 	mat4.translate(temp, temp, [0, 0.48, 0]);
 	mat4.scale(scaleMatrix, scaleMatrix, [0.05, 0.5, 0.05]);

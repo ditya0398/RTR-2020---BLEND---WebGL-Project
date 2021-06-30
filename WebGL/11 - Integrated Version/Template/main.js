@@ -167,11 +167,11 @@ function keyDown(event) {
 			break
 
 		case 84: //Y
-		posterY += 0.05
+		TeapotTransY += 0.05
 			break
 
 		case 85: //U
-		posterY -= 0.05
+		TeapotTransY -= 0.05
 			break
 
 		case 100: //4

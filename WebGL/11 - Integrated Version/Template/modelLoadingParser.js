@@ -72,7 +72,7 @@ var vbo_cube_tp_modelLoading;
 var modelLoadingProgramObject;
 
 var TeapotTransX = 2.62;
-var TeapotTransY = 0.3;
+var TeapotTransY = 0.49999999999999994;
 var TeapotTransZ = -15.8;
 var TeapotScale = 0.1199999999999994;
 
