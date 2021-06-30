@@ -35,24 +35,45 @@ var grTexCoordPowerUnifrom;
 
 var grstackMatrix = [];
 var grmatrixPosition = -1;
+var gr_vbo_normal_stage;
+var gr_vbo_normal_stageWall;
+
+//AKHI
+var ASJ_ambientUniform_spotLight_gauri;
+var ASJ_lightColorUniform_spotLight_gauri;
+var ASJ_lightPositionUniform_spotLight_gauri;
+var ASJ_shininessUniform_spotLight_gauri;
+var ASJ_strengthUniform_spotLight_gauri;
+var ASJ_eyeDirectionUniform_spotLight_gauri;
+var ASJ_attenuationUniform_spotLight_gauri;
+
+var ASJ_coneDirUniform_gauri;
+var ASJ_spotCosCutoffUniform_gauri;
+var ASJ_spotExponentUniform_gauri;
 
 function GRInitScene2()
 {
      // vertex shader
-     var grvertexShaderSourceCode = 
-     "#version 300 es" +
-     "\n" +
-     "in vec4 vPosition;" +
-     "in vec2 vTexCoord;" +
-     "uniform mat4 u_model_matrix;" +
-     "uniform mat4 u_view_matrix;" +
-     "uniform mat4 u_projection_matrix;" +
-     "uniform vec2 u_texCoordPower;" +
-     "out vec2 out_texcoord;" +
-     "void main(void)" +
-     "{" +
-     "gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * vPosition;" +
-     "out_texcoord = vTexCoord * u_texCoordPower;" +
+    var grvertexShaderSourceCode =
+        "#version 300 es" +
+        "\n" +
+        "in vec4 vPosition;" +
+        "in vec2 vTexCoord;" +
+        "in vec3 vNormal;" +
+        "uniform mat4 u_model_matrix;" +
+        "uniform mat4 u_view_matrix;" +
+        "uniform mat4 u_projection_matrix;" +
+        "uniform vec2 u_texCoordPower;" +
+        "out vec2 out_texcoord;" +
+        //akhi out
+        "out vec4 Position;" +
+        "out vec3 tNormal;" +
+        "void main(void)" +
+        "{" +
+        "gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * vPosition;" +
+        "out_texcoord = vTexCoord * u_texCoordPower;" +
+        "Position=u_model_matrix * vPosition;" +
+        "tNormal=normalize(mat3(u_model_matrix )* vNormal);"+
      "}";
  
      grvertexShaderObjectStage = gl.createShader(gl.VERTEX_SHADER);
@@ -63,7 +84,7 @@ function GRInitScene2()
          var error = gl.getShaderInfoLog(grvertexShaderObjectStage);
          if(error.length > 0)
          {
-             alert(error);
+             alert("gauri vertex \n"+error);
              uninitialize();
          }
          alert("in compile vertex shader error");
@@ -78,14 +99,86 @@ function GRInitScene2()
      "uniform highp sampler2D u_texture_sampler;" +
      "uniform vec4 u_color;" +
      "uniform float distortion;" +
-     "out vec4 FragColor;" +
+         "out vec4 FragColor;" +
+         //akhi in
+         "in vec4 Position;" +
+         "in vec3 tNormal;" +
+
+         //akhi uniform
+         "uniform vec4 Ambient;" +
+         "uniform vec3 LightColor;" +
+         "uniform vec3 LightPosition;" +
+         "uniform float Shininess;" +
+         "uniform float Strength;" +
+
+         "uniform vec3 EyeDirection;" +
+         "uniform float ConstantAttenuation;" +
+         "float linearA=1.0f;" +
+         "float quadraticA=0.5f;" +
+
+         "uniform vec3 ConeDirection;" +
+         "uniform float SpotCosCutoff;" +
+         "uniform float SpotExponent;" +
+
+         "vec4 res;" +
+        // "vec3 normalizedConeDirection;" +
+         //akhi function
+
+         "vec4  spotLight(vec3 Normal,vec4 Color){" +
+
+         "vec3 lightDirection=LightPosition-vec3(Position);" +
+         "float lightDistance=length(lightDirection);" +
+
+         "lightDirection=normalize(lightDirection);" +
+
+         "float AttenuaFactor=1.0 / (ConstantAttenuation + linearA*lightDistance + quadraticA * lightDistance * lightDistance);" +
+         "vec3 normalizedConeDirection=normalize(ConeDirection);" +
+         "float spotCos=dot(lightDirection,-normalizedConeDirection);" +
+
+         "vec3 HalfVector=normalize(lightDirection+EyeDirection);" +
+
+
+         "float diffuse=max(0.0f,dot(Normal,lightDirection));" +
+         "float specular=max(0.0f,dot(Normal,HalfVector));" +
+
+
+         "if(spotCos<SpotCosCutoff)" +
+         "{" +
+         "AttenuaFactor=0.0;" +
+         "}" +
+         "else" +
+         "{" +
+         "AttenuaFactor=AttenuaFactor*pow(spotCos,SpotExponent);" +
+         "}" +
+
+         "if(diffuse==0.0)" +
+         "{" +
+         "specular=0.0f;" +
+         "}" +
+         "else" +
+         "{" +
+         "specular=pow(specular,Shininess)*Strength;" +
+         "}" +
+
+         "vec4 scatteredLight=Ambient + vec4(LightColor*diffuse*AttenuaFactor,0.0);" +
+         "vec4 ReflectedLight=vec4(LightColor * specular *AttenuaFactor,0.0);" +
+
+         "res=min(Color * scatteredLight + ReflectedLight,vec4(1.0));" +
+         "return res;"+
+         "}"+
+        
      "void main(void)" +
-     "{" +
-     "FragColor = texture(u_texture_sampler, out_texcoord) * u_color;" +
+         "{" +
+         //Akhi Lighting Calculation
+         "vec3 Normal_AJ=tNormal;" +
+         "vec4 result_spotLight;" +
+
+         "FragColor = texture(u_texture_sampler, out_texcoord) * u_color;" +
+         "result_spotLight=spotLight(Normal_AJ,FragColor);"+
      "vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
-     "FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
+     "FragColor =  vec4(mix(vec3(FragColor), gray, distortion), 1.0) * result_spotLight;" +
      "}";
- 
+  //  vec4(mix(vec3(FragColor), gray, distortion), 1.0) + result_spotLight
      grfragmentShaderObjectStage = gl.createShader(gl.FRAGMENT_SHADER);
      gl.shaderSource(grfragmentShaderObjectStage, grfragmentShaderSourceCode);
      gl.compileShader(grfragmentShaderObjectStage);
@@ -94,7 +187,7 @@ function GRInitScene2()
          var error = gl.getShaderInfoLog(grfragmentShaderObjectStage);
          if(error.length > 0)
          {
-             alert(error);
+             alert("gauri fragment\n"+error);
              uninitialize(); 
          }
          alert("in compile fragment shader error");
@@ -107,7 +200,8 @@ function GRInitScene2()
      gl.attachShader(grshaderProgramObjectStage, grfragmentShaderObjectStage);
      // pre-linking
      gl.bindAttribLocation(grshaderProgramObjectStage, macros.AMC_ATTRIB_POSITION, "vPosition");
-     gl.bindAttribLocation(grshaderProgramObjectStage, macros.AMC_ATTRIB_TEXCOORD, "vTexCoord");
+    gl.bindAttribLocation(grshaderProgramObjectStage, macros.AMC_ATTRIB_TEXCOORD, "vTexCoord");
+    gl.bindAttribLocation(grshaderProgramObjectStage, macros.AMC_ATTRIB_NORMAL, "vNormal");
  
      // linking
      gl.linkProgram(grshaderProgramObjectStage);
@@ -133,7 +227,22 @@ function GRInitScene2()
      grColorUniform = gl.getUniformLocation(grshaderProgramObjectStage, "u_color");
      grTexCoordPowerUnifrom = gl.getUniformLocation(grshaderProgramObjectStage, "u_texCoordPower");
      grgDistortionUniformStage = gl.getUniformLocation(grshaderProgramObjectStage, "distortion");
-     
+
+    //akhi uniform
+
+    //Akhi unifrom
+    ASJ_ambientUniform_spotLight_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "Ambient");
+    ASJ_lightColorUniform_spotLight_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "LightColor");
+    ASJ_lightPositionUniform_spotLight_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "LightPosition");
+    ASJ_shininessUniform_spotLight_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "Shininess");
+    ASJ_strengthUniform_spotLight_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "Strength");
+    ASJ_eyeDirectionUniform_spotLight_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "EyeDirection");
+    ASJ_attenuationUniform_spotLight_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "Attenuation");
+
+    ASJ_coneDirUniform_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "ConeDirection");
+    ASJ_spotCosCutoffUniform_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "SpotCosCutoff");
+    ASJ_spotExponentUniform_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "SpotExponent");
+
  
      var grstageTexcoords = new Float32Array(
          [
@@ -202,7 +311,41 @@ function GRInitScene2()
             1.0, 1.0
         ]
     );
- 
+
+
+    var grcubeNormal = new Float32Array([0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+        //RIGHT FACE
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        //BACK FACE
+        0.0, 0.0, -1.0,
+        0.0, 0.0, -1.0,
+        0.0, 0.0, -1.0,
+        0.0, 0.0, -1.0,
+
+        //LEFT FACE
+        -1.0, 0.0, 0.0,
+        -1.0, 0.0, 0.0,
+        -1.0, 0.0, 0.0,
+        -1.0, 0.0, 0.0,
+        //TOP FACE
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+
+
+        //BOTTOM FACE
+        0.0, -1.0, 0.0,
+        0.0, -1.0, 0.0,
+        0.0, -1.0, 0.0,
+        0.0, -1.0, 0.0]);
+
      var grcubeVertices = new Float32Array(
          [
              1.0, 1.0, 1.0,
@@ -253,7 +396,17 @@ function GRInitScene2()
      gl.bufferData(gl.ARRAY_BUFFER, grstageTexcoords, gl.STATIC_DRAW);
      gl.vertexAttribPointer(macros.AMC_ATTRIB_TEXCOORD, 2, gl.FLOAT, false, 0, 0);
      gl.enableVertexAttribArray(macros.AMC_ATTRIB_TEXCOORD);
-     gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    //normal
+    gr_vbo_normal_stage = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, gr_vbo_normal_stage);
+    gl.bufferData(gl.ARRAY_BUFFER, grcubeNormal, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(macros.AMC_ATTRIB_NORMAL, 3, gl.FLOAT,
+        false, 0, 0);
+    gl.enableVertexAttribArray(macros.AMC_ATTRIB_NORMAL);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
      
      gl.bindVertexArray(null);
 
@@ -274,7 +427,16 @@ function GRInitScene2()
      gl.bufferData(gl.ARRAY_BUFFER, grcubeTexcoords, gl.STATIC_DRAW);
      gl.vertexAttribPointer(macros.AMC_ATTRIB_TEXCOORD, 2, gl.FLOAT, false, 0, 0);
      gl.enableVertexAttribArray(macros.AMC_ATTRIB_TEXCOORD);
-     gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    //normal
+    gr_vbo_normal_stageWall= gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, gr_vbo_normal_stageWall);
+    gl.bufferData(gl.ARRAY_BUFFER, grcubeNormal, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(macros.AMC_ATTRIB_NORMAL, 3, gl.FLOAT,
+        false, 0, 0);
+    gl.enableVertexAttribArray(macros.AMC_ATTRIB_NORMAL);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
      
      gl.bindVertexArray(null);
 
@@ -357,6 +519,37 @@ function GRDisplayScene2()
 
 function GRStage()
 {
+   //akhi
+    var Ambient = new Float32Array([0.2, 0.2, 0.2, 1.0]);
+    var LightColor = new Float32Array([1.0, 1.0, 1.0]);
+    var lightPosition = new Float32Array([0.0, 25.5, -13.2]);
+  // lightPosition[2] = val;
+    var Eye = new Float32Array([0, 1.2130000000002783, 2.619999999998648]);
+    var SpotDirection = new Float32Array([0.0, -1.0, 0]);
+
+    var shininess = 5.0;
+    var strength = parseFloat(400);
+    var attenuation = parseFloat(0.50);
+
+    var spotExponent = 142.0;
+    var spotCosCutOff = parseFloat(Math.cos(3.14159 /32 ));
+
+    gl.uniform4fv(ASJ_ambientUniform_spotLight_gauri, Ambient);
+
+    gl.uniform3fv(ASJ_lightColorUniform_spotLight_gauri, LightColor);
+    gl.uniform3fv(ASJ_lightPositionUniform_spotLight_gauri, lightPosition);
+    gl.uniform1f(ASJ_shininessUniform_spotLight_gauri, shininess);
+    gl.uniform1f(ASJ_strengthUniform_spotLight_gauri, strength);
+
+    gl.uniform3fv(ASJ_eyeDirectionUniform_spotLight_gauri, Eye);
+    gl.uniform1f(ASJ_attenuationUniform_spotLight_gauri, attenuation);
+
+
+    gl.uniform3fv(ASJ_coneDirUniform_gauri, SpotDirection);
+    gl.uniform1f(ASJ_spotExponentUniform_gauri, spotExponent);
+    gl.uniform1f(ASJ_spotCosCutoffUniform_gauri, spotCosCutOff);
+
+
     gl.uniform1f(grgDistortionUniformStage, blackWhiteDistortion)
 
     var grmodelMatrix = mat4.create();
@@ -456,12 +649,12 @@ function GRStage()
     gl.uniform1i(grgtextureSamplerUniformStage, 0);
 
     gl.bindVertexArray(grgVaoStage);
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-    gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
-    gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
-    gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
+    //gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    //gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
+    //gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
+    //gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
     gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
-    gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
+   // gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
 
     gl.bindTexture(gl.TEXTURE_2D, null);

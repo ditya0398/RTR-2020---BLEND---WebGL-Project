@@ -24,6 +24,20 @@ var dl_trans_z_chair = -11.5
 
 var dl_scale_chair = 2.21
 
+//AKHI
+var ASJ_ambientUniform_spotLight_chair;
+var ASJ_lightColorUniform_spotLight_chair;
+var ASJ_lightPositionUniform_spotLight_chair;
+var ASJ_shininessUniform_spotLight_chair;
+var ASJ_strengthUniform_spotLight_chair;
+var ASJ_eyeDirectionUniform_spotLight_chair;
+var ASJ_attenuationUniform_spotLight_chair;
+
+var ASJ_coneDirUniform_chair;
+var ASJ_spotCosCutoffUniform_chair;
+var ASJ_spotExponentUniform_chair;
+
+
 function DL_getRotatedVertices(angle, axis, povars) {
 	if(axis == 0) {
 		return [
@@ -941,14 +955,20 @@ function DL_initChair() {
 	"out vec3 vs_N;\n"+
 	"out vec3 vs_L;\n"+
 	"out vec3 vs_V;\n"+
-	"out vec2 vs_texCoord;\n"+
+		"out vec2 vs_texCoord;\n" +
+		//akhi out
+		"out vec4 Position;" +
+		"out vec3 tNormal;" +
+
 	"void main(void) {\n"+
 	"gl_Position = u_projMat * u_vMat * u_mMat * vPos;\n"+
 	"vec4 P = u_vMat * u_mMat * vPos;\n"+
 	"vs_N = mat3(u_vMat * u_mMat) * vNormal;\n"+
 	"vs_L = vec3(lightPosition - P);\n"+
 	"vs_V = -P.xyz;\n"+
-	"vs_texCoord = vec2(vTexCoord.x, 1.0 - vTexCoord.y);\n"+
+		"vs_texCoord = vec2(vTexCoord.x, 1.0 - vTexCoord.y);\n" +
+		"Position=u_mMat * vPos;" +
+		"tNormal=normalize(mat3(u_mMat )* vNormal);" +
 	"}\n"
 
 	var fragSrc = 
@@ -968,9 +988,82 @@ function DL_initChair() {
 	"uniform float distortion;" +
     "uniform bool isLight;\n"+
 	"uniform sampler2D texSam;\n"+
-	"out vec4 FragColor;\n"+
-	"void main(void) {\n"+
-	"if(isLight) {\n"+
+		"out vec4 FragColor;\n" +
+
+		//akhi in
+		"in vec4 Position;" +
+		"in vec3 tNormal;" +
+		//akhi uniform
+		"uniform vec4 Ambient;" +
+		"uniform vec3 LightColor;" +
+		"uniform vec3 LightPosition;" +
+		"uniform float Shininess;" +
+		"uniform float Strength;" +
+
+		"uniform vec3 EyeDirection;" +
+		"uniform float ConstantAttenuation;" +
+		"float linearA=1.0f;" +
+		"float quadraticA=0.5f;" +
+
+		"uniform vec3 ConeDirection;" +
+		"uniform float SpotCosCutoff;" +
+		"uniform float SpotExponent;" +
+
+		"vec4 res;" +
+		// "vec3 normalizedConeDirection;" +
+		//akhi function
+
+		"vec4  spotLight(vec3 Normal,vec4 Color){" +
+
+		"vec3 lightDirection=LightPosition-vec3(Position);" +
+		"float lightDistance=length(lightDirection);" +
+
+		"lightDirection=normalize(lightDirection);" +
+
+		"float AttenuaFactor=1.0 / (ConstantAttenuation + linearA*lightDistance + quadraticA * lightDistance * lightDistance);" +
+		"vec3 normalizedConeDirection=normalize(ConeDirection);" +
+		"float spotCos=dot(lightDirection,-normalizedConeDirection);" +
+
+		"vec3 HalfVector=normalize(lightDirection+EyeDirection);" +
+
+
+		"float diffuse=max(0.0f,dot(Normal,lightDirection));" +
+		"float specular=max(0.0f,dot(Normal,HalfVector));" +
+
+
+		"if(spotCos<SpotCosCutoff)" +
+		"{" +
+		"AttenuaFactor=0.0;" +
+		"}" +
+		"else" +
+		"{" +
+		"AttenuaFactor=AttenuaFactor*pow(spotCos,SpotExponent);" +
+		"}" +
+
+		"if(diffuse==0.0)" +
+		"{" +
+		"specular=0.0f;" +
+		"}" +
+		"else" +
+		"{" +
+		"specular=pow(specular,Shininess)*Strength;" +
+		"}" +
+
+		"vec4 scatteredLight=Ambient + vec4(LightColor*diffuse*AttenuaFactor,0.0);" +
+		"vec4 ReflectedLight=vec4(LightColor * specular *AttenuaFactor,0.0);" +
+
+		"res=min(Color * scatteredLight + ReflectedLight,vec4(1.0));" +
+		"return res;" +
+		"}" +
+
+		//main
+		"void main(void) {\n" +
+		"vec3 Normal_AJ=tNormal;" +
+		"vec4 result_spotLight;" +
+		"if(isLight) {\n" +
+		//Akhi Lighting Calculation
+		
+
 	"vec3 N = normalize(vs_N);\n"+
 	"vec3 L = normalize(vs_L);\n"+
 	"vec3 V = normalize(vs_V);\n"+
@@ -982,9 +1075,12 @@ function DL_initChair() {
 	"FragColor.w = 1.0;\n"+
 	"} else {\n"+
 	"FragColor = texture(texSam, vs_texCoord);\n"+
-	"}\n"+
+		"}\n" +
+		//akhi
+		"result_spotLight=spotLight(Normal_AJ,FragColor);" +
+
 	"vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
-	"FragColor = vec4(mix(vec3(FragColor), gray, distortion), FragColor.w);" +
+	"FragColor = vec4(mix(vec3(FragColor), gray, distortion), FragColor.w)*result_spotLight;" +
     "}\n"
 
 	var vertShader = gl.createShader(gl.VERTEX_SHADER)
@@ -1000,7 +1096,7 @@ function DL_initChair() {
 	gl.compileShader(fragShader)
 	if(!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)) {
 		var error = gl.getShaderInfoLog(fragShader)
-		alert("frag" + error)
+		alert("frag\n" + error)
 	}
 
 	dl_program_chair = gl.createProgram()
@@ -1029,6 +1125,20 @@ function DL_initChair() {
 	dl_distortionUniform_chair = gl.getUniformLocation(dl_program_chair, "distortion")
 	dl_texSamUniform = gl.getUniformLocation(dl_program_chair, "texSam")
 	dl_isLightUniform = gl.getUniformLocation(dl_program_chair, "isLight")
+
+	//Akhi unifrom
+	ASJ_ambientUniform_spotLight_chair = gl.getUniformLocation(dl_program_chair, "Ambient");
+	ASJ_lightColorUniform_spotLight_chair = gl.getUniformLocation(dl_program_chair, "LightColor");
+	ASJ_lightPositionUniform_spotLight_chair = gl.getUniformLocation(dl_program_chair, "LightPosition");
+	ASJ_shininessUniform_spotLight_chair = gl.getUniformLocation(dl_program_chair, "Shininess");
+	ASJ_strengthUniform_spotLight_chair = gl.getUniformLocation(dl_program_chair, "Strength");
+	ASJ_eyeDirectionUniform_spotLight_chair = gl.getUniformLocation(dl_program_chair, "EyeDirection");
+	ASJ_attenuationUniform_spotLight_chair = gl.getUniformLocation(dl_program_chair, "Attenuation");
+
+	ASJ_coneDirUniform_chair = gl.getUniformLocation(dl_program_chair, "ConeDirection");
+	ASJ_spotCosCutoffUniform_chair = gl.getUniformLocation(dl_program_chair, "SpotCosCutoff");
+	ASJ_spotExponentUniform_chair = gl.getUniformLocation(dl_program_chair, "SpotExponent");
+
 	
 	gl.detachShader(dl_program_chair, vertShader)
 	gl.deleteShader(vertShader)
@@ -1066,6 +1176,41 @@ function DL_renderChair() {
 	gl.useProgram(dl_program_chair)
 	gl.enable(gl.BLEND)
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+
+
+
+	//akhi
+	var Ambient = new Float32Array([0.2, 0.2, 0.2, 1.0]);
+	var LightColor = new Float32Array([1.0, 1.0, 1.0]);
+	var lightPosition = new Float32Array([0.0, 20.5, -10.5]);
+	// lightPosition[2] = val;
+	var Eye = new Float32Array([0, 1.2130000000002783, 1.619999999998648]);
+	var SpotDirection = new Float32Array([0.0, -1.0, 0]);
+
+	var shininess = 5.0;
+	var strength = parseFloat(400);
+	var attenuation = parseFloat(0.50);
+
+	var spotExponent = 142.0;
+	var spotCosCutOff = parseFloat(Math.cos(3.14159 / 32));
+
+	gl.uniform4fv(ASJ_ambientUniform_spotLight_chair, Ambient);
+
+	gl.uniform3fv(ASJ_lightColorUniform_spotLight_chair, LightColor);
+	gl.uniform3fv(ASJ_lightPositionUniform_spotLight_chair, lightPosition);
+	gl.uniform1f(ASJ_shininessUniform_spotLight_chair, shininess);
+	gl.uniform1f(ASJ_strengthUniform_spotLight_chair, strength);
+
+	gl.uniform3fv(ASJ_eyeDirectionUniform_spotLight_chair, Eye);
+	gl.uniform1f(ASJ_attenuationUniform_spotLight_chair, attenuation);
+
+
+	gl.uniform3fv(ASJ_coneDirUniform_chair, SpotDirection);
+	gl.uniform1f(ASJ_spotExponentUniform_chair, spotExponent);
+	gl.uniform1f(ASJ_spotCosCutoffUniform_chair, spotCosCutOff);
+
+	//akhi end
+
 	
 	var mMat = mat4.create()
 	mat4.translate(mMat, mMat, [dl_trans_x_chair, dl_trans_y_chair, dl_trans_z_chair])
@@ -1086,7 +1231,7 @@ function DL_renderChair() {
 	gl.uniform1f(dl_distortionUniform_chair, blackWhiteDistortion)
 	gl.uniform1i(dl_texSamUniform, 0)
 	
-	gl.activeTexture(gl.TEXTURE0)
+	gl.activeTexture(gl.TEXTURE_0)
 	gl.bindTexture(gl.TEXTURE_2D, dl_directorTex_chair)
 	gl.bindVertexArray(dl_vao_chair)
 	gl.uniform1i(dl_isLightUniform, 1)
