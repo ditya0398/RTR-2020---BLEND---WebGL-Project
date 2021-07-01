@@ -74,6 +74,7 @@ var ASJ_strengthUniform_pointLight_gauri,ASJ_strengthUniform_pointLight_gauri1;
 var ASJ_eyeDirectionUniform_pointLight_gauri,ASJ_eyeDirectionUniform_pointLight_gauri1;
 var ASJ_attenuationUniform_pointLight_gauri,ASJ_attenuationUniform_pointLight_gauri1;
 var ASJ_lightPositionUniform_pointLight_gauri_2;
+var ASJ_lightPositionUniform_pointLight_gauri_3;
 
 var gr_vbo_normal_table;
 var gr_vbo_normal_bench;
@@ -153,6 +154,9 @@ function GRInit() {
         "uniform vec3 EyeDirection_AJ1;" +
         "uniform float Attenuation_AJ1;" +
         "uniform vec3 LightPosition_2_AJ;" +
+
+        //3rd
+        "uniform vec3 LightPosition_3_AJ;" +
         //Akhi in
         "in vec4 Position;" +
         "in vec3 tNormal;" +
@@ -232,11 +236,13 @@ function GRInit() {
         "vec3 Normal_AJ=tNormal;" +
         "vec4 result_1;" +
         "vec4 result_2;" +
+        "vec4 result_3;" +
 
         "result_1=pointLight(Normal_AJ,color,LightPosition_AJ);" +
         "result_2=pointLight2(Normal_AJ,color,LightPosition_2_AJ);" +
+        "result_3=pointLight2(Normal_AJ,color,LightPosition_3_AJ);" +
 
-        "FragColor =color * (result_1 + result_2 );" +
+        "FragColor =color * (result_1 + result_2 + result_3 );" +
         "}";
 
     grfragmentShaderObjectTableBench = gl.createShader(gl.FRAGMENT_SHADER);
@@ -299,6 +305,7 @@ function GRInit() {
     ASJ_eyeDirectionUniform_pointLight_gauri1 = gl.getUniformLocation(grshaderProgramObjectTableBench, "EyeDirection_AJ1");
     ASJ_attenuationUniform_pointLight_gauri1 = gl.getUniformLocation(grshaderProgramObjectTableBench, "Attenuation_AJ1");
 
+    ASJ_lightPositionUniform_pointLight_gauri_3 = gl.getUniformLocation(grshaderProgramObjectTableBench, "LightPosition_3_AJ");
 
     // radio 
     var grradioVertices = new Float32Array(
@@ -615,7 +622,7 @@ function GRInit() {
   //texture for kaagaz ke phool
   textureKaagazKePhool = gl.createTexture();
   textureKaagazKePhool.image = new Image();
-  textureKaagazKePhool.image.src = "AdityaResources/KaagazKePhool2.jpg";
+  textureKaagazKePhool.image.src = "AdityaResources/KaagazKePhoolWithFrame.jpg";
   textureKaagazKePhool.image.onload = function () {
       gl.bindTexture(gl.TEXTURE_2D, textureKaagazKePhool);
       //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
@@ -661,6 +668,9 @@ function GRDisplay() {
     var Ambient_AJ1 = new Float32Array([0.0, 0.0, 0.0, 1.0]);
     var LightColor_AJ1 = new Float32Array([1.0, 1.0, 1.0]);
 
+
+    var lightPosition_AJ_3 = new Float32Array([posterX - 3.0,posterY, posterZ]);
+
     //lightPosition_AJ[2]=
     gl.uniform4fv(ASJ_ambientUniform_pointLight_gauri, Ambient_AJ);
     gl.uniform3fv(ASJ_lightColorUniform_pointLight_gauri, LightColor_AJ);
@@ -678,6 +688,9 @@ function GRDisplay() {
     gl.uniform1f(ASJ_strengthUniform_pointLight_gauri1, strength_AJ1);
     gl.uniform3fv(ASJ_eyeDirectionUniform_pointLight_gauri1, Eye_AJ1);
     gl.uniform1f(ASJ_attenuationUniform_pointLight_gauri1, attenuation_AJ1);
+
+
+    gl.uniform3fv(ASJ_lightPositionUniform_pointLight_gauri_3, lightPosition_AJ_3);
 
     //************************************************************************************************ radio ********************************************************
     //***************************************************************************************************************************************************************
@@ -1277,7 +1290,7 @@ function GRDisplay() {
 
     gl.bindTexture(gl.TEXTURE_2D, null);
     GRPopFromStack();
-    //drawFilmPosters();
+    drawFilmPosters();
     gl.useProgram(null);
 
 }

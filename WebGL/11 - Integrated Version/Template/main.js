@@ -61,7 +61,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_0
+var currentScene = scenes.SCENE_1
 
 
 
