@@ -19,6 +19,14 @@ var texTeacherMaam_end
 var texTeacherPradnyaMaam_end
 var texAstromedicomp_end
 var texPresents_end
+var texSpecialEffectTitle_end
+var texSpecialEffect1_end
+var texSpecialEffect2_end
+var texSpecialEffect3_end
+var texSpecialEffect4_end
+var texSpecialEffect5_end
+var texSpecialEffect6_end
+var texSpecialEffect7_end
 var mvUniform_end
 var projUniform_end
 var samplerUniform_end
@@ -73,6 +81,11 @@ var dl_rot_member6_y_end = -Math.PI * 4.0
 var dl_trans_teacher_y = -2.0
 var dl_rot_teacher_x = Math.PI * 8.0
 
+var dl_effectsTitle_trans_z = -10.0
+var dl_effectsRigth_trans_x = 2.6
+var dl_effectsLeft_trans_x = -2.6
+var dl_effects_trans_y = 0.0
+
 var rot_end = 0.0
 
 function createFontTexture(font, color, str) {
@@ -84,7 +97,7 @@ function createFontTexture(font, color, str) {
 		console.log("Context Not Found")
 	}
 
-	context.fillStyle = "rgba(0.0, 0, 0, 0.0)"
+	context.fillStyle = "rgba(0, 0, 0, 1.0)"
 	context.fillRect(0, 0, textCanvas.width, textCanvas.height)
 	context.textAlign = "center"
 	context.textBaseline = "middle"
@@ -284,6 +297,69 @@ function initEndScreen() {
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("90px Fonesia Bold", "white", "presents..."))
 	gl.generateMipmap(gl.TEXTURE_2D)
 
+	texSpecialEffectTitle_end = gl.createTexture()
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffectTitle_end)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("70px Liberation Serif", "white", "Special Effects"))
+	gl.generateMipmap(gl.TEXTURE_2D)
+
+	texSpecialEffect1_end = gl.createTexture()
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect1_end)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("50px Galaxy Monkey", "white", "Desaturation"))
+	gl.generateMipmap(gl.TEXTURE_2D)
+
+	texSpecialEffect2_end = gl.createTexture()
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect2_end)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("50px Galaxy Monkey", "white", "Model Loading"))
+	gl.generateMipmap(gl.TEXTURE_2D)
+
+	texSpecialEffect3_end = gl.createTexture()
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect3_end)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("50px Galaxy Monkey", "white", "Normal Mapping"))
+	gl.generateMipmap(gl.TEXTURE_2D)
+
+	texSpecialEffect4_end = gl.createTexture()
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect4_end)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("50px Galaxy Monkey", "white", "Particle System"))
+	gl.generateMipmap(gl.TEXTURE_2D)
+
+	texSpecialEffect5_end = gl.createTexture()
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect5_end)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("50px Galaxy Monkey", "white", "Perlin Noise"))
+	gl.generateMipmap(gl.TEXTURE_2D)
+
+	texSpecialEffect6_end = gl.createTexture()
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect6_end)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("50px Galaxy Monkey", "white", "Point Lighting"))
+	gl.generateMipmap(gl.TEXTURE_2D)
+
+	texSpecialEffect7_end = gl.createTexture()
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect7_end)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("50px Galaxy Monkey", "white", "Rim Lighting"))
+	gl.generateMipmap(gl.TEXTURE_2D)
+
+	texSpecialEffect8_end = gl.createTexture()
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect8_end)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, createFontTexture("50px Galaxy Monkey", "white", "Spotlight"))
+	gl.generateMipmap(gl.TEXTURE_2D)
+
 	var quadVertices = new Float32Array([
 		//GrpName
 		0.66, 0.2, 0.0,				0.83, 0.66,
@@ -422,6 +498,60 @@ function renderEndScreen() {
 	gl.uniformMatrix4fv(projUniform_end, false, perspMat)
 
 	mvMat = mat4.create()
+	mat4.translate(mvMat, mvMat, [0.0, 0.7 + dl_effects_trans_y, -3.0 + dl_effectsTitle_trans_z])
+	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffectTitle_end)
+	gl.drawArrays(gl.TRIANGLE_FAN, 12, 4)
+	
+	mvMat = mat4.create()
+	mat4.translate(mvMat, mvMat, [0.0 + dl_effectsLeft_trans_x, 0.5 + dl_effects_trans_y, -3.0])
+	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect1_end)
+	gl.drawArrays(gl.TRIANGLE_FAN, 12, 4)
+	
+	mvMat = mat4.create()
+	mat4.translate(mvMat, mvMat, [0.0 + dl_effectsRigth_trans_x, 0.35 + dl_effects_trans_y, -3.0])
+	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect2_end)
+	gl.drawArrays(gl.TRIANGLE_FAN, 12, 4)
+	
+	mvMat = mat4.create()
+	mat4.translate(mvMat, mvMat, [0.0 + dl_effectsLeft_trans_x, 0.2 + dl_effects_trans_y, -3.0])
+	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect3_end)
+	gl.drawArrays(gl.TRIANGLE_FAN, 12, 4)
+	
+	mvMat = mat4.create()
+	mat4.translate(mvMat, mvMat, [0.0 + dl_effectsRigth_trans_x, 0.05 + dl_effects_trans_y, -3.0])
+	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect4_end)
+	gl.drawArrays(gl.TRIANGLE_FAN, 12, 4)
+	
+	mvMat = mat4.create()
+	mat4.translate(mvMat, mvMat, [0.0 + dl_effectsLeft_trans_x, -0.1 + dl_effects_trans_y, -3.0])
+	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect5_end)
+	gl.drawArrays(gl.TRIANGLE_FAN, 12, 4)
+	
+	mvMat = mat4.create()
+	mat4.translate(mvMat, mvMat, [0.0 + dl_effectsRigth_trans_x, -0.25 + dl_effects_trans_y, -3.0])
+	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect6_end)
+	gl.drawArrays(gl.TRIANGLE_FAN, 12, 4)
+	
+	mvMat = mat4.create()
+	mat4.translate(mvMat, mvMat, [0.0 + dl_effectsLeft_trans_x, -0.4 + dl_effects_trans_y, -3.0])
+	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect7_end)
+	gl.drawArrays(gl.TRIANGLE_FAN, 12, 4)
+	
+	mvMat = mat4.create()
+	mat4.translate(mvMat, mvMat, [0.0 + dl_effectsRigth_trans_x, -0.55 + dl_effects_trans_y, -3.0])
+	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
+	gl.bindTexture(gl.TEXTURE_2D, texSpecialEffect8_end)
+	gl.drawArrays(gl.TRIANGLE_FAN, 12, 4)
+	
+	mvMat = mat4.create()
 	mat4.translate(mvMat, mvMat, [0.0, 0.8 + dl_trans_leadermember_y_end, -3.0 + dl_trans_title1_z_end])
 	mat4.rotateX(mvMat, mvMat, dl_rot_title1_x_end)
 	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
@@ -532,23 +662,26 @@ const dl_update_macros_start = {
 	end_start:8
 }
 const dl_update_macros_end = {
-	grp_title_1_translate:1,
-	grp_leader_translate:2,
-	grp_title_2_translate:3,
-	grp_member_1_translate:4,
-	grp_member_2_translate:5,
-	grp_member_3_translate:6,
-	grp_member_4_translate:7,
-	grp_member_5_translate:8,
-	grp_member_6_translate:9,
-	grp_leadermember_translate_up:10,
-	grp_teacher_translate_init:11,
-	grp_teacher_wait:12,
-	grp_teacher_translate_up:13,
-	end_end:14
+	grp_special_title_translate:0,
+	grp_special_effects_translate:1,
+	grp_special_translate_up:2,
+	grp_title_1_translate:3,
+	grp_leader_translate:4,
+	grp_title_2_translate:5,
+	grp_member_1_translate:6,
+	grp_member_2_translate:7,
+	grp_member_3_translate:8,
+	grp_member_4_translate:9,
+	grp_member_5_translate:10,
+	grp_member_6_translate:11,
+	grp_leadermember_translate_up:12,
+	grp_teacher_translate_init:13,
+	grp_teacher_wait:14,
+	grp_teacher_translate_up:15,
+	end_end:16
 }
 
-var dl_current_update_end = dl_update_macros_end.grp_title_1_translate
+var dl_current_update_end = dl_update_macros_end.grp_special_title_translate
 var dl_current_update_start = dl_update_macros_start.grp_astromedicomp_translate
 
 function updateStartScene() {
@@ -608,8 +741,26 @@ function updateStartScene() {
 } 
 
 function updateEndScene() {
-	console.log("into the update EndScene");
-	if(dl_current_update_end == dl_update_macros_end.grp_title_1_translate) {
+	if(dl_current_update_end == dl_update_macros_end.grp_special_title_translate) {
+		if(dl_effectsTitle_trans_z < 0.0) {
+			dl_effectsTitle_trans_z += 0.1
+		} else {
+			dl_current_update_end = dl_update_macros_end.grp_special_effects_translate
+		}
+	} else if(dl_current_update_end == dl_update_macros_end.grp_special_effects_translate) {
+		if(dl_effectsLeft_trans_x < -0.05) {
+			dl_effectsLeft_trans_x += 0.05
+			dl_effectsRigth_trans_x -= 0.05
+		} else {
+			dl_current_update_end = dl_update_macros_end.grp_special_translate_up
+		}
+	} else if(dl_current_update_end == dl_update_macros_end.grp_special_translate_up) {
+		if(dl_effects_trans_y < 2.0) {
+			dl_effects_trans_y += 0.008
+		} else {
+			dl_current_update_end = dl_update_macros_end.grp_title_1_translate
+		}
+	} else if(dl_current_update_end == dl_update_macros_end.grp_title_1_translate) {
 		if(dl_trans_title1_z_end > 0.0) {
 			dl_trans_title1_z_end -= 0.01
 			dl_rot_title1_x_end -= 0.0836

@@ -60,7 +60,9 @@ const scenes = {
 
 
 
+
 var currentScene = scenes.SCENE_1
+
 
 
 
@@ -513,7 +515,7 @@ function update() {
 			SBR_DM_EYE_X_ -= 0.007
 		}
 	} else if(currentScene == scenes.SCENE_5) {
-		//updateEndScene()
+		updateEndScene()
 	}
 }
 
