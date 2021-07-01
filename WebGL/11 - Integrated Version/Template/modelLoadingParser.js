@@ -93,16 +93,7 @@ var ASJ_eyeDirectionUniform_pointLight_model;
 var ASJ_attenuationUniform_pointLight_model;
 
 function initializeModel() {
-    //Get OpenGL context
-    gl = canvas.getContext("webgl2");
-    if (gl == null)
-        console.log("Obtaining 2D webgl2 failed\n");
-    else
-        console.log("Obtaining 2D webgl2 succeeded\n");
-
-    gl.viewportWidth = canvas.width;
-    gl.viewportHeight = canvas.height;
-
+   
 
     var modelLoadingProgramObject;
     //vertex shaderProgramObject

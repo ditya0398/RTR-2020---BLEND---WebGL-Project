@@ -61,7 +61,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_2
+var currentScene = scenes.SCENE_3
 
 
 
@@ -159,33 +159,33 @@ function keyDown(event) {
 		case 78: //N
 			break
 		case 38: //up arrow
-		posterZ -= 0.05
+		MercTransZ -= 0.05
 			break
 		case 40: //down arrow
-		posterZ += 0.05
+		MercTransZ += 0.05
 			break
 		case 37: //left arrow
 
-		posterX -= 0.05
+		mercTransX -= 0.05
 			break
 		case 39: //right arrow
-		posterX += 0.025
+		mercTransX += 0.025
 			break
 
 		case 84: //Y
-		TeapotTransY += 0.05
+		MercTransY += 0.05
 			break
 
 		case 85: //U
-		TeapotTransY -= 0.05
+		MercTransY -= 0.05
 			break
 
 		case 100: //4
-			TeacupScale -= 0.005
+			MercScale -= 0.0005
 			break
 
 		case 102: //6
-		TeacupScale += 0.005
+		MercScale += 0.0005
 			break
 		case 104:
 			val_AJ = val_AJ + 0.5;
@@ -312,16 +312,30 @@ function init() {
 	// });
 
 
-	loadModel('Models/car.obj',vao_car,vbo_car,function(parts_car,numElem2){
+	// loadModel('Models/car.obj',vao_car,vbo_car,function(parts_car,numElem2){
+	// 	console.log("succeeded");
+	// 	numElements_Car = numElem2;
+	// 	console.log(numElements_Car);
+	// 	 gParts_Car = parts_car;
+	// 	console.log(gParts_Car.length);
+	// 	//numElem = null;
+	// });
+
+	loadModel_Merc('Models/modiferMercedes.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
 		console.log("succeeded");
-		numElements_Car = numElem2;
-		console.log(numElements_Car);
-		 gParts_Car = parts_car;
-		console.log(gParts_Car.length);
-		//numElem = null;
+		numElements_table = numElem2;
+		gParts_Teapot_Merc = parts_teapotMerc;
+		console.log(gParts_Teapot_Merc.length);
+
 	});
 
+
+
 	modelLoadingProgramObject = initializeModel();
+
+
+	MercedesProgramObject_Merc = initializeModel_Merc();
+
 
 
 	gViewMatrix = mat4.create()
@@ -391,7 +405,9 @@ function render() {
 		break;
 		case scenes.SCENE_3:
 			 displayStarBucksOuter();
-			 drawCar();
+			 //drawCar();
+
+			 drawModel_Merc();
 		
 		break;
 		case scenes.SCENE_4:
