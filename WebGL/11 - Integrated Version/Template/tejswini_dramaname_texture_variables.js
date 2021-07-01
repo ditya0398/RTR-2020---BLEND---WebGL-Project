@@ -11,6 +11,7 @@ var tvn_pUniform_drama;
 var tvn_vUniform_drama;
 var tvn_mUniform_drama;
 var tvn_distortion_uniform_drama;
+var dl_blend_uniform_drama
 
 var textureSamplerUniform_drama;
 
@@ -43,6 +44,14 @@ var drama_texture_2;
 var drama_texture_3;
 var drama_texture_4;
 var drama_texture_5;
+var drama_texture_6;
+
+var dl_drama_blend_1 = 1.0
+var dl_drama_blend_2 = 1.0
+var dl_drama_blend_3 = 1.0
+var dl_drama_blend_4 = 1.0
+var dl_drama_blend_5 = 1.0
+var dl_drama_blend_6 = 1.0
 
 function tvn_drama_init() {
     //vertex shader 
@@ -82,13 +91,14 @@ function tvn_drama_init() {
         "precision highp float;" +
         "uniform sampler2D u_texture_sampler;" +
         "uniform float distortion;" +
+        "uniform float dl_blend;"+
         "in vec2 tex_coord;" +
         "out vec4 FragColor;" +
         "void main(void)" +
         "{" +
         "FragColor = texture(u_texture_sampler,tex_coord);" +
         "vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
-		"FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
+		"FragColor = vec4(mix(vec3(FragColor), gray, distortion), dl_blend);" +
         "}";
 
     tvn_fragmentShaderObject_drama = gl.createShader(gl.FRAGMENT_SHADER);
@@ -128,6 +138,7 @@ function tvn_drama_init() {
     tvn_mUniform_drama = gl.getUniformLocation(tvn_shaderProgramObject_drama, "u_m_matrix");
     textureSamplerUniform_drama = gl.getUniformLocation(tvn_shaderProgramObject_drama, "u_texture_sampler");
     tvn_distortion_uniform_drama = gl.getUniformLocation(tvn_shaderProgramObject_drama, "distortion");
+    dl_blend_uniform_drama = gl.getUniformLocation(tvn_shaderProgramObject_drama, "dl_blend")
 
     // ** vertices , color , shader attribs, vbo initialization***
 
@@ -296,7 +307,9 @@ function tvn_drama_init() {
 
 function tvn_drama_draw() {
 
-    gl.useProgram(tvn_shaderProgramObject_drama);
+    gl.enable(gl.BLEND)
+	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+	gl.useProgram(tvn_shaderProgramObject_drama);
 
     var modelMatrix = mat4.create();
 
@@ -308,6 +321,7 @@ function tvn_drama_draw() {
     gl.uniformMatrix4fv(tvn_pUniform_drama, false, perspectiveMatrix);
 
     gl.uniform1f(tvn_distortion_uniform_drama, blackWhiteDistortion)
+    gl.uniform1f(dl_blend_uniform_drama, dl_drama_blend_1)
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, drama_texture_1);
@@ -327,6 +341,7 @@ function tvn_drama_draw() {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, drama_texture_2);
     gl.uniform1i(textureSamplerUniform_drama, 0);
+    gl.uniform1f(dl_blend_uniform_drama, dl_drama_blend_2)
 
     gl.bindVertexArray(tvn_vao_rectangle_drama);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -344,6 +359,7 @@ function tvn_drama_draw() {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, drama_texture_3);
     gl.uniform1i(textureSamplerUniform_drama, 0);
+    gl.uniform1f(dl_blend_uniform_drama, dl_drama_blend_3)
 
     gl.bindVertexArray(tvn_vao_rectangle_drama);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -360,6 +376,7 @@ function tvn_drama_draw() {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, drama_texture_4);
     gl.uniform1i(textureSamplerUniform_drama, 0);
+    gl.uniform1f(dl_blend_uniform_drama, dl_drama_blend_4)
 
     gl.bindVertexArray(tvn_vao_rectangle_drama);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -376,6 +393,7 @@ function tvn_drama_draw() {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, drama_texture_5);
     gl.uniform1i(textureSamplerUniform_drama, 0);
+    gl.uniform1f(dl_blend_uniform_drama, dl_drama_blend_5)
 
     gl.bindVertexArray(tvn_vao_rectangle_drama);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -392,6 +410,7 @@ function tvn_drama_draw() {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, drama_texture_6);
     gl.uniform1i(textureSamplerUniform_drama, 0);
+    gl.uniform1f(dl_blend_uniform_drama, dl_drama_blend_6)
 
     gl.bindVertexArray(tvn_vao_rectangle_drama);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -401,6 +420,7 @@ function tvn_drama_draw() {
     gl.bindVertexArray(null);
 
     gl.useProgram(null);
+    gl.disable(gl.BLEND)
 }
 
 

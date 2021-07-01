@@ -475,31 +475,49 @@ function update() {
 			if(tvn_trans_z_drama_main_1 > -53.9) {
 				if(blackWhiteDistortion <= 1.0)
 					blackWhiteDistortion += 0.007;
+				if(tvn_trans_z_drama_main_1 < -40.0) {
+					dl_drama_blend_1 -= 0.01
+				}
 				tvn_trans_z_drama_main_1 -= 0.1
 				tvn_trans_y_drama_main_1 += 0.011
 				tvn_trans_x_drama_main_1 += 0.03
 				tvn_scale_drama_Main_1 += 0.007
 			} else if(tvn_trans_z_drama_main_2 > -53.9) {
+				if(tvn_trans_z_drama_main_2 < -40.0) {
+					dl_drama_blend_2 -= 0.01
+				}
 				tvn_trans_z_drama_main_2 -= 0.1
 				tvn_trans_y_drama_main_2 += 0.011
 				tvn_trans_x_drama_main_2 -= 0.03
 				tvn_scale_drama_Main_2 += 0.007
 			} else if(tvn_trans_z_drama_main_3 > -53.9) {
+				if(tvn_trans_z_drama_main_3 < -40.0) {
+					dl_drama_blend_3 -= 0.01
+				}
 				tvn_trans_z_drama_main_3 -= 0.1
 				tvn_trans_y_drama_main_3 += 0.011
 				tvn_trans_x_drama_main_3 += 0.03
 				tvn_scale_drama_Main_3 += 0.007
 			} else if(tvn_trans_z_drama_main_4 > -53.9) {
+				if(tvn_trans_z_drama_main_4 < -40.0) {
+					dl_drama_blend_4 -= 0.01
+				}
 				tvn_trans_z_drama_main_4 -= 0.1
 				tvn_trans_y_drama_main_4 += 0.011
 				tvn_trans_x_drama_main_4 -= 0.03
 				tvn_scale_drama_Main_4 += 0.007
 			} else if(tvn_trans_z_drama_main_5 > -53.9) {
+				if(tvn_trans_z_drama_main_5 < -40.0) {
+					dl_drama_blend_5 -= 0.01
+				}
 				tvn_trans_z_drama_main_5 -= 0.1
 				tvn_trans_y_drama_main_5 += 0.011
 				tvn_trans_x_drama_main_5 += 0.03
 				tvn_scale_drama_Main_5 += 0.007
 			} else if(tvn_trans_z_drama_main_6 > -53.9) {
+				if(tvn_trans_z_drama_main_6 < -40.0) {
+					dl_drama_blend_6 -= 0.01
+				}
 				tvn_trans_z_drama_main_6 -= 0.1
 				tvn_trans_y_drama_main_6 += 0.011
 				tvn_trans_x_drama_main_6 -= 0.03
