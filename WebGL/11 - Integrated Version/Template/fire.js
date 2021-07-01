@@ -705,10 +705,7 @@ var fragmentShaderObject;
 
   //gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-  squareTexCoordsBuffer = gl.createBuffer();
-  ColorBuff_Fire = gl.createBuffer();
-  vertBuff_Fire = gl.createBuffer();
-
+ 
 //   // setup GLSL program
 //   vertexShader = createShaderFromScriptElement(gl, "2d-vertex-shader");
 //   fragmentShader = createShaderFromScriptElement(gl, "2d-fragment-shader");
@@ -1034,6 +1031,11 @@ function drawRects(rects,textureIndex) {
           ]);
       }
   }
+
+  squareTexCoordsBuffer = gl.createBuffer();
+  ColorBuff_Fire = gl.createBuffer();
+  vertBuff_Fire = gl.createBuffer();
+
 
   gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, textures[currentTextureIndex]);

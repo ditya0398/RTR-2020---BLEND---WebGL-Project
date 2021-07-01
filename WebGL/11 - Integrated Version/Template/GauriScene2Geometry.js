@@ -535,7 +535,7 @@ function GRStage()
     var Eye = new Float32Array([0, 1.2130000000002783, 2.619999999998648]);
     var SpotDirection = new Float32Array([0.0, -1.0, 0]);
 
-    var shininess = 5.0;
+    var shininess = 1.0;
     var strength = parseFloat(400);
     var attenuation = parseFloat(0.50);
 
