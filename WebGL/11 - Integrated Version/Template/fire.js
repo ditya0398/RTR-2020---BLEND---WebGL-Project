@@ -982,7 +982,7 @@ function renderFire() {
       drawRects(sparkParticles);
       gl.useProgram(null);
 
-    // gl.disable(gl.BLEND);
+     gl.disable(gl.BLEND);
   //console.log(particleAverage);
 }
 
@@ -1005,9 +1005,9 @@ function drawRects(rects,textureIndex) {
   var index = 0;
   var colorIndex = 0;
   var texIndex = 0;
-  rectArray = [];
-  colorArray = [];
-  textureCoordinates = [];
+ var rectArray = [];
+   var colorArray = [];
+  var textureCoordinates = [];
   for (var i = 0; i < rects.length; i++) {
       var x1 = rects[i].pos.x - rects[i].size.width/2;
       var x2 = rects[i].pos.x + rects[i].size.width/2;
@@ -1047,21 +1047,26 @@ function drawRects(rects,textureIndex) {
   gl.bindTexture(gl.TEXTURE_2D, textures[currentTextureIndex]);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, squareTexCoordsBuffer);
-  gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, 0);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
                 gl.STATIC_DRAW);
-gl.enableVertexAttribArray(2);
+				gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, 0);
+	gl.enableVertexAttribArray(2);
+	gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
 
   gl.bindBuffer(gl.ARRAY_BUFFER, vertBuff_Fire);
-  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(rectArray), gl.STATIC_DRAW);
+  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(0);
-
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, ColorBuff_Fire);
-  gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 0, 0);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colorArray), gl.STATIC_DRAW);
+  gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(1);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
   gl.drawArrays(gl.TRIANGLES, 0, rects.length*6);
+  gl.bindTexture(gl.TEXTURE_2D,null);
+  
 }

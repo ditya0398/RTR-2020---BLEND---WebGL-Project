@@ -69,7 +69,7 @@ var currentScene = scenes.SCENE_0
 
 
 
-var blackWhiteDistortion = 0.0
+var blackWhiteDistortion = 1.0
 
 function main() {
 	//Get Canvas from DOM
@@ -243,13 +243,13 @@ function init() {
 // Scene 1
 
 
-	 
+initEndScreen()
 	 GRInit()
 	 GRInitRoadside();
 	 initNormalMapRoad()
 	 ASJ_init_stove();
 	 tejswini_hut_init()
-
+	initCubeMap();
 	// tvn_init_lamp_arch();
 	GRInitChaiCup();
 
@@ -257,7 +257,7 @@ function init() {
 
 	//initShadow();
 
-	dl_init_fade();
+	
 
 
 
@@ -276,20 +276,21 @@ function init() {
 
 
 	init_InteriorStarbucks();
-
+	dl_init_sir_shadow()
 
 	//utensil_init();
 
+	dl_init_fade();
 	init_macWindow()
 	initStarbucksOuter();
 	ASJ_init_laptop()
 	GRInitBluetooth();
 	
-	initEndScreen()
 
-	dl_init_sir_shadow()
-	initFire();
+
 	
+
+
 
 
 	loadModel('Models/teapot.obj',vao_teapot,vbo_teapot,function(parts_teapot,numElem){
@@ -336,7 +337,8 @@ function init() {
 
 	MercedesProgramObject_Merc = initializeModel_Merc();
 
-
+	initFire();
+	
 
 	gViewMatrix = mat4.create()
 	perspectiveMatrix = mat4.create()
@@ -378,17 +380,20 @@ function render() {
 		case scenes.SCENE_1:
 
 			
-			  drawFire();
-			// //	Display_CubeMap()
+			tvn_speaker_draw();
+			//Display_CubeMap()
+			drawFire();
 			GRDisplay()
+			
 			tejswini_hut_draw()
 			renderNormalMapRoad()
-
+		
 			GRDisplayRoadside();
 			//  //tvn_draw_lamp_arch();
 			drawModel();
 			ASJ_draw_stove();
 			GRDisplayChaiCup();
+			
 		break;
 
 		case scenes.SCENE_2:

@@ -467,14 +467,14 @@ function renderStartScreen() {
 
 	gl.disable(gl.BLEND)
 
-	if(dl_current_update_start == dl_update_macros_start.end_start)
+	if(dl_current_update_start == dl_update_macros_start.end_start && currentScene == scenes.SCENE_0)
 		{
 			if(SceneTransitionValue <= 1.0)
 				SceneTransitionValue += globalQuadBlendingValue +0.002;
 			else
 			{
-				currentScene  = scenes.SCENE_1;
-				x_audio.play();
+				currentScene = scenes.SCENE_1;
+			//	x_audio.play();
 			}
 
 		}
@@ -483,6 +483,8 @@ function renderStartScreen() {
 }
 
 function renderEndScreen() {
+
+	
 	gl.enable(gl.BLEND)
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	gl.useProgram(program_end)
