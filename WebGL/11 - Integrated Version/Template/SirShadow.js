@@ -24,9 +24,9 @@ function dl_init_sir_shadow() {
     "vec2(1.0, -1.0)\n"+
     ");\n"+
     "vec2 vTex[] = vec2[4](\n"+
-    "vec2(0.0, 1.0),\n"+
-    "vec2(1.0, 1.0),\n"+
-    "vec2(1.0, 0.0),\n"+
+    "vec2(0.0, 0.9),\n"+
+    "vec2(0.9, 0.9),\n"+
+    "vec2(0.9, 0.0),\n"+
     "vec2(0.0, 0.0)\n"+
     ");\n"+
     "outTexture = vTex[gl_VertexID];\n" +
@@ -137,28 +137,24 @@ function dl_render_sir_shadow() {
     gl.uniformMatrix4fv(dl_pUniform_sir_shadow, false, perspectiveMatrix)
     
 	var modelMatrix = mat4.create()
-	mat4.translate(modelMatrix, modelMatrix, [0.0, -4.0, -12.5]);
-	mat4.scale(modelMatrix, modelMatrix, [1.0, 1.0, 1.0])
+	mat4.translate(modelMatrix, modelMatrix, [0.0, -4.0, -13.5]);
+	mat4.scale(modelMatrix, modelMatrix, [1.5, 1.5, 1.0])
     gl.uniformMatrix4fv(dl_mUniform_sir_shadow, false, modelMatrix)
-    
+    gl.uniform1i(dl_sampleruniform_sir_shadow, 0)
     gl.activeTexture(gl.TEXTURE0)
     gl.bindTexture(gl.TEXTURE_2D, dl_tex_sirleg_shadow)
-	gl.uniform1i(dl_sampleruniform_sir_shadow, 0)
-
 
 	gl.drawArrays(gl.TRIANGLE_FAN, 0,4);
 
 
 	modelMatrix = mat4.create()
-	mat4.translate(modelMatrix, modelMatrix, [0.0, -1.7, -10.7]);
+	mat4.translate(modelMatrix, modelMatrix, [0.0, -1.3, -10.7]);
 	mat4.rotateX(modelMatrix, modelMatrix, Math.PI * 0.10)
-	mat4.scale(modelMatrix, modelMatrix, [2.0, 2.0, 2.0])
+	mat4.scale(modelMatrix, modelMatrix, [2.5, 2.5, 2.5])
 	gl.uniformMatrix4fv(dl_mUniform_sir_shadow, false, modelMatrix)
-    
+    gl.uniform1i(dl_sampleruniform_sir_shadow, 0)
     gl.activeTexture(gl.TEXTURE0)
     gl.bindTexture(gl.TEXTURE_2D, dl_tex_sir_shadow)
-	gl.uniform1i(dl_sampleruniform_sir_shadow, 0)
-
 
 	gl.drawArrays(gl.TRIANGLE_FAN, 0,4);
 
