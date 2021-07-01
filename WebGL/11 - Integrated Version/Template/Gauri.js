@@ -655,9 +655,9 @@ function GRDisplay() {
 
     var lightPosition_AJ_2 = new Float32Array([2.9000000000000012, 0.13199999999999107, -14.299999999999961]);
     var Eye_AJ1 = new Float32Array([0.0, 0.0, 2.0]);
-    var shininess_AJ1 = 2.50;
+    var shininess_AJ1 = 0.50;
     var strength_AJ1 = parseFloat(1);
-    var attenuation_AJ1 = parseFloat(0.50);
+    var attenuation_AJ1 = parseFloat(1.00);
     var Ambient_AJ1 = new Float32Array([0.0, 0.0, 0.0, 1.0]);
     var LightColor_AJ1 = new Float32Array([1.0, 1.0, 1.0]);
 

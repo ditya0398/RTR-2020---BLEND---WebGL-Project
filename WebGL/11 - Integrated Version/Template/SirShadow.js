@@ -140,9 +140,11 @@ function dl_render_sir_shadow() {
 	mat4.translate(modelMatrix, modelMatrix, [0.0, -4.0, -12.5]);
 	mat4.scale(modelMatrix, modelMatrix, [1.0, 1.0, 1.0])
     gl.uniformMatrix4fv(dl_mUniform_sir_shadow, false, modelMatrix)
-    gl.uniform1i(dl_sampleruniform_sir_shadow, 0)
+    
     gl.activeTexture(gl.TEXTURE0)
     gl.bindTexture(gl.TEXTURE_2D, dl_tex_sirleg_shadow)
+	gl.uniform1i(dl_sampleruniform_sir_shadow, 0)
+
 
 	gl.drawArrays(gl.TRIANGLE_FAN, 0,4);
 
@@ -152,9 +154,11 @@ function dl_render_sir_shadow() {
 	mat4.rotateX(modelMatrix, modelMatrix, Math.PI * 0.10)
 	mat4.scale(modelMatrix, modelMatrix, [2.0, 2.0, 2.0])
 	gl.uniformMatrix4fv(dl_mUniform_sir_shadow, false, modelMatrix)
-    gl.uniform1i(dl_sampleruniform_sir_shadow, 0)
+    
     gl.activeTexture(gl.TEXTURE0)
     gl.bindTexture(gl.TEXTURE_2D, dl_tex_sir_shadow)
+	gl.uniform1i(dl_sampleruniform_sir_shadow, 0)
+
 
 	gl.drawArrays(gl.TRIANGLE_FAN, 0,4);
 

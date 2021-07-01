@@ -47,10 +47,10 @@ var pyramid_texture_FboFire = 0;
 var cube_texture_FboFire = 0;
 
 var fireTransX = 2.6749999999999985;
-var fireTransY = -0.54;
+var fireTransY = -0.5;
 var fireTransZ =-15.300000000000004;
 
-var fireScale = 0.3399999999999994;
+var fireScale = 0.3499999999999994;
 
 var options = {
     // this option is not actually in the UI
@@ -300,10 +300,10 @@ var fragmentShaderSource1 =
 	gl.attachShader(shaderProgramObject_FBO_FboFire, vertexShaderObject_FboFire);
 	gl.attachShader(shaderProgramObject_FBO_FboFire, fragmentShaderObject_FboFire);
 	
-	//pre-link binidng of shader program object with vertex shader attributes
-	gl.bindAttribLocation(shaderProgramObject_FBO_FboFire, WebGLMacros.AMC_ATTRIBUTE_POSITION, "vPosition");
-	//gl.bindAttribLocation(shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_POSITION, "vColor");
-	gl.bindAttribLocation(shaderProgramObject_FBO_FboFire, WebGLMacros.AMC_ATTRIBUTE_TEXTURE0, "vTexture");
+	// //pre-link binidng of shader program object with vertex shader attributes
+	// gl.bindAttribLocation(shaderProgramObject_FBO_FboFire, WebGLMacros.AMC_ATTRIBUTE_POSITION, "vPosition");
+	// //gl.bindAttribLocation(shaderProgramObject, WebGLMacros.AMC_ATTRIBUTE_POSITION, "vColor");
+	// gl.bindAttribLocation(shaderProgramObject_FBO_FboFire, WebGLMacros.AMC_ATTRIBUTE_TEXTURE0, "vTexture");
 	
 	//linking
 	gl.linkProgram(shaderProgramObject_FBO_FboFire);
@@ -329,9 +329,9 @@ sampleruniform_FboFire = gl.getUniformLocation(shaderProgramObject_FBO_FboFire, 
 	gl.attachShader(shaderProgramObject_normal_FboFire, fragmentShaderObject1_FboFire);
 	
 	//pre-link binidng of shader program object with vertex shader attributes
-	gl.bindAttribLocation(shaderProgramObject_normal_FboFire, WebGLMacros.AMC_ATTRIBUTE_POSITION, "vPosition");
-	//gl.bindAttribLocation(shaderProgramObject_normal, WebGLMacros.AMC_ATTRIBUTE_POSITION, "vColor");
-	gl.bindAttribLocation(shaderProgramObject_normal_FboFire, WebGLMacros.AMC_ATTRIBUTE_TEXTURE0, "vTexture");
+	// gl.bindAttribLocation(shaderProgramObject_normal_FboFire, WebGLMacros.AMC_ATTRIBUTE_POSITION, "vPosition");
+	// //gl.bindAttribLocation(shaderProgramObject_normal, WebGLMacros.AMC_ATTRIBUTE_POSITION, "vColor");
+	// gl.bindAttribLocation(shaderProgramObject_normal_FboFire, WebGLMacros.AMC_ATTRIBUTE_TEXTURE0, "vTexture");
 	
 	//linking
 	gl.linkProgram(shaderProgramObject_normal_FboFire);
@@ -544,10 +544,10 @@ var triangleTexcoords = new Float32Array([0.5, 1.0,
 	gl.bindBuffer(gl.ARRAY_BUFFER, null);
 	gl.bindVertexArray(null);
 
-	//gl.enable(gl.TEXTURE_2D);
+	gl.enable(gl.TEXTURE_2D);
 	// gl.clearColor(0.0,0.0,0.0,1.0);
-	// gl.enable(gl.DEPTH_TEST);
-	// gl.depthFunc(gl.LEQUAL);
+	 gl.enable(gl.DEPTH_TEST);
+	 gl.depthFunc(gl.LEQUAL);
 
 
 
@@ -579,6 +579,9 @@ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 		var attachments = [gl.COLOR_ATTACHMENT0];
 		gl.drawBuffers(attachments);
 
+
+		
+		gl.bindTexture(gl.TEXTURE_2D,null);
 		gl.bindFramebuffer(gl.FRAMEBUFFER,null);
 
 		var status = gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER);
@@ -599,9 +602,9 @@ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 function initFire()
 {
 
-	    initFireFBO();
+	    
       loadAllTextures();
-
+	
 var vertexShaderObject;
 var fragmentShaderObject;
 
@@ -705,27 +708,25 @@ var fragmentShaderObject;
 
   //gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
- 
 //   // setup GLSL program
 //   vertexShader = createShaderFromScriptElement(gl, "2d-vertex-shader");
 //   fragmentShader = createShaderFromScriptElement(gl, "2d-fragment-shader");
 //   program = createProgram(gl, [vertexShader, fragmentShader]);
-  gl.useProgram(program_Fire);
+  //gl.useProgram(program_Fire);
 
   // look up where the vertex data needs to go.
 
    gl.bindAttribLocation(program_Fire, 0, "a_position");
   //positionAttrib = gl.getAttribLocation(program, "a_position");
-  gl.enableVertexAttribArray(0);
-
+ 
   gl.bindAttribLocation(program_Fire, 1, "a_color");
   //colorAttrib = gl.getAttribLocation(program, "a_color");
-  gl.enableVertexAttribArray(1);
+ // gl.enableVertexAttribArray(1);
 
 
   gl.bindAttribLocation(program_Fire, 2, "a_texture_coord");
  // textureCoordAttribute = gl.getAttribLocation(program, "a_texture_coord");
-  gl.enableVertexAttribArray(2);
+ // gl.enableVertexAttribArray(2);
 
   // lookup uniforms
   // resolutionLocation = gl.getUniformLocation(program_Fire, "u_resolution");
@@ -734,11 +735,16 @@ var fragmentShaderObject;
   mvpUniformFire = gl.getUniformLocation(program_Fire, "u_mvp_matrix");
 
   
- // gl.enable(gl.BLEND);
+  gl.enable(gl.BLEND);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); 
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); 
   gl.useProgram(null);
+  gl.disable(gl.BLEND);
+    
+ 
+  initFireFBO();
+
  
 }
 function animloop() {
@@ -1044,14 +1050,18 @@ function drawRects(rects,textureIndex) {
   gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, 0);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
                 gl.STATIC_DRAW);
+gl.enableVertexAttribArray(2);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, vertBuff_Fire);
   gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(rectArray), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);
+
 
   gl.bindBuffer(gl.ARRAY_BUFFER, ColorBuff_Fire);
   gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 0, 0);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colorArray), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(1);
 
   gl.drawArrays(gl.TRIANGLES, 0, rects.length*6);
 }

@@ -61,7 +61,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_1
+var currentScene = scenes.SCENE_2
 
 
 
@@ -253,7 +253,7 @@ function init() {
 	// tvn_init_lamp_arch();
 	GRInitChaiCup();
 
-	dl_init_sir_shadow()
+	
 
 	//initShadow();
 
@@ -287,8 +287,11 @@ function init() {
 	
 	initEndScreen()
 
-
+	dl_init_sir_shadow()
 	initFire();
+	
+
+
 	loadModel('Models/teapot.obj',vao_teapot,vbo_teapot,function(parts_teapot,numElem){
 		console.log("succeeded");
 		numElements_Teapot = numElem;
@@ -416,16 +419,16 @@ function render() {
 	}
 
 
-	if(currentScene == scenes.SCENE_5)
-	{
-		SceneTransitionValue = 0.0
-		updateEndScene();
-	}
-	else
-	{
-		SceneTransitions();
-		dl_render_fade();
-	}
+	// if(currentScene == scenes.SCENE_5)
+	// {
+	// 	SceneTransitionValue = 0.0
+	// 	updateEndScene();
+	// }
+	// else
+	// {
+	// 	SceneTransitions();
+	// 	dl_render_fade();
+	// }
 	
 
 //	Draw_Shadow();

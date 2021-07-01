@@ -653,14 +653,15 @@ function renderNormalMapRoad() {
 	modelMatLeft = mat4.create()
 	gl.bindVertexArray(vao_road)
 	mat4.translate(modelMatLeft, modelMatLeft, [0.0, -2.25, -10.0])
+	//mat4.scale(modelMatLeft, modelMatLeft, [1.0, 1.0, -10.0])
 	gl.uniformMatrix4fv(modelUniform, false, modelMatLeft)
 	gl.drawArrays(gl.TRIANGLES, 0, 6)
 
 	//akhilesh
 	var Eye_AJ =  new Float32Array([0.0, 0.0, 2.0]);
-	var shininess_AJ = 2.50;
-	var strength_AJ = parseFloat(5);
-	var attenuation_AJ = parseFloat(0.50);
+	var shininess_AJ = 2.0;
+	var strength_AJ = parseFloat(4.5);
+	var attenuation_AJ = parseFloat(0.40);
 	var Ambient_AJ = new Float32Array([0.0, 0.0, 0.0, 1.0]);
 	var LightColor_AJ = new Float32Array([1.0, 1.0, 1.0]);
 	var lightPosition_AJ = view;//new Float32Array([0.0, 1.0, -15 + val_AJ]);
