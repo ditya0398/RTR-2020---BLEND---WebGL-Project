@@ -61,7 +61,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_3
+var currentScene = scenes.SCENE_0
 
 
 
@@ -435,16 +435,16 @@ function render() {
 	}
 
 
-	// if(currentScene == scenes.SCENE_5)
-	// {
-	// 	SceneTransitionValue = 0.0
-	// 	updateEndScene();
-	// }
-	// else
-	// {
-	// 	SceneTransitions();
-	// 	dl_render_fade();
-	// }
+	if(currentScene == scenes.SCENE_5)
+	{
+		SceneTransitionValue = 0.0
+		updateEndScene();
+	}
+	else
+	{
+		SceneTransitions();
+		dl_render_fade();
+	}
 	
 
 //	Draw_Shadow();
@@ -464,8 +464,8 @@ function update() {
 		} else {
 			
 			if(view[2] < 1.6) {
-				view[2] += 0.035
-				view[1] -= 0.01
+				view[2] += 0.037
+				view[1] -= 0.011
 			 } else
 			if(tvn_trans_z_drama_main_1 > -53.9) {
 				if(blackWhiteDistortion <= 1.0)
@@ -546,7 +546,7 @@ function SceneTransitions()
 	case scenes.SCENE_1:
 		if(SceneTransitionValue >= 0.0 && firstSceneFadeInTransition)
 		{
-				SceneTransitionValue -= globalQuadBlendingValue;
+				SceneTransitionValue -= globalQuadBlendingValue + 0.0001;
 				if(SceneTransitionValue < 0.0)
 				{
 					SceneTransitionValue = 0.0;					
@@ -562,17 +562,17 @@ function SceneTransitions()
 		}
 		if(SceneTransitionValue <= 1.0 && firstSceneFadeOutTransition)
 		{
-			SceneTransitionValue += globalQuadBlendingValue;
+			SceneTransitionValue += globalQuadBlendingValue + 0.0000001;
 			if(SceneTransitionValue >= 1.0)
 			{
 				SceneTransitionValue = 1.0;
 				firstSceneFadeOutTransition = false;
 				secondSceneFadeInTransition = true;
-				fourthSceneFadeInTransition = true;
+			//	fourthSceneFadeInTransition = true;
 				view[0] = 0.0;
 				view[1] = 15.133;
 				view[2] =  -47.1;
-				currentScene = scenes.SCENE_5;
+				currentScene = scenes.SCENE_2;
 
 			}
 		}
@@ -590,7 +590,7 @@ function SceneTransitions()
 			}
 		}
 		else if(secondSceneFadeOutTransition && SceneTransitionValue <= 1.0){
-			SceneTransitionValue += globalQuadBlendingValue;
+			SceneTransitionValue += globalQuadBlendingValue + 0.000001;
 		}
 		if(SceneTransitionValue >= 1.0 && secondSceneFadeOutTransition)
 		{
@@ -620,8 +620,8 @@ function SceneTransitions()
 
 		//	if(SceneTransitionValue >= -0.5)
 		//	{
-				if(TeacupTransZ > -4.8)
-					TeacupTransZ -= 0.005
+				if(MercTransZ > -5.5)
+					MercTransZ -= 0.007
 		//	}
 			if(SceneTransitionValue >= 1.0 && thirdSceneFadeOutTransition)
 			{
