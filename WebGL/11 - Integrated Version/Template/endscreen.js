@@ -33,6 +33,7 @@ var samplerUniform_end
 var isTexUniform_end
 
 var dl_wait_end = 0.0
+var dl_wait_end2 = 0.0
 
 var dl_trans_grp1_x_end = -3.0
 var dl_trans_grp1_y_end = 0.0
@@ -47,7 +48,7 @@ var dl_shear_grp2_x_end = 0.5
 var dl_shear_grp2_z_end = 0.5
 
 var dl_astromedicomp_end = 1.0
-var dl_presents_end = -1.0
+var dl_presents_end = -1.1
 
 var dl_trans_title1_z_end = 3.0
 var dl_rot_title1_x_end = Math.PI * 8.0
@@ -82,8 +83,8 @@ var dl_trans_teacher_y = -2.0
 var dl_rot_teacher_x = Math.PI * 8.0
 
 var dl_effectsTitle_trans_z = -10.0
-var dl_effectsRigth_trans_x = 2.6
-var dl_effectsLeft_trans_x = -2.6
+var dl_effectsRigth_trans_x = 2.8
+var dl_effectsLeft_trans_x = -2.8
 var dl_effects_trans_y = 0.0
 
 var rot_end = 0.0
@@ -97,7 +98,7 @@ function createFontTexture(font, color, str) {
 		console.log("Context Not Found")
 	}
 
-	context.fillStyle = "rgba(0, 0, 0, 1.0)"
+	context.fillStyle = "rgba(0, 0, 0, 0.0)"
 	context.fillRect(0, 0, textCanvas.width, textCanvas.height)
 	context.textAlign = "center"
 	context.textBaseline = "middle"
@@ -437,6 +438,13 @@ function renderStartScreen() {
 	gl.bindTexture(gl.TEXTURE_2D, texAstromedicomp_end)
 	gl.drawArrays(gl.TRIANGLE_FAN, 16, 4)
 
+	mvMat = mat4.create()
+	mat4.translate(mvMat, mvMat, [1.0, -0.6 + dl_presents_end, -3.0])
+	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
+	
+	gl.bindTexture(gl.TEXTURE_2D, texPresents_end)
+	gl.drawArrays(gl.TRIANGLE_FAN, 16, 4)
+
 	//Grp Name 1
 	mvMat = mat4.create()
 	mat4.multiply(mvMat, mvMat, shearMatrix)
@@ -457,14 +465,7 @@ function renderStartScreen() {
 	
 	gl.bindTexture(gl.TEXTURE_2D, texGrpName2_end)
 	gl.drawArrays(gl.TRIANGLE_FAN, 0, 4)
-
-	mvMat = mat4.create()
-	mat4.translate(mvMat, mvMat, [1.0, -0.6 + dl_presents_end, -3.0])
-	gl.uniformMatrix4fv(mvUniform_end, false, mvMat)
 	
-	gl.bindTexture(gl.TEXTURE_2D, texPresents_end)
-	gl.drawArrays(gl.TRIANGLE_FAN, 16, 4)
-
 	gl.disable(gl.BLEND)
 
 	if(dl_current_update_start == dl_update_macros_start.end_start && currentScene == scenes.SCENE_0)
@@ -666,6 +667,7 @@ const dl_update_macros_start = {
 const dl_update_macros_end = {
 	grp_special_title_translate:0,
 	grp_special_effects_translate:1,
+	grp_special_effects_wait:17,
 	grp_special_translate_up:2,
 	grp_title_1_translate:3,
 	grp_leader_translate:4,
@@ -734,7 +736,7 @@ function updateStartScene() {
 			dl_current_update_start = dl_update_macros_start.grp_prensets_translate
 		}
 	} else if(dl_current_update_start == dl_update_macros_start.grp_prensets_translate) {
-		if(dl_presents_end < 0.0) {
+		if(dl_presents_end < 0.1) {
 			dl_presents_end += 0.006
 		} else {
 			dl_current_update_start = dl_update_macros_start.end_start
@@ -754,11 +756,17 @@ function updateEndScene() {
 			dl_effectsLeft_trans_x += 0.05
 			dl_effectsRigth_trans_x -= 0.05
 		} else {
+			dl_current_update_end = dl_update_macros_end.grp_special_effects_wait
+		}
+	} else if(dl_current_update_end == dl_update_macros_end.grp_special_effects_wait) {
+		if(dl_wait_end < 100.0) {
+			dl_wait_end += 1.0
+		} else {
 			dl_current_update_end = dl_update_macros_end.grp_special_translate_up
 		}
 	} else if(dl_current_update_end == dl_update_macros_end.grp_special_translate_up) {
 		if(dl_effects_trans_y < 2.0) {
-			dl_effects_trans_y += 0.008
+			dl_effects_trans_y += 0.005
 		} else {
 			dl_current_update_end = dl_update_macros_end.grp_title_1_translate
 		}
@@ -839,8 +847,8 @@ function updateEndScene() {
 			dl_current_update_end = dl_update_macros_end.grp_teacher_wait
 		}
 	} else if(dl_current_update_end == dl_update_macros_end.grp_teacher_wait) {
-		if(dl_wait_end < 100.0) {
-			dl_wait_end += 1.0
+		if(dl_wait_end2 < 100.0) {
+			dl_wait_end2 += 1.0
 		} else {
 			dl_current_update_end = dl_update_macros_end.grp_teacher_translate_up
 		}
