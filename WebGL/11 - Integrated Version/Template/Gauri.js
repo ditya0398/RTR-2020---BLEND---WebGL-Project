@@ -66,13 +66,13 @@ var grstackMatrixTableBench = [];
 var grmatrixPositionTableBench = -1;
 
 //AKHI
-var ASJ_ambientUniform_pointLight_gauri;
-var ASJ_lightColorUniform_pointLight_gauri;
+var ASJ_ambientUniform_pointLight_gauri,ASJ_ambientUniform_pointLight_gauri1;
+var ASJ_lightColorUniform_pointLight_gauri,ASJ_lightColorUniform_pointLight_gauri1;
 var ASJ_lightPositionUniform_pointLight_gauri;
-var ASJ_shininessUniform_pointLight_gauri;
-var ASJ_strengthUniform_pointLight_gauri;
-var ASJ_eyeDirectionUniform_pointLight_gauri;
-var ASJ_attenuationUniform_pointLight_gauri;
+var ASJ_shininessUniform_pointLight_gauri,ASJ_shininessUniform_pointLight_gauri1;
+var ASJ_strengthUniform_pointLight_gauri,ASJ_strengthUniform_pointLight_gauri1;
+var ASJ_eyeDirectionUniform_pointLight_gauri,ASJ_eyeDirectionUniform_pointLight_gauri1;
+var ASJ_attenuationUniform_pointLight_gauri,ASJ_attenuationUniform_pointLight_gauri1;
 var ASJ_lightPositionUniform_pointLight_gauri_2;
 
 var gr_vbo_normal_table;
@@ -145,6 +145,13 @@ function GRInit() {
         "uniform float Attenuation_AJ;" +
 
         //2nd point light
+        "uniform vec4 Ambient_AJ1;" +
+        "uniform vec3 LightColor_AJ1;" +
+        "uniform vec3 LightPosition_AJ1;" +
+        "uniform float Shininess_AJ1;" +
+        "uniform float Strength_AJ1;" +
+        "uniform vec3 EyeDirection_AJ1;" +
+        "uniform float Attenuation_AJ1;" +
         "uniform vec3 LightPosition_2_AJ;" +
         //Akhi in
         "in vec4 Position;" +
@@ -182,6 +189,41 @@ function GRInit() {
         "return res;" +
         "}" +
 
+        
+        //2nd point light
+        "vec4 pointLight2(vec3 Normal,vec4 Color,vec3 LightPosition)" +
+        "{" +
+
+        "vec3 lightDirection=vec3(Position)-LightPosition;" +
+        "\n" +
+        "float lightDistance=length(lightDirection);" +
+        "lightDirection= lightDirection / lightDistance;" +
+        "\n" +
+        "vec3 HalfVector=normalize(EyeDirection_AJ1 - lightDirection);" +
+        "\n" +
+        "float AttenuaFactor = 1.0 / (Attenuation_AJ1 * lightDistance * lightDistance  );" +
+
+        "float diffuse=max(0.0f,-1.0*dot(Normal,lightDirection)) * 0.5;" +
+        "\n" +
+        "float specular=max(0.0f,1.0*dot(Normal,HalfVector));" +
+
+        "if(diffuse<=0.00001)" +
+        "{" +
+        "specular=0.0f;" +
+        "}" +
+        "else" +
+        "{" +
+        "specular=pow(specular,Shininess_AJ1);" +
+        "}" +
+        "\n" +
+        "vec4 scatteredLight=Ambient_AJ1 + vec4(LightColor_AJ1 * diffuse * AttenuaFactor,1.0);" +
+        "vec4 ReflectedLight=vec4(LightColor_AJ1 * specular * Strength_AJ1 * AttenuaFactor,1.0);" +
+
+        "vec4 res=min(Color * scatteredLight + ReflectedLight,vec4(1.0));" +
+        "return res;" +
+        "}" +
+
+
         "void main(void)" +
         "{" +
         "vec4 color;" +
@@ -192,7 +234,7 @@ function GRInit() {
         "vec4 result_2;" +
 
         "result_1=pointLight(Normal_AJ,color,LightPosition_AJ);" +
-        "result_2=pointLight(Normal_AJ,color,LightPosition_2_AJ);" +
+        "result_2=pointLight2(Normal_AJ,color,LightPosition_2_AJ);" +
 
         "FragColor =color * (result_1 + result_2 );" +
         "}";
@@ -249,6 +291,13 @@ function GRInit() {
     ASJ_attenuationUniform_pointLight_gauri = gl.getUniformLocation(grshaderProgramObjectTableBench, "Attenuation_AJ");
 
     ASJ_lightPositionUniform_pointLight_gauri_2 = gl.getUniformLocation(grshaderProgramObjectTableBench, "LightPosition_2_AJ");
+    ASJ_ambientUniform_pointLight_gauri1 = gl.getUniformLocation(grshaderProgramObjectTableBench, "Ambient_AJ1");
+    ASJ_lightColorUniform_pointLight_gauri1 = gl.getUniformLocation(grshaderProgramObjectTableBench, "LightColor_AJ1");
+    ASJ_lightPositionUniform_pointLight_gauri1 = gl.getUniformLocation(grshaderProgramObjectTableBench, "LightPosition_AJ1");
+    ASJ_shininessUniform_pointLight_gauri1 = gl.getUniformLocation(grshaderProgramObjectTableBench, "Shininess_AJ1");
+    ASJ_strengthUniform_pointLight_gauri1 = gl.getUniformLocation(grshaderProgramObjectTableBench, "Strength_AJ1");
+    ASJ_eyeDirectionUniform_pointLight_gauri1 = gl.getUniformLocation(grshaderProgramObjectTableBench, "EyeDirection_AJ1");
+    ASJ_attenuationUniform_pointLight_gauri1 = gl.getUniformLocation(grshaderProgramObjectTableBench, "Attenuation_AJ1");
 
 
     // radio 
@@ -604,8 +653,13 @@ function GRDisplay() {
     var LightColor_AJ = new Float32Array([1.0, 1.0, 1.0]);
     var lightPosition_AJ = view;//new Float32Array([0.0, 1.0, -15 + val_AJ]);
 
-    var lightPosition_AJ_2 = new Float32Array([2.9000000000000012, 0.33199999999999107, -14.299999999999961]);
-
+    var lightPosition_AJ_2 = new Float32Array([2.9000000000000012, 0.13199999999999107, -14.299999999999961]);
+    var Eye_AJ1 = new Float32Array([0.0, 0.0, 2.0]);
+    var shininess_AJ1 = 2.50;
+    var strength_AJ1 = parseFloat(1);
+    var attenuation_AJ1 = parseFloat(0.50);
+    var Ambient_AJ1 = new Float32Array([0.0, 0.0, 0.0, 1.0]);
+    var LightColor_AJ1 = new Float32Array([1.0, 1.0, 1.0]);
 
     //lightPosition_AJ[2]=
     gl.uniform4fv(ASJ_ambientUniform_pointLight_gauri, Ambient_AJ);
@@ -615,7 +669,15 @@ function GRDisplay() {
     gl.uniform1f(ASJ_strengthUniform_pointLight_gauri, strength_AJ);
     gl.uniform3fv(ASJ_eyeDirectionUniform_pointLight_gauri, Eye_AJ);
     gl.uniform1f(ASJ_attenuationUniform_pointLight_gauri, attenuation_AJ);
+
+
     gl.uniform3fv(ASJ_lightPositionUniform_pointLight_gauri_2, lightPosition_AJ_2);
+    gl.uniform4fv(ASJ_ambientUniform_pointLight_gauri1, Ambient_AJ1);
+    gl.uniform3fv(ASJ_lightColorUniform_pointLight_gauri1, LightColor_AJ1);
+    gl.uniform1f(ASJ_shininessUniform_pointLight_gauri1, shininess_AJ1);
+    gl.uniform1f(ASJ_strengthUniform_pointLight_gauri1, strength_AJ1);
+    gl.uniform3fv(ASJ_eyeDirectionUniform_pointLight_gauri1, Eye_AJ1);
+    gl.uniform1f(ASJ_attenuationUniform_pointLight_gauri1, attenuation_AJ1);
 
     //************************************************************************************************ radio ********************************************************
     //***************************************************************************************************************************************************************

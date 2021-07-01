@@ -60,7 +60,8 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_4
+var currentScene = scenes.SCENE_1
+
 
 
 
@@ -239,8 +240,8 @@ function init() {
 
 // Scene 1
 
-	//Something clashing with sir_shadow have to check, commented for now -Deep Lalwani
-	//  initFire);
+
+	 
 	 GRInit()
 	 GRInitRoadside();
 	 initNormalMapRoad()
@@ -283,7 +284,9 @@ function init() {
 	GRInitBluetooth();
 	
 	initEndScreen()
-	
+
+
+	initFire();
 	loadModel('Models/teapot.obj',vao_teapot,vbo_teapot,function(parts_teapot,numElem){
 		console.log("succeeded");
 		numElements_Teapot = numElem;
@@ -356,7 +359,7 @@ function render() {
 		case scenes.SCENE_1:
 
 			
-			//  drawFire();
+			  drawFire();
 			// //	Display_CubeMap()
 			GRDisplay()
 			tejswini_hut_draw()
@@ -411,16 +414,16 @@ function render() {
 	}
 
 
-	// if(currentScene == scenes.SCENE_5)
-	// {
-	// 	SceneTransitionValue = 0.0
-	// 	updateEndScene();
-	// }
-	// else
-	// {
-	// 	SceneTransitions();
-	// 	dl_render_fade();
-	// }
+	if(currentScene == scenes.SCENE_5)
+	{
+		SceneTransitionValue = 0.0
+		updateEndScene();
+	}
+	else
+	{
+		SceneTransitions();
+		dl_render_fade();
+	}
 	
 
 //	Draw_Shadow();
@@ -544,10 +547,12 @@ function SceneTransitions()
 				SceneTransitionValue = 1.0;
 				firstSceneFadeOutTransition = false;
 				secondSceneFadeInTransition = true;
+				fourthSceneFadeInTransition = true;
 				view[0] = 0.0;
 				view[1] = 15.133;
 				view[2] =  -47.1;
-				currentScene = scenes.SCENE_2;
+				currentScene = scenes.SCENE_5;
+
 			}
 		}
 	break;
