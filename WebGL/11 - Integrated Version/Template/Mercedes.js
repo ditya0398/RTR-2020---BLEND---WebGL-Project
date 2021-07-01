@@ -55,7 +55,7 @@ var vbo_teapot_Merc = [];
 
 var mercTransX = -1.2500000000000002;
 var MercTransY = -2.749999999999998;
-var MercTransZ = 6.0999999999999895;
+var MercTransZ = 9.8999999999999895;
 
 var MercScale = 0.012999999999999182;
 

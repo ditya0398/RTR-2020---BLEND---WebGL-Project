@@ -533,9 +533,9 @@ function update() {
 			SBR_DM_EYE_Y_ += 0.0045
 			SBR_DM_EYE_X_ -= 0.007
 		}
-	} else if(currentScene == scenes.SCENE_5) {
-		updateEndScene()
-	}
+	// } else if(currentScene == scenes.SCENE_5) {
+	// 	updateEndScene()
+	 }
 }
 
 function SceneTransitions()
@@ -546,7 +546,7 @@ function SceneTransitions()
 	case scenes.SCENE_1:
 		if(SceneTransitionValue >= 0.0 && firstSceneFadeInTransition)
 		{
-				SceneTransitionValue -= globalQuadBlendingValue + 0.0001;
+				SceneTransitionValue -= globalQuadBlendingValue + 0.001;
 				if(SceneTransitionValue < 0.0)
 				{
 					SceneTransitionValue = 0.0;					
