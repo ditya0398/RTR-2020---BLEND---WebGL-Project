@@ -62,7 +62,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_3
+var currentScene = scenes.SCENE_4
 
 
 
@@ -285,7 +285,7 @@ initEndScreen()
 	initStarbucksOuter();
 	ASJ_init_laptop()
 	GRInitBluetooth();
-	
+	GRInitCoffee();
 
 
 	
@@ -432,6 +432,7 @@ function render() {
 			ASJ_draw_laptop();
 			render_macWindow()
 			GRDisplayBluetooth();
+			GRDisplayCoffee();
 			//drawCup();
 		break;
 		case scenes.SCENE_5:
@@ -453,16 +454,16 @@ function render() {
 	}
 
 
-	// if(currentScene == scenes.SCENE_5)
-	// {
-	// 	SceneTransitionValue = 0.0
-	// 	updateEndScene();
-	// }
-	// else
-	// {
-	// 	SceneTransitions();
-	// 	dl_render_fade();
-	// }
+	 if(currentScene == scenes.SCENE_4)
+	 {
+	 	SceneTransitionValue = 0.0
+	 	updateEndScene();
+	 }
+	 else
+	 {
+	 	SceneTransitions();
+	 	dl_render_fade();
+	 }
 	
 
 //	Draw_Shadow();
@@ -734,6 +735,7 @@ function uninit() {
 	GRUninitializeMic();
 	GRUninitializeCamera();
 	GRUninitializeBluetooth();
+	GRUninitializeCoffee();
 	gl.deleteVertexArray(vao_footpath)
 	gl.deleteBuffer(vbo_footpath)
 	gl.deleteProgram(program)
