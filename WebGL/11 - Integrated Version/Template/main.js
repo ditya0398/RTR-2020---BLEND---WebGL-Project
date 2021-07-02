@@ -32,7 +32,7 @@ var firstSceneFadeOutTransition = false;
 var secondSceneFadeInTransition = false;
 var secondSceneFadeOutTransition = false;
 var thirdSceneFadeOutTransition = false;
-var thirdSceneFadeInTransition = false;
+var thirdSceneFadeInTransition = true;
 var fourthSceneFadeOutTransition = false;
 var fourthSceneFadeInTransition = false;
 //Scene 2 camera positions [0.0, 15.133, -47.1]
@@ -328,7 +328,7 @@ initEndScreen()
 	// 	console.log(gParts_Car.length);
 	// 	//numElem = null;
 	// });
-	loadModel_Merc('Models/MercedesFinal2.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
+	loadModel_Merc('Models/MercedesFinal2obj.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
 
 		console.log("succeeded");
 		numElements_table = numElem2;

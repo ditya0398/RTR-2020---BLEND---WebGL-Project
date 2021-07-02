@@ -138,7 +138,7 @@ function initSmoke()
 				"discard;" +																											
 			"}" +
 			
-		"		FragColor =texColor * vec4(color ,0.22);																				" +
+		"		FragColor =texColor * vec4(color ,0.2);																				" +
 		"	}																													";
 	fragmentShaderObject_Smoke = gl.createShader(gl.FRAGMENT_SHADER);
 	gl.shaderSource(fragmentShaderObject_Smoke,fragmentShaderSource);
@@ -407,7 +407,7 @@ function drawSmoke()
 
 
 
-	Time_Smoke += 0.04;
+	Time_Smoke += 0.065;
 	gl.uniformMatrix4fv(mvpUniform_Smoke, false, modelViewProjectionMatrix);
 	gl.bindTexture(gl.TEXTURE_2D, pyramid_texture_Smoke);
 	gl.uniform1i(sampleruniform_Smoke, 0);
