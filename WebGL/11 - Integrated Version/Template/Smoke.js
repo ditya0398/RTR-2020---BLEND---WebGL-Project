@@ -36,10 +36,10 @@ var u_viewUniformSmoke;
 var u_projectionUniformSmoke;
 
 
-var smokeX = 1.424;
-var smokeY =0.0;
-var smokeZ = -16.56;
-var smokeScale = 1.0;
+var smokeX = 1.7989999999999942;
+var smokeY =-0.8200000000000005;
+var smokeZ = -14.719999999999953;
+var smokeScale = 0.11499999999999921;
 
 
 
@@ -138,7 +138,7 @@ function initSmoke()
 				"discard;" +																											
 			"}" +
 			
-		"		FragColor =texColor * vec4(color ,0.2);																				" +
+		"		FragColor =texColor * vec4(color ,0.22);																				" +
 		"	}																													";
 	fragmentShaderObject_Smoke = gl.createShader(gl.FRAGMENT_SHADER);
 	gl.shaderSource(fragmentShaderObject_Smoke,fragmentShaderSource);
@@ -380,7 +380,7 @@ var triangleTexcoords = new Float32Array([0.5, 1.0,
 function drawSmoke()
 {
     
-console.log("drawing the smoke");
+
 	gl.enable(gl.BLEND)
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 

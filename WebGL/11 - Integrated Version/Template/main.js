@@ -18,7 +18,7 @@ var rotX = 0.0, rotY = 0.0
 var x_audio;
 
 //first scene view 
-var view =[2.49, -1.05, -12.899]
+var view =[2.49, -1.05, -1.899]
 //[2.49, -1.19, -1.899]
 
 
@@ -62,8 +62,8 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_3
 
+var currentScene = scenes.SCENE_3
 
 
 
@@ -285,7 +285,7 @@ initEndScreen()
 	initStarbucksOuter();
 	ASJ_init_laptop()
 	GRInitBluetooth();
-	
+	GRInitCoffee();
 
 
 	
@@ -331,8 +331,8 @@ initEndScreen()
 	// 	console.log(gParts_Car.length);
 	// 	//numElem = null;
 	// });
+	loadModel_Merc('Models/MercedesFinal2.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
 
-	loadModel_Merc('Models/modiferMercedes.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
 		console.log("succeeded");
 		numElements_table = numElem2;
 		gParts_Teapot_Merc = parts_teapotMerc;
@@ -393,6 +393,7 @@ function render() {
 			tvn_speaker_draw();
 			//Display_CubeMap()
 			drawFire();
+			drawSmoke();
 			GRDisplay()
 			
 			tejswini_hut_draw()
@@ -404,7 +405,7 @@ function render() {
 			ASJ_draw_stove();
 			GRDisplayChaiCup();
 
-			drawSmoke();
+			
 			
 		break;
 
@@ -433,6 +434,7 @@ function render() {
 			ASJ_draw_laptop();
 			render_macWindow()
 			GRDisplayBluetooth();
+			GRDisplayCoffee();
 			//drawCup();
 		break;
 		case scenes.SCENE_5:
@@ -454,6 +456,8 @@ function render() {
 	}
 
 
+
+
 	if(currentScene == scenes.SCENE_5)
 	{
 		SceneTransitionValue = 0.0
@@ -464,7 +468,8 @@ function render() {
 		SceneTransitions();
 		dl_render_fade();
 	}
-	
+
+
 
 //	Draw_Shadow();
 
@@ -735,6 +740,7 @@ function uninit() {
 	GRUninitializeMic();
 	GRUninitializeCamera();
 	GRUninitializeBluetooth();
+	GRUninitializeCoffee();
 	gl.deleteVertexArray(vao_footpath)
 	gl.deleteBuffer(vbo_footpath)
 	gl.deleteProgram(program)

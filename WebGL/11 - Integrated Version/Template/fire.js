@@ -74,7 +74,7 @@ var options = {
     fireSpeedVariance: 80.0,
     fireSpeedVarianceSlider: {min:0.0,max:100.0},
   
-    fireDeathSpeed: 0.007,
+    fireDeathSpeed: 0.008,
     fireDeathSpeedSlider: {min: 0.001, max: 0.05},
   
     fireTriangleness: 0.0000,
