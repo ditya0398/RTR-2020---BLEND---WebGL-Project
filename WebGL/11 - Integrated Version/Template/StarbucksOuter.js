@@ -28,6 +28,7 @@ var Front_Side_Starbugs;
 var Starbug_Logo_Starbugs;
 var Shalter_Starbugs;
 var Wall_Wood_Starbugs;
+var building
 
 var mvpUniform_DM_StarbuckOuter;
 
@@ -160,11 +161,11 @@ function initStarbucksOuter() {
         1.0, -1.0, -1.0,
         -1.0, -1.0, -1.0,
 
-        // left face
-        -1.0, 1.0, 1.0,
-        -1.0, 1.0, -1.0,
-        -1.0, -1.0, -1.0,
-        -1.0, -1.0, 1.0,
+        // building left face
+        -15.0, 20.0, 20.0,
+        -15.0, 20.0, -20.0,
+        -15.0, -20.0, -20.0,
+        -15.0, -20.0, 20.0,
 
         // top face
         //3
@@ -617,6 +618,22 @@ function LoadGLTexture_Starbucks_Outer() {
 
         gl.bindTexture(gl.TEXTURE_2D, null);
     }
+    
+    building = gl.createTexture();
+    building.image = new Image();
+    building.image.src = "DarshanResources/Building.jpg";
+    building.image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, building);
+        //gl.pixelStorei(gl.UNPACK_FLIP_Z_WEBGL, 1);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, building.image);
+
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    }
+    
     road_Starbugs = gl.createTexture();
     road_Starbugs.image = new Image();
     road_Starbugs.image.src = "DarshanResources/road.jpg";
@@ -679,6 +696,10 @@ function displayStarBucksOuter() {
     gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
     gl.bindTexture(gl.TEXTURE_2D, null);
     
+    gl.bindTexture(gl.TEXTURE_2D, building);
+
+    gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
+    gl.bindTexture(gl.TEXTURE_2D, null);
     
     gl.bindVertexArray(null);
 

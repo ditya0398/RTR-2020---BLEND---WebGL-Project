@@ -331,8 +331,8 @@ initEndScreen()
 	// 	console.log(gParts_Car.length);
 	// 	//numElem = null;
 	// });
-
 	loadModel_Merc('Models/MercedesFinal2.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
+
 		console.log("succeeded");
 		numElements_table = numElem2;
 		gParts_Teapot_Merc = parts_teapotMerc;
@@ -424,6 +424,7 @@ function render() {
 		case scenes.SCENE_3:
 			drawModel_Merc();
 			displayStarBucksOuter();
+			// Display_CubeMap()
 			 //drawCar();
 
 		
@@ -456,6 +457,7 @@ function render() {
 
 
 
+
 	if(currentScene == scenes.SCENE_5)
 	{
 		SceneTransitionValue = 0.0
@@ -466,6 +468,8 @@ function render() {
 		SceneTransitions();
 		dl_render_fade();
 	}
+
+
 
 //	Draw_Shadow();
 
@@ -650,7 +654,7 @@ function SceneTransitions()
 				{
 					SceneTransitionValue = -1.3;
 					thirdSceneFadeInTransition = false;	
-					thirdSceneFadeOutTransition = true;			
+					// thirdSceneFadeOutTransition = true;			
 				}				
 			}
 			else if(thirdSceneFadeOutTransition && SceneTransitionValue <= 1.0){
