@@ -47,16 +47,16 @@ var pyramid_texture_FboFire = 0;
 var cube_texture_FboFire = 0;
 
 var fireTransX = 2.6749999999999985;
-var fireTransY = -0.5;
+var fireTransY = -0.3499999999999999;
 var fireTransZ =-15.300000000000004;
 
-var fireScale = 0.3499999999999994;
+var fireScale = 0.4499999999999994;
 
 var options = {
     // this option is not actually in the UI
-    fireEmitPositionSpread: {x:100,y:20},
+    fireEmitPositionSpread: {x:130,y:20},
   
-    fireEmitRate: 3000,
+    fireEmitRate: 2500,
     fireEmitRateSlider: {min:1,max:5000},
   
     fireSize: 49.0,
@@ -65,7 +65,7 @@ var options = {
     fireSizeVariance:  100.0,
     fireSizeVarianceSlider: {min:0.0,max:100.0},
   
-    fireEmitAngleVariance: 0.42,
+    fireEmitAngleVariance: 1.8,
     fireEmitAngleVarianceSlider: {min:0.0,max:Math.PI/2},
   
     fireSpeed: 500.0,
@@ -74,10 +74,10 @@ var options = {
     fireSpeedVariance: 80.0,
     fireSpeedVarianceSlider: {min:0.0,max:100.0},
   
-    fireDeathSpeed: 0.015,
+    fireDeathSpeed: 0.007,
     fireDeathSpeedSlider: {min: 0.001, max: 0.05},
   
-    fireTriangleness: 0.00015,
+    fireTriangleness: 0.0000,
     fireTrianglenessSlider: {min:0.0, max:0.0003},
   
     fireTextureHue: 0.0,
@@ -90,22 +90,22 @@ var options = {
     wind: true,
     omnidirectionalWind:false,
   
-    windStrength:20.0,
+    windStrength:6.0,
     windStrengthSlider:{min:0.0,max:60.0},
   
-    windTurbulance:0.00018,
+    windTurbulance:0.00012,
     windTurbulanceSlider:{min:0.0,max:0.001},
   
     sparks: true,
   
     // some of these options for sparks are not actually available in the UI to save UI space
-    sparkEmitRate: 6.0,
+    sparkEmitRate: 20.0,
     sparkEmitSlider: {min:0.0,max:10.0},
   
     sparkSize: 10.0,
     sparkSizeSlider: {min:5.0,max:100.0},
   
-    sparkSizeVariance: 20.0,
+    sparkSizeVariance: 100.0,
     sparkSizeVarianceSlider: {min:0.0,max:100.0},
   
     sparkSpeed: 400.0,
@@ -114,7 +114,7 @@ var options = {
     sparkSpeedVariance: 80.0,
     sparkSpeedVarianceSlider: {min:0.0, max:100.0},
   
-    sparkDeathSpeed: 0.0085,
+    sparkDeathSpeed: 0.01,
     sparkDeathSpeedSlider: {min: 0.002, max: 0.05},
   
   };
