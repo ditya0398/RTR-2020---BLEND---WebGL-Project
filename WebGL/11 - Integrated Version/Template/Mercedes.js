@@ -7,6 +7,7 @@ var gParts_Table_Merc;
 
 var gParts_Teapot_Merc;
 
+var Aj_logo_scale = 4.0;
 
 var vertexShaderObject_modelLoading_Merc;
 var fragmentShaderObject_modelLoading_Merc;
@@ -16,6 +17,42 @@ var fragmentShaderObject_modelLoading_Merc;
 var gAngleTriangle_modelLoading_Merc=0.0;
 var gAngleSquare_modelLoading_Merc=0.0;
 var perspectiveProjectionMatrix_modelLoading;
+
+//Logo On Mercedes
+
+
+var grgVertexShaderObject_logo;
+var grgFragmentShadeerObject_logo;
+var grgShaderProgramObject_logo;
+
+var grgVao_logo;
+var grgVbo_logo;
+var grgVboTexture_logo;
+
+var grtransLogoX= 48.9;
+var grtransLogoY = 14.84;
+var grtransLogoZ = -81.9;
+var grfangleLogoX = -24.5;
+var grfangleLogoY = 0.0;
+var grfangleLogoZ = -8.5;
+
+
+// texture
+var grtextureLogo_Apple;
+var grtextureLogo_Adobe;
+var grtextureLogo_ARM;
+
+var grgtextureSamplerUniformLogo;
+
+var grgModelMatrixUniform;
+var grgViewMatrixUniform;
+var grgProjectionMatrixUniformLogo;
+var grgDistortionUniformLogo;
+
+var grstackMatrixLogo = [];
+var grmatrixPositionLogo = -1;
+
+//logo
 
 
 var modelUniform_modelLoading_Merc, viewUniform_modelLoading_Merc, projectionUniform_modelLoading_Merc,cameraPosUniform_Merc;
@@ -54,7 +91,7 @@ var vbo_teapot_Merc = [];
 
 
 var MercTransX = -1.2500000000000002;
-var MercTransY = -2.749999999999998;
+var MercTransY = -0.749999999999998;
 var MercTransZ = 9.8999999999999895;
 
 var MercRotY = 0.0;
@@ -69,6 +106,7 @@ var MercedesProgramObject_Merc;
 
 function initializeModel_Merc(){
 
+    GRInitLogo();
 	var modelLoadingProgramObject;
 	//vertex shaderProgramObject
 	var vertexShaderSourceCode =
@@ -715,10 +753,394 @@ var MercTransZ_Eye = 0.0
 var MercTransY_Eye = 0.0
 var MercTransX_Eye = 0.0
 
+
+
+function GRInitLogo() {
+
+
+
+
+
+    // vertex shader
+    var grvertexShaderSourceCode =
+        "#version 300 es" +
+        "\n" +
+        "in vec4 vPosition;" +
+        "in vec2 vTexCoord;" +
+        "uniform mat4 u_model_matrix;" +
+        "uniform mat4 u_view_matrix;" +
+        "uniform mat4 u_projection_matrix;" +
+        "out vec2 out_texcoord;" +
+        "void main(void)" +
+        "{" +
+        "gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * vPosition;" +
+        "out_texcoord = vTexCoord;" +
+        "}";
+
+    grgVertexShaderObject_logo = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(grgVertexShaderObject_logo, grvertexShaderSourceCode);
+    gl.compileShader(grgVertexShaderObject_logo);
+    if (gl.getShaderParameter(grgVertexShaderObject_logo, gl.COMPILE_STATUS) == false) {
+        var error = gl.getShaderInfoLog(grgVertexShaderObject_logo);
+        if (error.length > 0) {
+            alert(error);
+            uninitialize();
+        }
+        alert("in compile vertex shader error");
+
+    }
+
+    var grfragmentShaderSourceCode =
+        "#version 300 es" +
+        "\n" +
+        "precision highp float;" +
+        "in vec2 out_texcoord;" +
+        "uniform highp sampler2D u_texture_sampler;" +
+        "uniform float distortion;" +
+        "out vec4 FragColor;" +
+        "void main(void)" +
+        "{" +
+        
+        "vec4 color = texture(u_texture_sampler, out_texcoord);" +
+        "if(color.r+color.g+color.b < 0.2)" +
+        "{" +
+        "discard;"+
+        "}"+
+        //"vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
+       // "FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
+        "FragColor=color;"+
+        "}";
+
+    grgFragmentShaderObjectLogo = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(grgFragmentShaderObjectLogo, grfragmentShaderSourceCode);
+    gl.compileShader(grgFragmentShaderObjectLogo);
+    if (gl.getShaderParameter(grgFragmentShaderObjectLogo, gl.COMPILE_STATUS) == false) {
+        var error = gl.getShaderInfoLog(grgFragmentShaderObjectLogo);
+        if (error.length > 0) {
+            alert(error);
+            uninitialize();
+        }
+        alert("in compile fragment shader error");
+
+    }
+
+    // shader program
+    grgShaderProgramObject_logo = gl.createProgram();
+    //attach shader object
+    gl.attachShader(grgShaderProgramObject_logo, grgVertexShaderObject_logo);
+    gl.attachShader(grgShaderProgramObject_logo, grgFragmentShaderObjectLogo);
+    // pre-linking
+    gl.bindAttribLocation(grgShaderProgramObject_logo, macros.AMC_ATTRIB_POSITION, "vPosition");
+    gl.bindAttribLocation(grgShaderProgramObject_logo, macros.AMC_ATTRIB_TEXCOORD, "vTexCoord");
+
+    // linking
+    gl.linkProgram(grgShaderProgramObject_logo);
+    if (!gl.getProgramParameter(grgShaderProgramObject_logo, gl.LINK_STATUS)) {
+        var err = gl.getProgramInfoLog(grgShaderProgramObject_logo);
+        if (err.length > 0) {
+            alert(err);
+
+        }
+
+        alert("in shader program object error");
+        alert(err);
+        // uninitialize(); 
+    }
+
+    // mvp uniform binding
+    grgModelMatrixUniform = gl.getUniformLocation(grgShaderProgramObject_logo, "u_model_matrix");
+    grgViewMatrixUniform = gl.getUniformLocation(grgShaderProgramObject_logo, "u_view_matrix");
+    grgProjectionMatrixUniformLogo = gl.getUniformLocation(grgShaderProgramObject_logo, "u_projection_matrix");
+    grgtextureSamplerUniformLogo = gl.getUniformLocation(grgShaderProgramObject_logo, "u_texture_sampler");
+    grgDistortionUniformLogo = gl.getUniformLocation(grgShaderProgramObject_logo, "distortion");
+
+
+
+    var grcubeTexcoords = new Float32Array(
+        [
+            0.0, 0.0,		// right		
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+
+        ]
+    );
+
+    var grcubeVertices = new Float32Array(
+        [
+            1.0, 1.0, 1.0,
+            -1.0, 1.0, 1.0,
+            -1.0, -1.0, 1.0,
+            1.0, -1.0, 1.0,
+            // right face
+
+        ]
+    );
+
+    // radio
+    grgVao_logo = gl.createVertexArray();
+    gl.bindVertexArray(grgVao_logo);
+
+    grgVbo_logo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, grgVbo_logo);
+    gl.bufferData(gl.ARRAY_BUFFER, grcubeVertices, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(macros.AMC_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(macros.AMC_ATTRIB_POSITION);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    grgVboTexture_logo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, grgVboTexture_logo);
+    gl.bufferData(gl.ARRAY_BUFFER, grcubeTexcoords, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(macros.AMC_ATTRIB_TEXCOORD, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(macros.AMC_ATTRIB_TEXCOORD);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    gl.bindVertexArray(null);
+
+
+    // texture for Logo
+    grtextureLogo_Apple = gl.createTexture();
+    grtextureLogo_Apple.image = new Image();
+    grtextureLogo_Apple.image.src = "AkhileshResources/a1.png";
+    grtextureLogo_Apple.image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, grtextureLogo_Apple);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, grtextureLogo_Apple.image);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    };
+    grtextureLogo_Adobe = gl.createTexture();
+    grtextureLogo_Adobe.image = new Image();
+    grtextureLogo_Adobe.image.src = "AkhileshResources/adobe.png";
+    grtextureLogo_Adobe.image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, grtextureLogo_Adobe);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, grtextureLogo_Adobe.image);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    };
+
+
+    grtextureLogo_ARM = gl.createTexture();
+    grtextureLogo_ARM.image = new Image();
+    grtextureLogo_ARM.image.src = "AkhileshResources/arm.png";
+    grtextureLogo_ARM.image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, grtextureLogo_ARM);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, grtextureLogo_ARM.image);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    };
+}
+
+
+function GRDisplayLogo() {
+    // variables
+    var grmodelMatrix = mat4.create();
+    var grviewMatrix = mat4.create();
+    var grprojectionMatrix = mat4.create();
+    var grscaleMatrix = mat4.create();
+    var grtranslateMatrix = mat4.create();
+    var grrotateMatrix = mat4.create();
+
+
+
+    gl.useProgram(grgShaderProgramObject_logo);
+
+    gl.uniform1f(grgDistortionUniformLogo, blackWhiteDistortion)
+    //************************************************************************************************ roadside ********************************************************
+    //***************************************************************************************************************************************************************
+    mat4.translate(grtranslateMatrix, grtranslateMatrix, [grtransLogoX, grtransLogoY, grtransLogoZ]);
+    mat4.rotateY(grrotateMatrix, grrotateMatrix, deg2rad(180+grfangleLogoY));
+    mat4.rotateX(grrotateMatrix, grrotateMatrix, deg2rad(grfangleLogoX));
+    mat4.scale(grscaleMatrix, grscaleMatrix, [Aj_logo_scale, Aj_logo_scale, Aj_logo_scale]);
+    mat4.rotateX(grrotateMatrix, grrotateMatrix, deg2rad(grfangleLogoX));
+    mat4.rotateY(grrotateMatrix, grrotateMatrix, deg2rad(grfangleLogoY));
+    mat4.rotateZ(grrotateMatrix, grrotateMatrix, deg2rad(grfangleLogoZ));
+
+    mat4.multiply(grtranslateMatrix, grtranslateMatrix, grrotateMatrix);
+    mat4.multiply(grmodelMatrix, grtranslateMatrix, grscaleMatrix);
+
+    GRPushToStack_logo(grmodelMatrix);
+
+    grtranslateMatrix = mat4.create();
+    grscaleMatrix = mat4.create();
+    grrotateMatrix = mat4.create();
+    grmodelMatrix = mat4.create();
+
+    mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
+
+    grmodelMatrix = GRPushToStack_logo(grmodelMatrix);
+
+    GRPopFromStack_Logo();
+
+    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false,viewMatrix_Scene3);//viewMatrix
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformLogo, false, grprojectionMatrix);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, grtextureLogo_Apple);
+    gl.uniform1i(grgtextureSamplerUniformLogo, 0);
+    gl.bindVertexArray(grgVao_logo);
+
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
+    gl.bindVertexArray(null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
+    //adobe
+
+    grtranslateMatrix = mat4.create();
+    grscaleMatrix = mat4.create();
+    grrotateMatrix = mat4.create();
+    grmodelMatrix = mat4.create();
+
+    //mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
+    mat4.translate(grmodelMatrix, grmodelMatrix, [0, -1.7, 0]);
+    grmodelMatrix = GRPushToStack_logo(grmodelMatrix);
+
+    GRPopFromStack_Logo();
+    mat4.scale(grmodelMatrix, grmodelMatrix, [0.8,0.8,0.8]);
+
+    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, viewMatrix_Scene3);//viewMatrix
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformLogo, false, grprojectionMatrix);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, grtextureLogo_Adobe);
+    gl.uniform1i(grgtextureSamplerUniformLogo, 0);
+    gl.bindVertexArray(grgVao_logo);
+
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
+    gl.bindVertexArray(null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
+    //arm
+
+    grtranslateMatrix = mat4.create();
+    grscaleMatrix = mat4.create();
+    grrotateMatrix = mat4.create();
+    grmodelMatrix = mat4.create();
+
+    //mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
+    mat4.translate(grmodelMatrix, grmodelMatrix, [0, -4, 0]);
+    grmodelMatrix = GRPushToStack_logo(grmodelMatrix);
+
+    GRPopFromStack_Logo();
+    mat4.scale(grmodelMatrix, grmodelMatrix, [0.8, 0.8, 0.8]);
+    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform, false, viewMatrix_Scene3);//viewMatrix
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformLogo, false, grprojectionMatrix);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, grtextureLogo_ARM);
+    gl.uniform1i(grgtextureSamplerUniformLogo, 0);
+    gl.bindVertexArray(grgVao_logo);
+
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+
+    gl.bindVertexArray(null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
+    GRPopFromStack_Logo();
+
+    GRPopFromStack_Logo();
+    gl.useProgram(null);
+
+}
+
+function GRPushToStack_logo(matrix) {
+    if (grmatrixPositionLogo == -1) {
+        grstackMatrixLogo.push(matrix);
+        grmatrixPositionLogo++;
+        return matrix;
+    }
+    else {
+        var topMatrix = grstackMatrixLogo[grmatrixPositionLogo];
+        mat4.multiply(matrix, topMatrix, matrix);
+        grstackMatrixLogo.push(matrix);
+        grmatrixPositionLogo++;
+        return grstackMatrixLogo[grmatrixPositionLogo];
+    }
+
+}
+
+function GRPopFromStack_Logo() {
+    if (!grstackMatrixLogo[0]) {
+        grstackMatrixLogo[0] = mat4.create();
+        return grstackMatrixLogo[0];
+    }
+    else {
+        grstackMatrixLogo.pop();
+        grmatrixPositionLogo--;
+        return grstackMatrixLogo[grmatrixPositionLogo];
+    }
+
+}
+
+
+function GRUninitializeLogo() {
+    if (grgVao_logo) {
+        gl.deleteVertexArray(grgVao_logo);
+        grgVao_logo = null;
+    }
+    if (grgVbo_logo) {
+        gl.deleteBuffer(grgVbo_logo);
+        grgVbo_logo = null;
+    }
+    if (grtextureLogo_Apple) {
+        gl.deleteTexture(grtextureLogo_Apple);
+        grtextureLogo_Apple = null;
+    }
+    if (grtextureLogo_Adobe) {
+        gl.deleteTexture(grtextureLogo_Adobe);
+        grtextureLogo_Adobe = null;
+    }
+
+    if (grgShaderProgramObject_logo) {
+        if (grgFragmentShaderObjectLogo) {
+            gl.detachShader(grgShaderProgramObject_logo, grgFragmentShaderObjectLogo);
+            gl.deleteShader(grgFragmentShaderObjectLogo);
+            grgFragmentShaderObjectLogo = null;
+        }
+
+        if (grgFragmentShaderObjectLogo) {
+            gl.detachShader(grgShaderProgramObject_logo, grgVertexShaderObject_logo);
+            gl.deleteShader(grgVertexShaderObject_logo);
+            grgVertexShaderObject_logo = null;
+        }
+
+        gl.deleteProgram(grgShaderProgramObject_logo);
+        grshaderProgramObject = null;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//end Logo On Mercedes
+
 function drawModel_Merc()
 {
+    viewMatrix_Scene3 = mat4.create();
 
-
+   
+    
 	//gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
 	gl.useProgram(MercedesProgramObject_Merc);
 	//lighting details
@@ -728,7 +1150,7 @@ function drawModel_Merc()
 
 
 	var modelMatrix = mat4.create();
-	viewMatrix_Scene3 = mat4.create();
+    
   
   viewScene3[0] = Math.sin(MercRotY) + MercTransX_Eye
   viewScene3[1] = -1.5 + (MercTransY_Eye * 6)
@@ -736,8 +1158,12 @@ function drawModel_Merc()
   //Initially values [0.0, -1.5, 1.0], [0.0, -1.5, 0.0]
   mat4.lookAt(viewMatrix_Scene3, viewScene3, [MercTransX_Eye, -1.5 + MercTransY_Eye, MercTransZ_Eye], [0.0, 1.0, 0.0]);
   //var angleInRadian = degreeToRadian(gAngle);
-  mat4.translate(modelMatrix, modelMatrix, [MercTransX, MercTransY, MercTransZ]);
-  mat4.scale(modelMatrix, modelMatrix, [MercScale, MercScale, MercScale]);
+    mat4.translate(modelMatrix, modelMatrix, [MercTransX, MercTransY, MercTransZ]);
+
+   // mat4.rotateY(modelMatrix, modelMatrix, deg2rad(180));
+    mat4.scale(modelMatrix, modelMatrix, [MercScale, MercScale, MercScale]);
+
+    GRPushToStack_logo(modelMatrix);
 	//var angleInRadian = degreeToRadian(gAngle);
 	// mat4.translate(modelMatrix, modelMatrix, [0.0,transY_Merc,-100.0]);
   // mat4.scale(modelMatrix, modelMatrix, [0.2,0.2,0.2]);
@@ -834,7 +1260,8 @@ function drawModel_Merc()
 	
 	gl.useProgram(null);
 
-
+    //logo
+    GRDisplayLogo();
 
 
 	// requestAnimationFrame(drawModel_Merc,canvas);
@@ -984,3 +1411,5 @@ function drawCup()
 	// 	else
 	// 		gAngleSquare_modelLoading_Merc = gAngleSquare_modelLoading_Merc + 1.0;
 }
+
+

@@ -22,7 +22,7 @@ var view =[2.49, -1.05, -1.899]
 //[2.49, -1.19, -1.899]
 
 
-var SceneTransitionValue = 0.0;
+var SceneTransitionValue = 1.0;
 
 var globalQuadBlendingValue = 0.001; 
 var secondSceneCamera = false;
@@ -63,7 +63,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_1
+var currentScene = scenes.SCENE_3
 
 
 
@@ -332,7 +332,7 @@ initEndScreen()
 	// 	//numElem = null;
 	// });
 
-	loadModel_Merc('Models/modiferMercedes.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
+	loadModel_Merc('Models/MercedesFinal2.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
 		console.log("succeeded");
 		numElements_table = numElem2;
 		gParts_Teapot_Merc = parts_teapotMerc;
