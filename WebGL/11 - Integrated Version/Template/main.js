@@ -134,25 +134,22 @@ function keyDown(event) {
 			secondSceneCamera = true;
 			break
 		case 65: //A
-			viewScene3[0] -= 0.1
+			grtransLogoX -= 0.1
 			break
 		case 83: //S
-			view[2] += 0.1
-			viewScene3[2] += 0.1
-			//view[1] -= 0.033
+			grtransLogoZ += 0.1
 			break
 		case 68: //D
-			viewScene3[0] += 0.1
+			grtransLogoX += 0.1
 			break
 		case 87: //W
-			viewScene3[2] -= 0.1
-			//view[1] += 0.033
+			grtransLogoZ -= 0.1
 			break
 		case 81: //Q
-			SBR_DM_Y_ -= 0.1
+			grtransLogoY += 0.1
 			break
 		case 69: //E
-			SBR_DM_Y_ += 0.1
+			grtransLogoY -= 0.1
 			break
 		case 77: //M
 			break
@@ -663,7 +660,7 @@ function SceneTransitions()
 			if(gbAnim) {
 				//	if(SceneTransitionValue >= -0.5)
 		//	{
-				if(MercTransZ > -4.3) {
+				if(MercTransZ > -4.0) {
 					// MercTransZ -= 0.007
 					MercTransZ -= 0.007
 				} else if(MercRotY < Math.PI) {
@@ -674,7 +671,7 @@ function SceneTransitions()
 					if(MercTransZ > -5.5) {
 						MercTransZ -= 0.007
 					}
-					MercTransZ_Eye -= 6.5 / (Math.PI / camera_speed_scene3)
+					MercTransZ_Eye -= 6.2 / (Math.PI / camera_speed_scene3)
 					if(MercTransY_Eye < 0.2) {
 						MercTransY_Eye += camera_speed_scene3 * 0.3
 					}

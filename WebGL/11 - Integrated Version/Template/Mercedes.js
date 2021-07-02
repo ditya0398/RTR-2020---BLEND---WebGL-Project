@@ -29,9 +29,9 @@ var grgVao_logo;
 var grgVbo_logo;
 var grgVboTexture_logo;
 
-var grtransLogoX= 48.9;
-var grtransLogoY = 14.84;
-var grtransLogoZ = -81.9;
+var grtransLogoX= 48.67;
+var grtransLogoY = 18.14;
+var grtransLogoZ = -69.9;
 var grfangleLogoX = -24.5;
 var grfangleLogoY = 0.0;
 var grfangleLogoZ = -8.5;
@@ -90,9 +90,9 @@ var vbo_teapot_Merc = [];
 
 
 
-var MercTransX = -1.2500000000000002;
+var MercTransX = -1.5500000000000002;
 var MercTransY = -0.749999999999998;
-var MercTransZ = 9.8999999999999895;
+var MercTransZ = 4.8999999999999895;
 
 var MercRotY = 0.0;
 
@@ -1000,7 +1000,7 @@ function GRDisplayLogo() {
     grmodelMatrix = mat4.create();
 
     //mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
-    mat4.translate(grmodelMatrix, grmodelMatrix, [0, -1.7, 0]);
+    mat4.translate(grmodelMatrix, grmodelMatrix, [0, -2.7, 0]);
     grmodelMatrix = GRPushToStack_logo(grmodelMatrix);
 
     GRPopFromStack_Logo();
@@ -1028,7 +1028,7 @@ function GRDisplayLogo() {
     grmodelMatrix = mat4.create();
 
     //mat4.multiply(grprojectionMatrix, grprojectionMatrix, perspectiveMatrix);
-    mat4.translate(grmodelMatrix, grmodelMatrix, [0, -4, 0]);
+    mat4.translate(grmodelMatrix, grmodelMatrix, [0, -5.8, 0.5]);
     grmodelMatrix = GRPushToStack_logo(grmodelMatrix);
 
     GRPopFromStack_Logo();
@@ -1153,10 +1153,10 @@ function drawModel_Merc()
     
   
   viewScene3[0] = Math.sin(MercRotY) + MercTransX_Eye
-  viewScene3[1] = -1.5 + (MercTransY_Eye * 6)
+  viewScene3[1] = -1.0 + (MercTransY_Eye * 6)
   viewScene3[2] = Math.cos(MercRotY) + MercTransZ_Eye
   //Initially values [0.0, -1.5, 1.0], [0.0, -1.5, 0.0]
-  mat4.lookAt(viewMatrix_Scene3, viewScene3, [MercTransX_Eye, -1.5 + MercTransY_Eye, MercTransZ_Eye], [0.0, 1.0, 0.0]);
+  mat4.lookAt(viewMatrix_Scene3, viewScene3, [MercTransX_Eye, -1.0 + MercTransY_Eye, MercTransZ_Eye], [0.0, 1.0, 0.0]);
   //var angleInRadian = degreeToRadian(gAngle);
     mat4.translate(modelMatrix, modelMatrix, [MercTransX, MercTransY, MercTransZ]);
 
