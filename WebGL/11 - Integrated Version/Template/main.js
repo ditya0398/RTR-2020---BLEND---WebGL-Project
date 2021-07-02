@@ -18,7 +18,7 @@ var rotX = 0.0, rotY = 0.0
 var x_audio;
 
 //first scene view 
-var view =[2.49, -1.05, -1.899]
+var view =[2.49, -1.05, -12.899]
 //[2.49, -1.19, -1.899]
 
 
@@ -56,6 +56,7 @@ const scenes = {
 	SCENE_4:4,
 	SCENE_5:5,
 }
+
 
 
 
@@ -158,10 +159,10 @@ function keyDown(event) {
 		case 78: //N
 			break
 		case 38: //up arrow
-		poster1Z -= 0.05
+		TeapotTransZ -= 0.05
 			break
 		case 40: //down arrow
-		poster1Z += 0.05
+		TeapotTransZ += 0.01
 			break
 		case 37: //left arrow
 
@@ -172,11 +173,11 @@ function keyDown(event) {
 			break
 
 		case 84: //Y
-		poster1Y += 0.05
+		fireTransY += 0.01
 			break
 
 		case 85: //U
-		poster1Y -= 0.05
+		fireTransY -= 0.01
 			break
 
 		case 100: //4
@@ -331,13 +332,13 @@ initEndScreen()
 	// 	//numElem = null;
 	// });
 
-	loadModel_Merc('Models/modiferMercedes.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
-		console.log("succeeded");
-		numElements_table = numElem2;
-		gParts_Teapot_Merc = parts_teapotMerc;
-		console.log(gParts_Teapot_Merc.length);
+	// loadModel_Merc('Models/modiferMercedes.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
+	// 	console.log("succeeded");
+	// 	numElements_table = numElem2;
+	// 	gParts_Teapot_Merc = parts_teapotMerc;
+	// 	console.log(gParts_Teapot_Merc.length);
 
-	});
+	// });
 
 
 
@@ -450,16 +451,16 @@ function render() {
 	}
 
 
-	if(currentScene == scenes.SCENE_5)
-	{
-		SceneTransitionValue = 0.0
-		updateEndScene();
-	}
-	else
-	{
-		SceneTransitions();
-		dl_render_fade();
-	}
+	// if(currentScene == scenes.SCENE_5)
+	// {
+	// 	SceneTransitionValue = 0.0
+	// 	updateEndScene();
+	// }
+	// else
+	// {
+	// 	SceneTransitions();
+	// 	dl_render_fade();
+	// }
 	
 
 //	Draw_Shadow();

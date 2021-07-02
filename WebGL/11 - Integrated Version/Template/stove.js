@@ -413,8 +413,8 @@ function ASJ_draw_stove() {
 	gl.uniform1i(flagUniform_stove, 1);
 	burner = cover;
 	//s1
-	mat4.translate(burner, burner, [0, 0.0, -0.5]);
-	mat4.scale(burner, burner, [0.08, 0.08, 0.5]);
+	mat4.translate(burner, burner, [0, 0.0, -0.41]);
+	mat4.scale(burner, burner, [0.085, 0.08, 0.62]);
 	gl.uniformMatrix4fv(modelMatrixUniform_stove, false, burner);
 	gl.bindVertexArray(vao_square_stove);
 	gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -425,7 +425,7 @@ function ASJ_draw_stove() {
 	gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
 	gl.bindVertexArray(null);
 	//s2
-	mat4.translate(burner, burner, [0, 0.0, 0.5]);
+	mat4.translate(burner, burner, [0, 0.0, 0.55]);
 	mat4.scale(burner, burner, [2, 1.3, 0.5]);
 	gl.uniformMatrix4fv(modelMatrixUniform_stove, false, burner);
 	gl.bindVertexArray(vao_square_stove);
