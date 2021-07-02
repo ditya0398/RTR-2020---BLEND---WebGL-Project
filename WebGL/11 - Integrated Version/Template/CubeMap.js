@@ -34,7 +34,7 @@ function initCubeMap()
 		"void main(void){               \n" +
 		"gl_Position = u_mvp_matrix * vec4(vPosition, 1.0f);\n" +
 		"out_TexCoord = normalize(vPosition);             \n" +
-        "out_TexCoord = vec3(out_TexCoord.x, 1.0 - out_TexCoord.y, out_TexCoord.z);\n"+
+        "out_TexCoord = vec3(clamp(out_TexCoord.x, -1.0, 1.0), clamp(out_TexCoord.y, -1.0, 1.0), clamp(out_TexCoord.z, -1.0, 1.0));\n"+
         "}";
 
     vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
@@ -96,47 +96,47 @@ function initCubeMap()
     CubeMap_texture_Sampler_Uniform = gl.getUniformLocation(CubeMapShaderProgramObject,"u_Texture_Sampler");
 
     var CubeVertices = new Float32Array([
-        -20.0,  20.0, -20.0,
-        -20.0, -20.0, -20.0,
-         20.0, -20.0, -20.0,
-         20.0, -20.0, -20.0,
-         20.0,  20.0, -20.0,
-        -20.0,  20.0, -20.0,
+        -30.0,  30.0, -30.0,
+        -30.0, -30.0, -30.0,
+         30.0, -30.0, -30.0,
+         30.0, -30.0, -30.0,
+         30.0,  30.0, -30.0,
+        -30.0,  30.0, -30.0,
     
-        -20.0, -20.0,  20.0,
-        -20.0, -20.0, -20.0,
-        -20.0,  20.0, -20.0,
-        -20.0,  20.0, -20.0,
-        -20.0,  20.0,  20.0,
-        -20.0, -20.0,  20.0,
+        -30.0, -30.0,  30.0,
+        -30.0, -30.0, -30.0,
+        -30.0,  30.0, -30.0,
+        -30.0,  30.0, -30.0,
+        -30.0,  30.0,  30.0,
+        -30.0, -30.0,  30.0,
     
-         20.0, -20.0, -20.0,
-         20.0, -20.0,  20.0,
-         20.0,  20.0,  20.0,
-         20.0,  20.0,  20.0,
-         20.0,  20.0, -20.0,
-         20.0, -20.0, -20.0,
+         30.0, -30.0, -30.0,
+         30.0, -30.0,  30.0,
+         30.0,  30.0,  30.0,
+         30.0,  30.0,  30.0,
+         30.0,  30.0, -30.0,
+         30.0, -30.0, -30.0,
     
-        -20.0, -20.0,  20.0,
-        -20.0,  20.0,  20.0,
-         20.0,  20.0,  20.0,
-         20.0,  20.0,  20.0,
-         20.0, -20.0,  20.0,
-        -20.0, -20.0,  20.0,
+        -30.0, -30.0,  30.0,
+        -30.0,  30.0,  30.0,
+         30.0,  30.0,  30.0,
+         30.0,  30.0,  30.0,
+         30.0, -30.0,  30.0,
+        -30.0, -30.0,  30.0,
     
-        -20.0,  20.0, -20.0,
-         20.0,  20.0, -20.0,
-         20.0,  20.0,  20.0,
-         20.0,  20.0,  20.0,
-        -20.0,  20.0,  20.0,
-        -20.0,  20.0, -20.0,
+        -30.0,  30.0, -30.0,
+         30.0,  30.0, -30.0,
+         30.0,  30.0,  30.0,
+         30.0,  30.0,  30.0,
+        -30.0,  30.0,  30.0,
+        -30.0,  30.0, -30.0,
     
-        -20.0, -20.0, -20.0,
-        -20.0, -20.0,  20.0,
-         20.0, -20.0, -20.0,
-         20.0, -20.0, -20.0,
-        -20.0, -20.0,  20.0,
-         20.0, -20.0,  20.0
+        -30.0, -30.0, -30.0,
+        -30.0, -30.0,  30.0,
+         30.0, -30.0, -30.0,
+         30.0, -30.0, -30.0,
+        -30.0, -30.0,  30.0,
+         30.0, -30.0,  30.0
         ]);
 
 
@@ -153,24 +153,24 @@ function initCubeMap()
     gl.bindVertexArray(null);    
     LoadCubeMapTextures();
 }
+
+var angle = 0.0
 function Display_CubeMap() {
     
-
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
     gl.useProgram(CubeMapShaderProgramObject);
 
-    var modelViewMatrix = mat4.create();
+    var modelViewMatrix = viewMatrix_Scene3
     var modelViewProjectionMatrix = mat4.create();
-    // var XRotationMatrix = mat4.create();
+    var XRotationMatrix = mat4.create();
 
     mat4.identity(modelViewMatrix);
     mat4.identity(modelViewProjectionMatrix);
-    // mat4.identity(XRotationMatrix);
+    mat4.identity(XRotationMatrix);
 
-    // mat4.rotateY(XRotationMatrix, XRotationMatrix, angle);
+    mat4.rotateX(XRotationMatrix, XRotationMatrix, Math.PI)
+    mat4.rotateY(XRotationMatrix, XRotationMatrix, angle);
 
-    // mat4.multiply(modelViewMatrix, modelViewMatrix, XRotationMatrix);
+    mat4.multiply(modelViewMatrix, modelViewMatrix, XRotationMatrix);
     
     mat4.multiply(modelViewProjectionMatrix, perspectiveMatrix, modelViewMatrix);
     
@@ -196,78 +196,69 @@ function Display_CubeMap() {
     gl.useProgram(null);
 
     // update();
-
-    requestAnimationFrame(Display_CubeMap, canvas);
+    if(gbAnim) {
+        angle += 0.01
+    }
 
 }
 function LoadCubeMapTextures() {
 
     CubeMap_Texture_ID = gl.createTexture();
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, CubeMap_Texture_ID);
-
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_BASE_LEVEL, 0); 
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAX_LEVEL, 0); 
+        
 if(1)
 {
     hFront = new Image();
-    hFront.src = "DarshanResources/pz.jpg";
+    hFront.src = "DarshanResources/pz.png";
     hFront.onload = function (){
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, CubeMap_Texture_ID);
         gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, hFront);
-        gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-
+    
     } 
 
     hBack = new Image();
-    hBack.src = "DarshanResources/nz.jpg";
+    hBack.src = "DarshanResources/nz.png";
     hBack.onload = function (){
-
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, CubeMap_Texture_ID);
         gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, hBack);
-        gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-
     }   
 
     hLeft = new Image();
-    hLeft.src = "DarshanResources/nx.jpg";
+    hLeft.src = "DarshanResources/nx.png";
     hLeft.onload = function (){
-
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, CubeMap_Texture_ID);
         gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, hLeft);
-        gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-
     } 
 
     hRight = new Image();
-    hRight.src = "DarshanResources/px.jpg";
+    hRight.src = "DarshanResources/px.png";
     hRight.onload = function (){
-
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, CubeMap_Texture_ID);
         gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, hRight);
-        gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
 
     }
 
     hTop = new Image();
-    hTop.src = "DarshanResources/py.jpg";
+    hTop.src = "DarshanResources/py.png";
     hTop.onload = function (){
-
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, CubeMap_Texture_ID);
         gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, hTop);
-        gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-
     }
 
     hBottom = new Image();
-    hBottom.src = "DarshanResources/ny.jpg";
+    hBottom.src = "DarshanResources/ny.png";
     hBottom.onload = function (){
-
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, CubeMap_Texture_ID);
         gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, hBottom);
-        gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-
     }
-}
-    //gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+}   gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
 
 }

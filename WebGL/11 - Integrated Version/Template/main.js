@@ -332,13 +332,13 @@ initEndScreen()
 	// 	//numElem = null;
 	// });
 
-	// loadModel_Merc('Models/modiferMercedes.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
-	// 	console.log("succeeded");
-	// 	numElements_table = numElem2;
-	// 	gParts_Teapot_Merc = parts_teapotMerc;
-	// 	console.log(gParts_Teapot_Merc.length);
+	loadModel_Merc('Models/modiferMercedes.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
+		console.log("succeeded");
+		numElements_table = numElem2;
+		gParts_Teapot_Merc = parts_teapotMerc;
+		console.log(gParts_Teapot_Merc.length);
 
-	// });
+	});
 
 
 
@@ -423,6 +423,7 @@ function render() {
 		case scenes.SCENE_3:
 			drawModel_Merc();
 			displayStarBucksOuter();
+			// Display_CubeMap()
 			 //drawCar();
 
 		
@@ -453,16 +454,16 @@ function render() {
 	}
 
 
-	// if(currentScene == scenes.SCENE_5)
-	// {
-	// 	SceneTransitionValue = 0.0
-	// 	updateEndScene();
-	// }
-	// else
-	// {
-	// 	SceneTransitions();
-	// 	dl_render_fade();
-	// }
+	if(currentScene == scenes.SCENE_5)
+	{
+		SceneTransitionValue = 0.0
+		updateEndScene();
+	}
+	else
+	{
+		SceneTransitions();
+		dl_render_fade();
+	}
 	
 
 //	Draw_Shadow();
@@ -648,7 +649,7 @@ function SceneTransitions()
 				{
 					SceneTransitionValue = -1.3;
 					thirdSceneFadeInTransition = false;	
-					thirdSceneFadeOutTransition = true;			
+					// thirdSceneFadeOutTransition = true;			
 				}				
 			}
 			else if(thirdSceneFadeOutTransition && SceneTransitionValue <= 1.0){
