@@ -1,4 +1,5 @@
 // Referred -> https://github.com/mdn/webaudio-examples/tree/master/audio-basics
+// Demo : https://mdn.github.io/webaudio-examples/audio-basics/
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioElement = document.querySelector('audio');
 const playButton = document.querySelector("button");
@@ -30,14 +31,19 @@ function initSound() {
 
     // volume
     const gainNode = audioCtx.createGain();
-    gainNode.gain.value = 1;
+
+    // 0 : mute
+    gainNode.gain.value = 1; // change this value to control a volume of sound.
 
     // panning
     const pannerOptions = {
+        // 0 : Sound in both Left and right channel.
+        // -1 :  full left pan and 
+        // 1 : full right pan
         pan: 0
     };
     const panner = new StereoPannerNode(audioCtx, pannerOptions);
-    panner.pan.value = 1;
+    panner.pan.value = 0; // Change this value to -1 if you want to send sound to left channel only and to 1 if you want to send sound to left channel
 
     // connect our graph
     track.connect(gainNode).connect(panner).connect(audioCtx.destination);
