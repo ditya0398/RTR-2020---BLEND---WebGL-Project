@@ -206,11 +206,11 @@ var fragmentShaderObject;
 	"vec4 texColor = texture(u_sampler,v_texture_coord.xy);" +
 
 	"vec4 finalColor;" +
-	"finalColor.r = texColor.r*v_color.r;" +
-	"finalColor.g = texColor.g*v_color.g;" +
+	"finalColor.r = texColor.r*v_color.b;" +
+	"finalColor.g = texColor.g*v_color.b;" +
 	"finalColor.b = texColor.b*v_color.b;" +
 	"finalColor.a = texColor.a*v_color.a;" +
-
+  
 	"FragColor = finalColor;" +
 	"}";
 

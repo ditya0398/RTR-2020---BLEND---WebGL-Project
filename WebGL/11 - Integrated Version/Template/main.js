@@ -159,33 +159,33 @@ function keyDown(event) {
 		case 78: //N
 			break
 		case 38: //up arrow
-		TeapotTransZ -= 0.05
+		smokeZ -= 0.05
 			break
 		case 40: //down arrow
-		TeapotTransZ += 0.01
+		smokeZ += 0.01
 			break
 		case 37: //left arrow
 
-		poster1X -= 0.05
+		smokeX -= 0.05
 			break
 		case 39: //right arrow
-		poster1X += 0.025
+		smokeX += 0.025
 			break
 
 		case 84: //Y
-		fireTransY += 0.01
+		smokeY += 0.01
 			break
 
 		case 85: //U
-		fireTransY -= 0.01
+		smokeY -= 0.01
 			break
 
 		case 100: //4
-			MercScale -= 0.0005
+			smokeScale -= 0.005
 			break
 
 		case 102: //6
-		MercScale += 0.0005
+		smokeScale += 0.005
 			break
 		case 104:
 			val_AJ = val_AJ + 0.5;
@@ -253,7 +253,7 @@ initEndScreen()
 	// tvn_init_lamp_arch();
 	GRInitChaiCup();
 
-	
+	initSmoke();
 
 	//initShadow();
 
@@ -403,6 +403,8 @@ function render() {
 			drawModel();
 			ASJ_draw_stove();
 			GRDisplayChaiCup();
+
+			drawSmoke();
 			
 		break;
 
