@@ -22,7 +22,7 @@ var view =[2.49, -1.05, -1.899]
 //[2.49, -1.19, -1.899]
 
 
-var SceneTransitionValue = 1.0;
+var SceneTransitionValue = 0.0;
 
 var globalQuadBlendingValue = 0.001; 
 var secondSceneCamera = false;
@@ -32,7 +32,7 @@ var firstSceneFadeOutTransition = false;
 var secondSceneFadeInTransition = false;
 var secondSceneFadeOutTransition = false;
 var thirdSceneFadeOutTransition = false;
-var thirdSceneFadeInTransition = true;
+var thirdSceneFadeInTransition = false;
 var fourthSceneFadeOutTransition = false;
 var fourthSceneFadeInTransition = false;
 //Scene 2 camera positions [0.0, 15.133, -47.1]
@@ -63,7 +63,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_3
+var currentScene = scenes.SCENE_0
 
 
 
@@ -239,14 +239,14 @@ function init() {
 
 // Scene 1
 
-
+initFire();
 initEndScreen()
 	 GRInit()
 	 GRInitRoadside();
 	 initNormalMapRoad()
 	 ASJ_init_stove();
 	 tejswini_hut_init()
-	initCubeMap();
+//	initCubeMap();
 	// tvn_init_lamp_arch();
 	GRInitChaiCup();
 
@@ -344,7 +344,7 @@ initEndScreen()
 
 	MercedesProgramObject_Merc = initializeModel_Merc();
 
-	initFire();
+	
 	
 
 	gViewMatrix = mat4.create()
@@ -390,8 +390,10 @@ function render() {
 			tvn_speaker_draw();
 			//Display_CubeMap()
 			drawFire();
-			drawSmoke();
+
+			
 			GRDisplay()
+			drawSmoke();
 			
 			tejswini_hut_draw()
 			renderNormalMapRoad()
@@ -408,12 +410,13 @@ function render() {
 
 		case scenes.SCENE_2:
 			GRDisplayScene2();
+			GRDisplayCamera();
 			GRDisplayStageLights();
 			tvn_tripod_draw();
 			GRDisplayMic();
 			tvn_speaker_draw();
 			DL_renderChair()
-			GRDisplayCamera();
+			
 			tvn_script_draw();
 			tvn_drama_draw();
 			dl_render_sir_shadow()
@@ -651,7 +654,7 @@ function SceneTransitions()
 				{
 					SceneTransitionValue = -1.3;
 					thirdSceneFadeInTransition = false;	
-					// thirdSceneFadeOutTransition = true;			
+					 thirdSceneFadeOutTransition = true;			
 				}				
 			}
 			else if(thirdSceneFadeOutTransition && SceneTransitionValue <= 1.0){

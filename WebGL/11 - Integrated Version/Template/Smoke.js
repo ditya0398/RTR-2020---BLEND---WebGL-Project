@@ -407,7 +407,7 @@ function drawSmoke()
 
 
 
-	Time_Smoke += 0.01;
+	Time_Smoke += 0.04;
 	gl.uniformMatrix4fv(mvpUniform_Smoke, false, modelViewProjectionMatrix);
 	gl.bindTexture(gl.TEXTURE_2D, pyramid_texture_Smoke);
 	gl.uniform1i(sampleruniform_Smoke, 0);

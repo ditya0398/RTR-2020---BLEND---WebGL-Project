@@ -74,7 +74,7 @@ var modelLoadingProgramObject;
 var TeapotTransX = 2.62;
 var TeapotTransY =0.54999999999999;
 var TeapotTransZ = -15.77;
-var TeapotScale = 0.1399999999999994;
+var TeapotScale = 0.1499999999999994;
 
 
 

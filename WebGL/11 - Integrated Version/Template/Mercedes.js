@@ -44,8 +44,8 @@ var grtextureLogo_ARM;
 
 var grgtextureSamplerUniformLogo;
 
-var grgModelMatrixUniform;
-var grgViewMatrixUniform;
+var grgModelMatrixUniform_Logo;
+var grgViewMatrixUniform_Logo;
 var grgProjectionMatrixUniformLogo;
 var grgDistortionUniformLogo;
 
@@ -848,8 +848,8 @@ function GRInitLogo() {
     }
 
     // mvp uniform binding
-    grgModelMatrixUniform = gl.getUniformLocation(grgShaderProgramObject_logo, "u_model_matrix");
-    grgViewMatrixUniform = gl.getUniformLocation(grgShaderProgramObject_logo, "u_view_matrix");
+    grgModelMatrixUniform_Logo = gl.getUniformLocation(grgShaderProgramObject_logo, "u_model_matrix");
+    grgViewMatrixUniform_Logo = gl.getUniformLocation(grgShaderProgramObject_logo, "u_view_matrix");
     grgProjectionMatrixUniformLogo = gl.getUniformLocation(grgShaderProgramObject_logo, "u_projection_matrix");
     grgtextureSamplerUniformLogo = gl.getUniformLocation(grgShaderProgramObject_logo, "u_texture_sampler");
     grgDistortionUniformLogo = gl.getUniformLocation(grgShaderProgramObject_logo, "distortion");
@@ -978,8 +978,8 @@ function GRDisplayLogo() {
 
     GRPopFromStack_Logo();
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false,viewMatrix_Scene3);//viewMatrix
+    gl.uniformMatrix4fv(grgModelMatrixUniform_Logo, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform_Logo, false,viewMatrix_Scene3);//viewMatrix
     gl.uniformMatrix4fv(grgProjectionMatrixUniformLogo, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -1006,8 +1006,8 @@ function GRDisplayLogo() {
     GRPopFromStack_Logo();
     mat4.scale(grmodelMatrix, grmodelMatrix, [0.8,0.8,0.8]);
 
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, viewMatrix_Scene3);//viewMatrix
+    gl.uniformMatrix4fv(grgModelMatrixUniform_Logo, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform_Logo, false, viewMatrix_Scene3);//viewMatrix
     gl.uniformMatrix4fv(grgProjectionMatrixUniformLogo, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
@@ -1033,8 +1033,8 @@ function GRDisplayLogo() {
 
     GRPopFromStack_Logo();
     mat4.scale(grmodelMatrix, grmodelMatrix, [0.8, 0.8, 0.8]);
-    gl.uniformMatrix4fv(grgModelMatrixUniform, false, grmodelMatrix);
-    gl.uniformMatrix4fv(grgViewMatrixUniform, false, viewMatrix_Scene3);//viewMatrix
+    gl.uniformMatrix4fv(grgModelMatrixUniform_Logo, false, grmodelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniform_Logo, false, viewMatrix_Scene3);//viewMatrix
     gl.uniformMatrix4fv(grgProjectionMatrixUniformLogo, false, grprojectionMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
