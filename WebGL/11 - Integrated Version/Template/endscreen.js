@@ -475,7 +475,7 @@ function renderStartScreen() {
 			else
 			{
 				currentScene = scenes.SCENE_1;
-			//	x_audio.play();
+				x_audio.play();
 			}
 
 		}
@@ -854,7 +854,7 @@ function updateEndScene() {
 		}
 	} else if(dl_current_update_end == dl_update_macros_end.grp_teacher_translate_up) {
 		if(dl_trans_teacher_y < 2.0) {
-			dl_trans_teacher_y += 0.005
+			dl_trans_teacher_y += 0.004
 		} else {
 			dl_current_update_end = dl_update_macros_end.end_end
 		}

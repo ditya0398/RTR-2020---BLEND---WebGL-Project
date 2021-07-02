@@ -837,3 +837,137 @@ function drawModel_Merc()
 	// 	else
 	// 		gAngleSquare_modelLoading_Merc = gAngleSquare_modelLoading_Merc + 1.0;
 }
+
+
+function drawCup()
+{
+
+
+	//gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+	gl.useProgram(MercedesProgramObject_Merc);
+	//lighting details
+	
+// if(gParts_Table)
+//   console.log(gParts_Table.length);
+
+
+	var modelMatrix = mat4.create();
+	var viewMatrix = mat4.create();
+	
+  
+ // mat4.lookAt(viewMatrix, [0.0, -1.5, 1.0], [0.0, -1.5, 0.0], [0.0, 1.0, 0.0]);
+  //var angleInRadian = degreeToRadian(gAngle);
+  mat4.translate(modelMatrix, modelMatrix, [0.0, 0.0, -50.0]);
+  mat4.scale(modelMatrix, modelMatrix, [0.2, 0.2, 0.2]);
+	//var angleInRadian = degreeToRadian(gAngle);
+	// mat4.translate(modelMatrix, modelMatrix, [0.0,transY_Merc,-100.0]);
+  // mat4.scale(modelMatrix, modelMatrix, [0.2,0.2,0.2]);
+//	mat4.rotateY(modelMatrix,modelMatrix,degreeToRadian(gAngleTriangle_modelLoading));
+	
+	//gAngleTriangle_modelLoading += 0.005;
+	//mat4.rotateY(modelMatrix,modelMatrix,degreeToRadian(gAngleTriangle));
+	//mat4.multiply(modelViewMatrix, modelViewMatrix, modelMatrix);
+	gl.uniformMatrix4fv(modelUniform_modelLoading_Merc,false,modelMatrix);
+	gl.uniformMatrix4fv(viewUniform_modelLoading_Merc,false,viewMatrix);
+	gl.uniformMatrix4fv(projectionUniform_modelLoading_Merc,false,perspectiveMatrix);
+  gl.uniform3fv(cameraPosUniform_Merc,[0.0,0.0,0.0]);
+
+  var lightPos = [100.0,100.0,100.0];
+  
+  gl.uniform3fv(u_lightDirectionUniform_Merc,vec3.normalize(lightPos,[100.0,100.0,100.0]));
+
+
+
+	
+	// if(gParts_Table)
+	// {
+		
+
+	// 	for(var i = 0; i < gParts_Table.length;i++)
+	// 	{
+
+	// 		if(gbLighting_modelLoading){
+	// 			gl.uniform1i(LKeyPressed_modelLoading, 1);
+	// 			gl.uniform3fv(LAUniform_modelLoading, light_ambient_modelLoading);
+	// 			gl.uniform3fv(LDUniform_modelLoading, light_diffuse_modelLoading);
+	// 			gl.uniform3fv(LSUniform_modelLoading, light_specular_modelLoading);
+				
+	// 			gl.uniform4fv(LightPositionUniform_modelLoading, light_position_modelLoading);
+				
+	// 			//set material properties
+	// 			gl.uniform3fv(KAUniform_modelLoading, gParts_Table[i].material.ambient);
+	// 			gl.uniform3fv(KDUniform_modelLoading, gParts_Table[i].material.diffuse);
+	// 			gl.uniform3fv(KSUniform_modelLoading, gParts_Table[i].material.specular);
+	// 			gl.uniform1f(MaterialShininessUniform_modelLoading,gParts_Table[i].material.shininess);
+				
+	// 			}
+	// 			else
+	// 			{
+	// 					gl.uniform1i(LKeyPressed_modelLoading, 0);
+	// 			}
+	// 		gl.bindTexture(gl.TEXTURE_2D, gParts_Table[i].material.diffuseMap);
+
+	// 			gl.bindVertexArray(vao_mercedes_modelLoading[i]);
+		
+	// 			gl.drawArrays(gl.TRIANGLES,0,numElements_Teapot[i]);
+	// 	}
+        
+	// }
+
+
+  if(gParts_Teapot_Merc)
+	{
+		
+
+		for(var i = 0; i < gParts_Teapot_Merc.length;i++)
+		{
+
+			if(gbLighting_modelLoading_Merc){
+				gl.uniform1i(LKeyPressed_modelLoading_Merc, 1);
+				// gl.uniform3fv(LAUniform_modelLoading, light_ambient_modelLoading);
+				// gl.uniform3fv(LDUniform_modelLoading, light_diffuse_modelLoading);
+				// gl.uniform3fv(LSUniform_modelLoading, light_specular_modelLoading);
+				
+				// gl.uniform4fv(LightPositionUniform_modelLoading, light_position_modelLoading);
+				
+				//set material properties
+				gl.uniform3fv(ambientUniform_Merc, gParts_Teapot_Merc[i].material.ambient);
+		//		gl.uniform3fv(diffuseMapUniform, gParts_Teapot[i].material.diffuseMap);
+				gl.uniform3fv(diffuseUniform_Merc, gParts_Teapot_Merc[i].material.diffuse);
+        gl.uniform3fv(specularUniform_Merc, gParts_Teapot_Merc[i].material.specular);
+				gl.uniform1f(shininessUniform_Merc,gParts_Teapot_Merc[i].material.shininess);
+				gl.uniform1f(opacityUniform_Merc,gParts_Teapot_Merc[i].material.opacity);
+
+				}
+				else
+				{
+						gl.uniform1i(LKeyPressed_modelLoading_Merc, 0);
+				}
+			gl.bindTexture(gl.TEXTURE_2D, gParts_Teapot_Merc[i].material.diffuseMap);
+
+				gl.bindVertexArray(vao_teapot_Merc[i]);
+		
+				gl.drawArrays(gl.TRIANGLES,0,numElements_table[i]);
+		}
+        
+	}
+	
+	
+	gl.useProgram(null);
+
+
+
+
+	// requestAnimationFrame(drawModel_Merc,canvas);
+	 console.log(i);
+	
+	// if( gAngleTriangle_modelLoading_Merc >= 360.0)
+	// 		gAngleTriangle_modelLoading_Merc = 0.0;
+	// 	else
+	// 		gAngleTriangle_modelLoading_Merc = gAngleTriangle_modelLoading_Merc + 1.0;
+	
+	// if( gAngleSquare_modelLoading_Merc >= 360.0)
+	// 		gAngleSquare_modelLoading_Merc = 0.0;
+	// 	else
+	// 		gAngleSquare_modelLoading_Merc = gAngleSquare_modelLoading_Merc + 1.0;
+}

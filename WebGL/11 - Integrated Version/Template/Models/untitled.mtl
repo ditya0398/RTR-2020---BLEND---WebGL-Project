@@ -1,0 +1,35 @@
+# Blender MTL File: 'None'
+# Material Count: 3
+
+newmtl material_0
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.921569 0.921569 0.921569
+Ks 1.000000 1.000000 1.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\user\\Downloads\\Compressed\\a89e0ec8bbc0783ea6aa7076b47d2e4a\\4_redsml.jpg
+
+newmtl material_1
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.921569 0.921569 0.921569
+Ks 1.000000 1.000000 1.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\user\\Downloads\\Compressed\\a89e0ec8bbc0783ea6aa7076b47d2e4a\\2.jpg
+
+newmtl material_2
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.980392 0.941176 0.949020
+Ks 1.000000 1.000000 1.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\user\\Downloads\\Compressed\\a89e0ec8bbc0783ea6aa7076b47d2e4a\\4_whites.jpg

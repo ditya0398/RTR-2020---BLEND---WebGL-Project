@@ -141,7 +141,7 @@ function tvn_init()
 
     pyramid_texture = gl.createTexture();
     pyramid_texture.image = new Image();
-    pyramid_texture.image.src = "Tejswini_Resources/lampstand.png";
+    pyramid_texture.image.src = "Tejswini_Resources/starbucks.jpg";
 
     pyramid_texture.image.onload = function () {
         gl.bindTexture(gl.TEXTURE_2D, pyramid_texture);
@@ -157,6 +157,13 @@ function tvn_init()
 }
 
 
+function deg2rad(degrees)
+{
+    var rad = degrees * Math.PI / 180.0;
+    return rad;
+}
+var angle = 0;
+
 function tvn_display()
 {
     gl.useProgram(tvn_shaderProgramObject);
@@ -164,7 +171,8 @@ function tvn_display()
     var modelViewMatrix = mat4.create();
 
     mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -4.0]);//resulting matrix, act on the matrix, open square bracket
-
+    mat4.rotateX(modelViewMatrix,modelViewMatrix,deg2rad(angle));
+    angle += 0.001;
     var modelViewProjectionMatrix = mat4.create(); // tayar hi honar and indentity matrix la inidilization pan karnar  
     mat4.multiply
         (modelViewProjectionMatrix, perspectiveProjectionMatrix, modelViewMatrix);

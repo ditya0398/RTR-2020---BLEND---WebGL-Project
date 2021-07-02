@@ -78,10 +78,10 @@ var TeapotScale = 0.1199999999999994;
 
 
 
-var TeacupTransX = -1.06;
-var TeacupTransY = -1.79;
-var TeacupTransZ = 8.5; // go till -4.44
-var TeacupScale = 0.039;
+var TeacupTransX = 0.0;
+var TeacupTransY = 0.0;
+var TeacupTransZ = -5.5; // go till -4.44
+var TeacupScale = 1.0;
 
 //AKHI
 var ASJ_ambientUniform_pointLight_model;
@@ -242,7 +242,7 @@ function initializeModel() {
                 "FragColor = vec4((vec3 (color) *phongADSLight),1.0);;" +
             "}" +
         
-      //  "FragColor =vec4(1.0,1.0,1.0,1.0);"+
+      // "FragColor =vec4(1.0,1.0,1.0,1.0);"+
         "}";
     fragmentShaderObject_modelLoading = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragmentShaderObject_modelLoading, fragmentShaderSource);
@@ -928,20 +928,22 @@ function drawModel() {
 
 function drawTeacup() {
     var modelMatrix = mat4.create();
-    var viewMatrix = mat4.create();
+    var ViewMatrix = mat4.create();
 
+    
+   // mat4.lookAt(ViewMatrix, [SBR_DM_X_, SBR_DM_Y_, SBR_DM_Z_], [SBR_DM_EYE_X_, SBR_DM_EYE_Y_, SBR_DM_EYE_Z_], [0.0, 1.0, 0.0]);
     //var angleInRadian = degreeToRadian(gAngle);
     mat4.translate(modelMatrix, modelMatrix, [TeacupTransX, TeacupTransY, TeacupTransZ]);
-    mat4.scale(modelMatrix, modelMatrix, [TeacupScale, TeacupScale, TeacupScale]);
+   // mat4.scale(modelMatrix, modelMatrix, [TeacupScale, TeacupScale, TeacupScale]);
     //mat4.rotateY(modelMatrix,modelMatrix,deg2rad(gAngleTriangle_modelLoading));
 
     //	gAngleTriangle_modelLoading += 0.02;
     //mat4.rotateY(modelMatrix,modelMatrix,degreeToRadian(gAngleTriangle));
     //mat4.multiply(modelViewMatrix, modelViewMatrix, modelMatrix);
     gl.uniformMatrix4fv(modelUniform_modelLoading, false, modelMatrix);
-    gl.uniformMatrix4fv(viewUniform_modelLoading, false, gViewMatrix);
+    gl.uniformMatrix4fv(viewUniform_modelLoading, false,ViewMatrix );
     gl.uniformMatrix4fv(projectionUniform_modelLoading, false, perspectiveMatrix);
-    gl.uniform1i(lightFlagUniform, 1);
+    gl.uniform1i(lightFlagUniform, 0);
     /************ TEAPOT ************************ */
 
 

@@ -61,7 +61,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_1
+var currentScene = scenes.SCENE_0
 
 
 
@@ -69,7 +69,7 @@ var currentScene = scenes.SCENE_1
 
 
 
-var blackWhiteDistortion = 1.0
+var blackWhiteDistortion = 0.0
 
 function main() {
 	//Get Canvas from DOM
@@ -159,25 +159,25 @@ function keyDown(event) {
 		case 78: //N
 			break
 		case 38: //up arrow
-		MercTransZ -= 0.05
+		poster1Z -= 0.05
 			break
 		case 40: //down arrow
-		MercTransZ += 0.05
+		poster1Z += 0.05
 			break
 		case 37: //left arrow
 
-		mercTransX -= 0.05
+		poster1X -= 0.05
 			break
 		case 39: //right arrow
-		mercTransX += 0.025
+		poster1X += 0.025
 			break
 
 		case 84: //Y
-		MercTransY += 0.05
+		poster1Y += 0.05
 			break
 
 		case 85: //U
-		MercTransY -= 0.05
+		poster1Y -= 0.05
 			break
 
 		case 100: //4
@@ -303,7 +303,17 @@ initEndScreen()
 	});
 
 
-	// loadModel('Models/Coffee Cup_final.obj',vao_teacup,vbo_teacup,function(parts_teacup,numElem1){
+	
+	// loadModel('Models/untitled.obj',vao_teapot,vbo_teapot,function(parts_teapot,numElem){
+	// 	console.log("succeeded");
+	// 	numElements_Teapot = numElem;
+	// 	console.log(numElements_Teapot);
+	// 	 gParts_Teapot = parts_teapot;
+	// 	console.log(gParts_Teapot.length);
+	// 	//numElem = null;
+	// });
+
+	// loadModel_Merc('Models/untitled.obj',vao_teacup,vbo_teacup,function(parts_teacup,numElem1){
 	// 	console.log("succeeded");
 	// 	numElements_Teacup = numElem1;
 	// 	console.log(numElements_Teacup);
@@ -420,6 +430,7 @@ function render() {
 			ASJ_draw_laptop();
 			render_macWindow()
 			GRDisplayBluetooth();
+			//drawCup();
 		break;
 		case scenes.SCENE_5:
 			renderEndScreen()
@@ -543,7 +554,7 @@ function update() {
 			
 		}
 		
-	} else if(currentScene == scenes.SCENE_4 && SceneTransitionValue < 0.2) {
+	} else if(currentScene == scenes.SCENE_4 && SceneTransitionValue < 0.5) {
 		if(SBR_DM_Y_ < -0.4) {
 			// SBR_DM_Y_ += 0.005
 			// SBR_DM_Z_ += 0.0165
@@ -661,7 +672,7 @@ function SceneTransitions()
 
 			if(fourthSceneFadeInTransition && SceneTransitionValue >= 0.0)
 			{
-				SceneTransitionValue -= globalQuadBlendingValue;
+				SceneTransitionValue -= globalQuadBlendingValue + 0.002;
 				if(SceneTransitionValue <= 0.0)
 				{
 					SceneTransitionValue = -0.4;

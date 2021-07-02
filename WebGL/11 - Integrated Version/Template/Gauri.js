@@ -75,6 +75,7 @@ var ASJ_eyeDirectionUniform_pointLight_gauri,ASJ_eyeDirectionUniform_pointLight_
 var ASJ_attenuationUniform_pointLight_gauri,ASJ_attenuationUniform_pointLight_gauri1;
 var ASJ_lightPositionUniform_pointLight_gauri_2;
 var ASJ_lightPositionUniform_pointLight_gauri_3;
+var ASJ_lightPositionUniform_pointLight_gauri_4;
 
 var gr_vbo_normal_table;
 var gr_vbo_normal_bench;
@@ -83,14 +84,21 @@ var gr_vbo_normal_radio;
 
 
 var textureKaagazKePhool;
+var textureKaagazKePhool2;
+var texturePyaasa;
 
-
-
+var texturePyaasa2;
 
 
 var posterX = 3.89;
 var posterY = -0.6;
 var posterZ = -6.099;
+
+
+var poster1X = 3.89;
+var poster1Y = -0.6;
+var poster1Z = -14.74900000000009;
+
 
 function GRInit() {
     // vertex shader
@@ -157,6 +165,9 @@ function GRInit() {
 
         //3rd
         "uniform vec3 LightPosition_3_AJ;" +
+
+        //4th
+        "uniform vec3 LightPosition_4_AJ;" +
         //Akhi in
         "in vec4 Position;" +
         "in vec3 tNormal;" +
@@ -237,12 +248,14 @@ function GRInit() {
         "vec4 result_1;" +
         "vec4 result_2;" +
         "vec4 result_3;" +
+        "vec4 result_4;" +
 
         "result_1=pointLight(Normal_AJ,color,LightPosition_AJ);" +
         "result_2=pointLight2(Normal_AJ,color,LightPosition_2_AJ);" +
         "result_3=pointLight2(Normal_AJ,color,LightPosition_3_AJ);" +
+        "result_4=pointLight2(Normal_AJ,color,LightPosition_4_AJ);" +
 
-        "FragColor =color * (result_1 + result_2 + result_3 );" +
+        "FragColor =color * (result_1 + result_2 + result_3 + result_4);" +
         "}";
 
     grfragmentShaderObjectTableBench = gl.createShader(gl.FRAGMENT_SHADER);
@@ -306,6 +319,7 @@ function GRInit() {
     ASJ_attenuationUniform_pointLight_gauri1 = gl.getUniformLocation(grshaderProgramObjectTableBench, "Attenuation_AJ1");
 
     ASJ_lightPositionUniform_pointLight_gauri_3 = gl.getUniformLocation(grshaderProgramObjectTableBench, "LightPosition_3_AJ");
+    ASJ_lightPositionUniform_pointLight_gauri_4 = gl.getUniformLocation(grshaderProgramObjectTableBench, "LightPosition_4_AJ");
 
     // radio 
     var grradioVertices = new Float32Array(
@@ -622,7 +636,7 @@ function GRInit() {
   //texture for kaagaz ke phool
   textureKaagazKePhool = gl.createTexture();
   textureKaagazKePhool.image = new Image();
-  textureKaagazKePhool.image.src = "AdityaResources/KaagazKePhoolWithFrame.jpg";
+  textureKaagazKePhool.image.src = "AdityaResources/kaagazkephooledited.jpg";
   textureKaagazKePhool.image.onload = function () {
       gl.bindTexture(gl.TEXTURE_2D, textureKaagazKePhool);
       //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
@@ -632,6 +646,56 @@ function GRInit() {
       //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureKaagazKePhool.image);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+  };
+
+  //texture for kaagaz ke phool
+  textureKaagazKePhool2 = gl.createTexture();
+  textureKaagazKePhool2.image = new Image();
+  textureKaagazKePhool2.image.src = "AdityaResources/kaagazKePhool3.jpg";
+  textureKaagazKePhool2.image.onload = function () {
+      gl.bindTexture(gl.TEXTURE_2D, textureKaagazKePhool2);
+      //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 2);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureKaagazKePhool2.image);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+  };
+
+  //texture for pyaasa
+  texturePyaasa = gl.createTexture();
+  texturePyaasa.image = new Image();
+  texturePyaasa.image.src = "AdityaResources/Pyaasaedited.jpg";
+  texturePyaasa.image.onload = function () {
+      gl.bindTexture(gl.TEXTURE_2D, texturePyaasa);
+      //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 2);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texturePyaasa.image);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+  };
+
+
+  
+  //texture for pyaasa
+  texturePyaasa2 = gl.createTexture();
+  texturePyaasa2.image = new Image();
+  texturePyaasa2.image.src = "AdityaResources/Pyaasa3.jpg";
+  texturePyaasa2.image.onload = function () {
+      gl.bindTexture(gl.TEXTURE_2D, texturePyaasa2);
+      //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 2);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texturePyaasa2.image);
       gl.bindTexture(gl.TEXTURE_2D, null);
   };
 
@@ -692,6 +756,8 @@ function GRDisplay() {
 
     gl.uniform3fv(ASJ_lightPositionUniform_pointLight_gauri_3, lightPosition_AJ_3);
 
+    
+    gl.uniform3fv(ASJ_lightPositionUniform_pointLight_gauri_4, new Float32Array([posterX - 3.0,posterY + 0.2, posterZ - 5.0]));
     //************************************************************************************************ radio ********************************************************
     //***************************************************************************************************************************************************************
     mat4.scale(grscaleMatrix, grscaleMatrix, [grscaling_radio, grscaling_radio, grscaling_radio]);
@@ -1301,8 +1367,8 @@ function drawFilmPosters()
     var modelMatrix = mat4.create();
    
     
-    mat4.translate(modelMatrix, modelMatrix, [posterX,posterY, posterZ]);
-    mat4.scale(modelMatrix,modelMatrix,[0.2,0.2,0.2]);
+    mat4.translate(modelMatrix, modelMatrix, [poster1X + 0.05,poster1Y + 0.2, poster1Z + 7.0]);
+    mat4.scale(modelMatrix,modelMatrix,[0.25,0.25,0.25]);
     mat4.rotateY(modelMatrix, modelMatrix, deg2rad(270.0));
     gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, modelMatrix);
     gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
@@ -1314,12 +1380,65 @@ function drawFilmPosters()
 
     gl.bindVertexArray(grgVaoBenchTable);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-        //  gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
-        //  gl.drawArrays(gl.TRIANGLE_FAN, 8, 4);
-    // gl.drawArrays(gl.TRIANGLE_FAN, 12, 4);
-    // gl.drawArrays(gl.TRIANGLE_FAN, 16, 4);
-    //gl.drawArrays(gl.TRIANGLE_FAN, 20, 4);
     gl.bindVertexArray(null);
+
+
+    //
+    modelMatrix = mat4.create();
+
+    mat4.translate(modelMatrix, modelMatrix, [posterX + 0.05,posterY + 0.2, posterZ ]);
+    mat4.scale(modelMatrix,modelMatrix,[0.25,0.25,0.25]);
+    mat4.rotateY(modelMatrix, modelMatrix, deg2rad(270.0));
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, modelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, perspectiveMatrix);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texturePyaasa);
+    gl.uniform1i(grtextureSamplerUniform, 0);
+
+    gl.bindVertexArray(grgVaoBenchTable);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    gl.bindVertexArray(null);
+
+//
+    modelMatrix = mat4.create();
+
+    mat4.translate(modelMatrix, modelMatrix, [posterX + 0.05,posterY + 0.2, posterZ - 4.0]);
+    mat4.scale(modelMatrix,modelMatrix,[0.25,0.25,0.25]);
+    mat4.rotateY(modelMatrix, modelMatrix, deg2rad(270.0));
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, modelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, perspectiveMatrix);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texturePyaasa2);
+    gl.uniform1i(grtextureSamplerUniform, 0);
+
+    gl.bindVertexArray(grgVaoBenchTable);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    gl.bindVertexArray(null);
+
+
+    //
+    modelMatrix = mat4.create();
+
+    mat4.translate(modelMatrix, modelMatrix, [posterX + 0.05,posterY + 0.2, posterZ - 6.5]);
+    mat4.scale(modelMatrix,modelMatrix,[0.25,0.25,0.25]);
+    mat4.rotateY(modelMatrix, modelMatrix, deg2rad(270.0));
+    gl.uniformMatrix4fv(grgModelMatrixUniformTableBench, false, modelMatrix);
+    gl.uniformMatrix4fv(grgViewMatrixUniformTableBench, false, gViewMatrix);
+    gl.uniformMatrix4fv(grgProjectionMatrixUniformTableBench, false, perspectiveMatrix);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, textureKaagazKePhool2);
+    gl.uniform1i(grtextureSamplerUniform, 0);
+
+    gl.bindVertexArray(grgVaoBenchTable);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    gl.bindVertexArray(null);
+
+
 
     gl.bindTexture(gl.TEXTURE_2D, null);
 }
