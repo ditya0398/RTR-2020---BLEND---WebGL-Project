@@ -53,9 +53,11 @@ var vbo_teapot_Merc = [];
 
 
 
-var mercTransX = -1.2500000000000002;
+var MercTransX = -1.2500000000000002;
 var MercTransY = -2.749999999999998;
 var MercTransZ = 9.8999999999999895;
+
+var MercRotY = 0.0;
 
 var MercScale = 0.012999999999999182;
 
@@ -704,6 +706,14 @@ async function loadModel_Merc(modelName,vao_cube,vbo_cube,callback)
 
 }
 
+var viewMatrix_Scene3
+
+var viewScene3 = [0.0, -1.5, 1.0]
+
+var MercTransZ_Eye = 0.0
+
+var MercTransY_Eye = 0.0
+var MercTransX_Eye = 0.0
 
 function drawModel_Merc()
 {
@@ -718,12 +728,15 @@ function drawModel_Merc()
 
 
 	var modelMatrix = mat4.create();
-	var viewMatrix = mat4.create();
-	
+	viewMatrix_Scene3 = mat4.create();
   
-  mat4.lookAt(viewMatrix, [0.0, -1.5, 1.0], [0.0, -1.5, 0.0], [0.0, 1.0, 0.0]);
+  viewScene3[0] = Math.sin(MercRotY) + MercTransX_Eye
+  viewScene3[1] = -1.5 + (MercTransY_Eye * 6)
+  viewScene3[2] = Math.cos(MercRotY) + MercTransZ_Eye
+  //Initially values [0.0, -1.5, 1.0], [0.0, -1.5, 0.0]
+  mat4.lookAt(viewMatrix_Scene3, viewScene3, [MercTransX_Eye, -1.5 + MercTransY_Eye, MercTransZ_Eye], [0.0, 1.0, 0.0]);
   //var angleInRadian = degreeToRadian(gAngle);
-  mat4.translate(modelMatrix, modelMatrix, [mercTransX, MercTransY, MercTransZ]);
+  mat4.translate(modelMatrix, modelMatrix, [MercTransX, MercTransY, MercTransZ]);
   mat4.scale(modelMatrix, modelMatrix, [MercScale, MercScale, MercScale]);
 	//var angleInRadian = degreeToRadian(gAngle);
 	// mat4.translate(modelMatrix, modelMatrix, [0.0,transY_Merc,-100.0]);
@@ -734,7 +747,7 @@ function drawModel_Merc()
 	//mat4.rotateY(modelMatrix,modelMatrix,degreeToRadian(gAngleTriangle));
 	//mat4.multiply(modelViewMatrix, modelViewMatrix, modelMatrix);
 	gl.uniformMatrix4fv(modelUniform_modelLoading_Merc,false,modelMatrix);
-	gl.uniformMatrix4fv(viewUniform_modelLoading_Merc,false,viewMatrix);
+	gl.uniformMatrix4fv(viewUniform_modelLoading_Merc,false,viewMatrix_Scene3);
 	gl.uniformMatrix4fv(projectionUniform_modelLoading_Merc,false,perspectiveMatrix);
   gl.uniform3fv(cameraPosUniform_Merc,[0.0,0.0,0.0]);
 

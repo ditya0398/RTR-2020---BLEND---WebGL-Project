@@ -22,7 +22,7 @@ var view =[2.49, -1.05, -12.899]
 //[2.49, -1.19, -1.899]
 
 
-var SceneTransitionValue = 0.0;
+var SceneTransitionValue = 1.0;
 
 var globalQuadBlendingValue = 0.001; 
 var secondSceneCamera = false;
@@ -32,7 +32,7 @@ var firstSceneFadeOutTransition = false;
 var secondSceneFadeInTransition = false;
 var secondSceneFadeOutTransition = false;
 var thirdSceneFadeOutTransition = false;
-var thirdSceneFadeInTransition = false;
+var thirdSceneFadeInTransition = true;
 var fourthSceneFadeOutTransition = false;
 var fourthSceneFadeInTransition = false;
 //Scene 2 camera positions [0.0, 15.133, -47.1]
@@ -61,7 +61,13 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_1
+
+var currentScene = scenes.SCENE_3
+
+
+
+
+
 
 
 var blackWhiteDistortion = 0.0
@@ -122,25 +128,24 @@ function keyDown(event) {
 			}
 			break
 		case 88 :                   // x key
-			gbAnim = true
+			gbAnim = !gbAnim
 			break
 		case 89 :                   // y key
 			secondSceneCamera = true;
 			break
 		case 65: //A
-			SBR_DM_X_ -= 0.1
+			viewScene3[0] -= 0.1
 			break
 		case 83: //S
 			view[2] += 0.1
-			SBR_DM_Z_ += 0.1
+			viewScene3[2] += 0.1
 			//view[1] -= 0.033
 			break
 		case 68: //D
-			SBR_DM_X_ += 0.1
+			viewScene3[0] += 0.1
 			break
 		case 87: //W
-			view[2] -= 0.1
-			SBR_DM_Z_ -= 0.1
+			viewScene3[2] -= 0.1
 			//view[1] += 0.033
 			break
 		case 81: //Q
@@ -414,10 +419,10 @@ function render() {
 			dl_render_sir_shadow()
 		break;
 		case scenes.SCENE_3:
-			 displayStarBucksOuter();
+			drawModel_Merc();
+			displayStarBucksOuter();
 			 //drawCar();
 
-			 drawModel_Merc();
 		
 		break;
 		case scenes.SCENE_4:
@@ -566,6 +571,7 @@ function update() {
 	// 	updateEndScene()
 	 }
 }
+var camera_speed_scene3 = 0.0 //end 0.01
 
 function SceneTransitions()
 {
@@ -646,12 +652,32 @@ function SceneTransitions()
 			else if(thirdSceneFadeOutTransition && SceneTransitionValue <= 1.0){
 				SceneTransitionValue += globalQuadBlendingValue + 0.0002;
 			}
-
-		//	if(SceneTransitionValue >= -0.5)
+			if(gbAnim) {
+				//	if(SceneTransitionValue >= -0.5)
 		//	{
-				if(MercTransZ > -5.5)
+				if(MercTransZ > -4.3) {
+					// MercTransZ -= 0.007
 					MercTransZ -= 0.007
+				} else if(MercRotY < Math.PI) {
+					if(camera_speed_scene3 < 0.01) {
+						camera_speed_scene3 += 0.00003
+					}
+					MercRotY += camera_speed_scene3
+					if(MercTransZ > -5.5) {
+						MercTransZ -= 0.007
+					}
+					MercTransZ_Eye -= 6.5 / (Math.PI / camera_speed_scene3)
+					if(MercTransY_Eye < 0.2) {
+						MercTransY_Eye += camera_speed_scene3 * 0.3
+					}
+					if(MercRotY > Math.PI / 2) {
+						MercTransX_Eye -= camera_speed_scene3 * 0.8
+					}
+					
+				}
+
 		//	}
+			}
 			if(SceneTransitionValue >= 1.0 && thirdSceneFadeOutTransition)
 			{
 				SceneTransitionValue = 1.0;

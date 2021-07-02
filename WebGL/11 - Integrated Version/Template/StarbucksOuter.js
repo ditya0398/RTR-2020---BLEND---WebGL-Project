@@ -150,10 +150,10 @@ function initStarbucksOuter() {
         10.0, -3.0, 0,
 
         //road
-        10.0, -2.5, 13.0, 
-        -10.0,-2.5, 13.0, 
-        -10.0, -2.5,-6.0,
-        10.0, -2.5, -6.0,
+        20.0, -2.5, 23.0, 
+        -20.0,-2.5, 23.0, 
+        -20.0, -2.5,-26.0,
+        20.0, -2.5, -26.0,
 
         -1.0, 1.0, -1.0,
         1.0, 1.0, -1.0,
@@ -644,7 +644,7 @@ function displayStarBucksOuter() {
 
     var modelMatrix = mat4.create();
     var modelViewMatrix = mat4.create();
-    var ViewMatrix = mat4.create();
+    // var ViewMatrix = mat4.create();
     var modelViewProjectionMatrix = mat4.create();
 
     var translateMatrix = mat4.create();
@@ -655,14 +655,14 @@ function displayStarBucksOuter() {
     mat4.multiply(modelMatrix, modelMatrix, translateMatrix);
     
 
-    mat4.lookAt(ViewMatrix, [0.0, -1.5, 1.0], [0.0, -1.5, 0.0], [0.0, 1.0, 0.0]);
+    // mat4.lookAt(ViewMatrix, [0.0, -1.5, 1.0], [0.0, -1.5, 0.0], [0.0, 1.0, 0.0]);
 
     // mat4.multiply(modelViewMatrix, modelViewMatrix, modelMatrix);
 
     //  mat4.multiply(modelViewProjectionMatrix, perspectiveMatrix, modelViewMatrix);
 
     gl.uniformMatrix4fv(modelMatrixStarbuckOuter, false, modelMatrix);
-    gl.uniformMatrix4fv(viewMatrixStarbuckOuter, false, ViewMatrix);
+    gl.uniformMatrix4fv(viewMatrixStarbuckOuter, false, viewMatrix_Scene3);
     gl.uniformMatrix4fv(projectionMatrixStarbuckOuter, false, perspectiveMatrix);
 
     gl.activeTexture(gl.TEXTURE0);
