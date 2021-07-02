@@ -1080,7 +1080,14 @@ function DL_initChair() {
 		"result_spotLight=spotLight(Normal_AJ,FragColor);" +
 
 	"vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
+	"if(isLight)" +
+	"{" +
 	"FragColor = vec4(mix(vec3(FragColor), gray, distortion), FragColor.w)*result_spotLight;" +
+	"}" +
+	"else" +
+	"{" +
+	"FragColor = vec4(mix(vec3(FragColor), gray, distortion), FragColor.w);" +
+	"}" +
     "}\n"
 
 	var vertShader = gl.createShader(gl.VERTEX_SHADER)

@@ -22,17 +22,17 @@ var view =[2.49, -1.05, -1.899]
 //[2.49, -1.19, -1.899]
 
 
-var SceneTransitionValue = 0.0;
+var SceneTransitionValue = 1.0;
 
 var globalQuadBlendingValue = 0.001; 
 var secondSceneCamera = false;
 
 var firstSceneFadeInTransition = true;
 var firstSceneFadeOutTransition = false;
-var secondSceneFadeInTransition = false;
+var secondSceneFadeInTransition = true;
 var secondSceneFadeOutTransition = false;
 var thirdSceneFadeOutTransition = false;
-var thirdSceneFadeInTransition = true;
+var thirdSceneFadeInTransition = false;
 var fourthSceneFadeOutTransition = false;
 var fourthSceneFadeInTransition = false;
 //Scene 2 camera positions [0.0, 15.133, -47.1]
@@ -63,7 +63,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_0
+var currentScene = scenes.SCENE_2
 
 
 
@@ -328,21 +328,21 @@ initEndScreen()
 	// 	console.log(gParts_Car.length);
 	// 	//numElem = null;
 	// });
-	loadModel_Merc('Models/MercedesFinal2obj.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
+	// loadModel_Merc('Models/MercedesFinal2obj.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
 
-		console.log("succeeded");
-		numElements_table = numElem2;
-		gParts_Teapot_Merc = parts_teapotMerc;
-		console.log(gParts_Teapot_Merc.length);
+	// 	console.log("succeeded");
+	// 	numElements_table = numElem2;
+	// 	gParts_Teapot_Merc = parts_teapotMerc;
+	// 	console.log(gParts_Teapot_Merc.length);
 
-	});
+	// });
 
 
 
 	modelLoadingProgramObject = initializeModel();
 
 
-	MercedesProgramObject_Merc = initializeModel_Merc();
+	//MercedesProgramObject_Merc = initializeModel_Merc();
 
 	
 	
@@ -652,7 +652,7 @@ function SceneTransitions()
 				SceneTransitionValue -= globalQuadBlendingValue;
 				if(SceneTransitionValue <= 0.0)
 				{
-					SceneTransitionValue = -1.3;
+					SceneTransitionValue = -2.3;
 					thirdSceneFadeInTransition = false;	
 					 thirdSceneFadeOutTransition = true;			
 				}				

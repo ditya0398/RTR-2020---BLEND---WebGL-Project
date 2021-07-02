@@ -138,7 +138,7 @@ function initSmoke()
 				"discard;" +																											
 			"}" +
 			
-		"		FragColor =texColor * vec4(color ,0.2);																				" +
+		"		FragColor =texColor * vec4(color ,0.6);																				" +
 		"	}																													";
 	fragmentShaderObject_Smoke = gl.createShader(gl.FRAGMENT_SHADER);
 	gl.shaderSource(fragmentShaderObject_Smoke,fragmentShaderSource);
