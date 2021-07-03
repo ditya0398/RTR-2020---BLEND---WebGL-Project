@@ -1,4 +1,4 @@
-
+var micFadeMixUniform;
 var grvertexShaderObjectMic;
 var grfragmentShaderObjectMic;
 var grshaderProgramObjectMic;
@@ -82,7 +82,9 @@ function GRInitMic()
         "uniform highp sampler2D u_texture_sampler;" +
         "uniform highp int u_is_sphere;" +
         "uniform float distortion;" +
-        "out vec4 FragColor;" +
+        "vec4 FragColor;" +
+        "out vec4 FinalColor;" +
+        "uniform mediump float FadeMix;" +
         "void main(void)" +
         "{" +
         "if(u_is_sphere == 1)" +
@@ -95,6 +97,7 @@ function GRInitMic()
         "}" +
         "vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
         "FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
+        "FinalColor = mix(vec4(FragColor),vec4(0.0),FadeMix);"+
         "}";
        
     grfragmentShaderObjectMic = gl.createShader(gl.FRAGMENT_SHADER);
@@ -145,6 +148,7 @@ function GRInitMic()
     grgtextureSamplerUniformMic = gl.getUniformLocation(grshaderProgramObjectMic, "u_texture_sampler");
     grgIsMicSphereUniform = gl.getUniformLocation(grshaderProgramObjectMic, "u_is_sphere");
     grgDistortionUniformMic = gl.getUniformLocation(grshaderProgramObjectMic, "distortion");
+    micFadeMixUniform = gl.getUniformLocation(grshaderProgramObjectMic, "FadeMix");
 
     var circleVerts = new Float32Array(37704);
 
@@ -220,6 +224,7 @@ function GRMic()
 {
 
     gl.uniform1f(grgDistortionUniformMic, blackWhiteDistortion)
+    gl.uniform1f(micFadeMixUniform, SecondSceneFade)
     gl.bindTexture(gl.TEXTURE_2D, null)
 
     grmodelMatrixMic = mat4.create();

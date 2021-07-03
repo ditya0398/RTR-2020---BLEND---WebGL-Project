@@ -17,19 +17,22 @@ var rotX = 0.0, rotY = 0.0
 
 var x_audio;
 
+var SecondSceneFade = 0.0;
+
+var ChairFadeCounter = 0.0;
 //first scene view 
 var view =[2.49, -1.05, -1.899]
 //[2.49, -1.19, -1.899]
 
 
-var SceneTransitionValue = 1.0;
+var SceneTransitionValue = 0.0;
 
 var globalQuadBlendingValue = 0.001; 
 var secondSceneCamera = false;
 
 var firstSceneFadeInTransition = true;
 var firstSceneFadeOutTransition = false;
-var secondSceneFadeInTransition = true;
+var secondSceneFadeInTransition = false;
 var secondSceneFadeOutTransition = false;
 var thirdSceneFadeOutTransition = false;
 var thirdSceneFadeInTransition = false;
@@ -63,7 +66,7 @@ const scenes = {
 
 
 
-var currentScene = scenes.SCENE_2
+var currentScene = scenes.SCENE_0
 
 
 
@@ -328,21 +331,21 @@ initEndScreen()
 	// 	console.log(gParts_Car.length);
 	// 	//numElem = null;
 	// });
-	// loadModel_Merc('Models/MercedesFinal2obj.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
+	loadModel_Merc('Models/MercedesFinal2obj.obj',vao_teapot_Merc,vbo_teapot_Merc,function(parts_teapotMerc,numElem2){
 
-	// 	console.log("succeeded");
-	// 	numElements_table = numElem2;
-	// 	gParts_Teapot_Merc = parts_teapotMerc;
-	// 	console.log(gParts_Teapot_Merc.length);
+		console.log("succeeded");
+		numElements_table = numElem2;
+		gParts_Teapot_Merc = parts_teapotMerc;
+		console.log(gParts_Teapot_Merc.length);
 
-	// });
+	});
 
 
 
 	modelLoadingProgramObject = initializeModel();
 
 
-	//MercedesProgramObject_Merc = initializeModel_Merc();
+	MercedesProgramObject_Merc = initializeModel_Merc();
 
 	
 	
@@ -415,8 +418,7 @@ function render() {
 			tvn_tripod_draw();
 			GRDisplayMic();
 			tvn_speaker_draw();
-			DL_renderChair()
-			
+			DL_renderChair()			
 			tvn_script_draw();
 			tvn_drama_draw();
 			dl_render_sir_shadow()
@@ -465,8 +467,11 @@ function render() {
 	}
 	else
 	{
+		
 		SceneTransitions();
-		dl_render_fade();
+
+		if(secondSceneFadeOutTransition != true)
+			dl_render_fade();
 	}
 
 
@@ -605,6 +610,7 @@ function SceneTransitions()
 		}
 		if(SceneTransitionValue <= 1.0 && firstSceneFadeOutTransition)
 		{
+			
 			SceneTransitionValue += globalQuadBlendingValue + 0.0000001;
 			if(SceneTransitionValue >= 1.0)
 			{
@@ -633,6 +639,12 @@ function SceneTransitions()
 			}
 		}
 		else if(secondSceneFadeOutTransition && SceneTransitionValue <= 1.0){
+			if(SceneTransitionValue > 0.3)
+			{
+				SecondSceneFade += 0.00175;
+				if(SecondSceneFade)
+				ChairFadeCounter += 0.00117;
+			}
 			SceneTransitionValue += globalQuadBlendingValue + 0.000001;
 		}
 		if(SceneTransitionValue >= 1.0 && secondSceneFadeOutTransition)
@@ -652,7 +664,7 @@ function SceneTransitions()
 				SceneTransitionValue -= globalQuadBlendingValue;
 				if(SceneTransitionValue <= 0.0)
 				{
-					SceneTransitionValue = -2.3;
+					SceneTransitionValue = -2.22;
 					thirdSceneFadeInTransition = false;	
 					 thirdSceneFadeOutTransition = true;			
 				}				
@@ -710,7 +722,7 @@ function SceneTransitions()
 				}				
 			}
 			else if(fourthSceneFadeOutTransition && SceneTransitionValue <= 1.0){
-				SceneTransitionValue += globalQuadBlendingValue;
+				SceneTransitionValue += globalQuadBlendingValue + 0.00001;
 			}
 			if(SceneTransitionValue >= 1.0 && fourthSceneFadeOutTransition)
 			{

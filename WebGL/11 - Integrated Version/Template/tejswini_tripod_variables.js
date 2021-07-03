@@ -1,3 +1,4 @@
+var tripodFadeMix;
 var tvn_vertexShaderObject_tripod;
 var tvn_fragmentShaderObject_tripod;
 var tvn_shaderProgramObject_tripod;
@@ -77,12 +78,15 @@ function tvn_init_tripod() {
         "in vec2 out_tex_coord;" +
         "uniform sampler2D u_texture_sampler;" +
         "uniform float distortion;" +
-        "out vec4 FragColor;" +
+        "vec4 FragColor;" +
+        "out vec4 FinalColor;" +
+        "uniform mediump float FadeMix;" +
         "void main(void)" +
         "{" +
         "FragColor = texture(u_texture_sampler, out_tex_coord);" +
         "vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
 		"FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
+        "FinalColor = mix(vec4(FragColor),vec4(0.0),FadeMix);"+
         "}";
 
     tvn_fragmentShaderObject_tripod = gl.createShader(gl.FRAGMENT_SHADER);
@@ -122,6 +126,7 @@ function tvn_init_tripod() {
     tvn_viewMatrix_tripod = gl.getUniformLocation(tvn_shaderProgramObject_tripod, "view_matrix");
     tvn_projectionMatrix_tripod = gl.getUniformLocation(tvn_shaderProgramObject_tripod, "projection_matrix");
     tvn_distortion_uniform_tripod = gl.getUniformLocation(tvn_shaderProgramObject_tripod, "distortion");
+    tripodFadeMix = gl.getUniformLocation(tvn_shaderProgramObject_tripod, "FadeMix");
 
     tvn_vao_tripod = gl.createVertexArray();
     gl.bindVertexArray(tvn_vao_tripod);
@@ -198,6 +203,7 @@ function tvn_tripod_draw() {
     gl.useProgram(tvn_shaderProgramObject_tripod);
 
     gl.uniform1f(tvn_distortion_uniform_tripod, blackWhiteDistortion)
+    gl.uniform1f(tripodFadeMix, SecondSceneFade)
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, tvn_tripod_texture);

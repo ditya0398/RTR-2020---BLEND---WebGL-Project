@@ -1,3 +1,4 @@
+var fadeMixScriptUniform;
 var degrees;
 var tvn_vertexShaderObject_script;
 var tvn_fragmentShaderObject_script;
@@ -58,12 +59,15 @@ function tvn_script_init() {
         "uniform sampler2D u_texture_sampler;" +
         "uniform float distortion;" +
         "in vec2 tex_coord;" +
-        "out vec4 FragColor;" +
+        "vec4 FragColor;" +
+        "out vec4 FinalColor;" +
+        "uniform mediump float FadeMix;" +
         "void main(void)" +
         "{" +
         "FragColor = texture(u_texture_sampler,tex_coord);" +
         "vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
 		"FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
+        "FinalColor = mix(vec4(FragColor),vec4(0.0),FadeMix);"+
         "}";
 
     tvn_fragmentShaderObject_script = gl.createShader(gl.FRAGMENT_SHADER);
@@ -103,6 +107,7 @@ function tvn_script_init() {
     tvn_mUniform = gl.getUniformLocation(tvn_shaderProgramObject_script, "u_m_matrix");
     textureSamplerUniform = gl.getUniformLocation(tvn_shaderProgramObject_script, "u_texture_sampler");
     tvn_distortion_uniform_script = gl.getUniformLocation(tvn_shaderProgramObject_script, "distortion");
+    fadeMixScriptUniform = gl.getUniformLocation(tvn_shaderProgramObject_script, "FadeMix");
 
     // ** vertices , color , shader attribs, vbo initialization***
 
@@ -206,6 +211,7 @@ function tvn_script_draw() {
     gl.uniformMatrix4fv(tvn_pUniform, false, perspectiveMatrix);
 
     gl.uniform1f(tvn_distortion_uniform_script, blackWhiteDistortion)
+    gl.uniform1f(fadeMixScriptUniform, SecondSceneFade + 0.00026)
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, script_texture);

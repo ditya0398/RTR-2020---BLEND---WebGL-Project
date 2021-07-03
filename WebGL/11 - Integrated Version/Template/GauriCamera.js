@@ -1,5 +1,5 @@
 
-
+var cameraFadeMixUniform;
 var grgVertexShaderObjectCamera;
 var grgFragmentShadeerObjectCamera;
 var grgShaderProgramObjectCamera;
@@ -74,12 +74,15 @@ function GRInitCamera()
      "in vec2 out_texcoord;" +
      "uniform highp sampler2D u_texture_sampler;" +
      "uniform float distortion;" +
-     "out vec4 FragColor;" +
+     "vec4 FragColor;" +
+     "out vec4 FinalColor;" +
+     "uniform mediump float FadeMix;" +
      "void main(void)" +
      "{" +
      "FragColor = texture(u_texture_sampler, out_texcoord);" +
      "vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
      "FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
+     "FinalColor = mix(vec4(FragColor),vec4(0.0),FadeMix);"+
      "}";
  
      grgFragmentShaderObjectCamera = gl.createShader(gl.FRAGMENT_SHADER);
@@ -128,7 +131,7 @@ function GRInitCamera()
      grgProjectionMatrixUniformCamera = gl.getUniformLocation(grgShaderProgramObjectCamera, "u_projection_matrix");
      grgtextureSamplerUniformCamera = gl.getUniformLocation(grgShaderProgramObjectCamera, "u_texture_sampler");
      grgDistortionUniformCamera = gl.getUniformLocation(grgShaderProgramObjectCamera, "distortion");
- 
+     cameraFadeMixUniform = gl.getUniformLocation(grgShaderProgramObjectCamera, "FadeMix");
    
  
      var grcubeTexcoords = new Float32Array(
@@ -263,6 +266,7 @@ function GRDisplayCamera()
     gl.useProgram(grgShaderProgramObjectCamera);
 
     gl.uniform1f(grgDistortionUniformCamera, blackWhiteDistortion)
+    gl.uniform1f(cameraFadeMixUniform, SecondSceneFade)
     //************************************************************************************************ roadside ********************************************************
     //***************************************************************************************************************************************************************
     mat4.translate(grtranslateMatrix, grtranslateMatrix, [grtransCameraX, grtransCameraY, grtransCameraZ]);

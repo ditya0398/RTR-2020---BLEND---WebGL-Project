@@ -1,3 +1,4 @@
+var speakerFadeMixUniform;
 var degrees;
 var tvn_vertexShaderObject_speaker;
 var tvn_fragmentShaderObject_speaker;
@@ -58,12 +59,15 @@ function tvn_speaker_init() {
         "in vec2 out_tex_coord;" +
         "uniform sampler2D u_texture_sampler;" +
         "uniform float distortion;" +
-        "out vec4 FragColor;" +
+        "vec4 FragColor;" +
+        "out vec4 FinalColor;" +
+        "uniform mediump float FadeMix;" +
         "void main(void)" +
         "{" +
         "FragColor = texture(u_texture_sampler, out_tex_coord);" +
         "vec3 gray = vec3(dot(vec3(FragColor), vec3(0.2126, 0.7152, 0.0722)));" +
 		"FragColor = vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
+        "FinalColor = mix(vec4(FragColor),vec4(0.0),FadeMix);"+
         "}";
 
     tvn_fragmentShaderObject_speaker = gl.createShader(gl.FRAGMENT_SHADER);
@@ -104,6 +108,7 @@ function tvn_speaker_init() {
     tvn_modelMatrix_speaker = gl.getUniformLocation(tvn_shaderProgramObject_speaker, "model_matrix");
     textureSamplerUniform_speaker = gl.getUniformLocation(tvn_shaderProgramObject_speaker, "u_texture_sampler");
     tvn_distortion_uniform_speaker = gl.getUniformLocation(tvn_shaderProgramObject_speaker, "distortion");
+    speakerFadeMixUniform = gl.getUniformLocation(tvn_shaderProgramObject_speaker, "FadeMix");
 
     // ** vertices , color , shader attribs, vbo initialization***
 
@@ -241,6 +246,7 @@ function tvn_speaker_draw() {
     var rotateMatrix = mat4.create();
 
     gl.uniform1f(tvn_distortion_uniform_speaker, blackWhiteDistortion)
+    gl.uniform1f(speakerFadeMixUniform, SecondSceneFade)
 
     mat4.translate(translateMatrix, translateMatrix, [-tvn_trans_x_speaker, tvn_trans_y_speaker, tvn_trans_z_speaker]);//resulting matrix, act on the matrix, open square bracket
     mat4.rotateY(rotateMatrix, rotateMatrix, deg2rad(45));

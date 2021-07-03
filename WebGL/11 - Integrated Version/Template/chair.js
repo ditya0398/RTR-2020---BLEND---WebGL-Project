@@ -1,3 +1,5 @@
+var chairFadeMixUniform;
+
 var dl_vao_chair
 var dl_vbo_chair
 var dl_program_chair
@@ -988,7 +990,8 @@ function DL_initChair() {
 	"uniform float distortion;" +
     "uniform bool isLight;\n"+
 	"uniform sampler2D texSam;\n"+
-		"out vec4 FragColor;\n" +
+		"vec4 FragColor;\n" +
+		"out vec4 FinalColor;" +
 
 		//akhi in
 		"in vec4 Position;" +
@@ -1008,7 +1011,7 @@ function DL_initChair() {
 		"uniform vec3 ConeDirection;" +
 		"uniform float SpotCosCutoff;" +
 		"uniform float SpotExponent;" +
-
+		"uniform mediump float FadeMix;" +
 		"vec4 res;" +
 		// "vec3 normalizedConeDirection;" +
 		//akhi function
@@ -1088,6 +1091,7 @@ function DL_initChair() {
 	"{" +
 	"FragColor = vec4(mix(vec3(FragColor), gray, distortion), FragColor.w);" +
 	"}" +
+	"FinalColor = mix(vec4(FragColor),vec4(0.0),FadeMix);"+
     "}\n"
 
 	var vertShader = gl.createShader(gl.VERTEX_SHADER)
@@ -1145,6 +1149,7 @@ function DL_initChair() {
 	ASJ_coneDirUniform_chair = gl.getUniformLocation(dl_program_chair, "ConeDirection");
 	ASJ_spotCosCutoffUniform_chair = gl.getUniformLocation(dl_program_chair, "SpotCosCutoff");
 	ASJ_spotExponentUniform_chair = gl.getUniformLocation(dl_program_chair, "SpotExponent");
+	chairFadeMixUniform = gl.getUniformLocation(dl_program_chair, "FadeMix");
 
 	
 	gl.detachShader(dl_program_chair, vertShader)
@@ -1237,6 +1242,7 @@ function DL_renderChair() {
 	gl.uniform1f(dl_matShininessUniform_chair, 50.0)
 	gl.uniform1f(dl_distortionUniform_chair, blackWhiteDistortion)
 	gl.uniform1i(dl_texSamUniform, 0)
+	gl.uniform1f(chairFadeMixUniform,ChairFadeCounter);
 	
 	gl.activeTexture(gl.TEXTURE_0)
 	gl.bindTexture(gl.TEXTURE_2D, dl_directorTex_chair)

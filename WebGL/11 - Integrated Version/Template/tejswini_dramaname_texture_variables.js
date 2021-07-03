@@ -1,3 +1,4 @@
+var fadeMixDramaUniform;
 var degrees;
 var tvn_vertexShaderObject_drama;
 var tvn_fragmentShaderObject_drama;

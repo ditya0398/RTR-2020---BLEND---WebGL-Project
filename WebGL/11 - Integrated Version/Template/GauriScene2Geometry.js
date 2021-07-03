@@ -52,6 +52,8 @@ var ASJ_spotCosCutoffUniform_gauri;
 var ASJ_spotExponentUniform_gauri;
 var gFlagSpotLightUniform;
 
+
+var fadeMixGauriScene2Uniform;
 function GRInitScene2()
 {
      // vertex shader
@@ -100,7 +102,9 @@ function GRInitScene2()
      "uniform highp sampler2D u_texture_sampler;" +
      "uniform vec4 u_color;" +
      "uniform float distortion;" +
-         "out vec4 FragColor;" +
+         "vec4 FragColor;" +
+         "out vec4 FinalColor;" +
+         "uniform highp float FadeMix;" +
          //akhi in
          "in vec4 Position;" +
          "in vec3 tNormal;" +
@@ -185,6 +189,7 @@ function GRInitScene2()
      "{" +
         "FragColor =  vec4(mix(vec3(FragColor), gray, distortion), 1.0);" +
      "}"+
+     "FinalColor = mix(vec4(FragColor),vec4(0.0),FadeMix);"+
      "}";
   //  vec4(mix(vec3(FragColor), gray, distortion), 1.0) + result_spotLight
      grfragmentShaderObjectStage = gl.createShader(gl.FRAGMENT_SHADER);
@@ -251,7 +256,7 @@ function GRInitScene2()
     ASJ_spotCosCutoffUniform_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "SpotCosCutoff");
     ASJ_spotExponentUniform_gauri = gl.getUniformLocation(grshaderProgramObjectStage, "SpotExponent");
     gFlagSpotLightUniform = gl.getUniformLocation(grshaderProgramObjectStage, "spotLightFlag");
- 
+    fadeMixGauriScene2Uniform = gl.getUniformLocation(grshaderProgramObjectStage, "FadeMix");
      var grstageTexcoords = new Float32Array(
          [
             10.0, 0.0,
@@ -557,7 +562,7 @@ function GRStage()
     gl.uniform1f(ASJ_spotExponentUniform_gauri, spotExponent);
     gl.uniform1f(ASJ_spotCosCutoffUniform_gauri, spotCosCutOff);
 
-
+    gl.uniform1f(fadeMixGauriScene2Uniform, SecondSceneFade);
     gl.uniform1f(grgDistortionUniformStage, blackWhiteDistortion)
     gl.uniform1i(gFlagSpotLightUniform, 0)
 
@@ -875,7 +880,7 @@ function GRStage()
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, grgtextureWings);
     gl.uniform1i(grgtextureSamplerUniformStage, 0);
-
+    
     gl.bindVertexArray(grgVaoStageWall);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     gl.bindVertexArray(null);
