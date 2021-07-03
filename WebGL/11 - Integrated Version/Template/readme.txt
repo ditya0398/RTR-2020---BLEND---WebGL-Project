@@ -1,1 +1,4 @@
-All the contribution from the project should be kept here.
+Press X to start the demo.
+Sync your monitor to 60 Hz 
+
+
